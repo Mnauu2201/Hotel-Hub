@@ -2,7 +2,6 @@ package com.hotelhub.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,19 +12,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tokenId;
+    private Long tokenId; // PK auto increment
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY) // mỗi token gắn với 1 user
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false, length = 512)
     private String token;
 
-    private LocalDateTime issuedAt;
+    @Column(nullable = false)
     private LocalDateTime expiresAt;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime issuedAt;
+
+    @Column(nullable = false)
     private Boolean revoked = false;
 
     private String ipAddress;
