@@ -1,18 +1,20 @@
 package com.hotelhub.backend.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
+@RequestMapping("/api/test")
 public class TestController {
 
-    @GetMapping("/api/test/public")
-    public String publicApi() {
-        return "✅ Public API - ai cũng gọi được!";
+    @GetMapping("/public")
+    public Map<String, String> publicEndpoint() {
+        return Map.of("message", "Public endpoint - không cần authentication");
     }
 
-    @GetMapping("/api/test/private")
-    public String privateApi() {
-        return "🔒 Private API - bạn đã login thành công!";
+    @GetMapping("/protected")
+    public Map<String, String> protectedEndpoint() {
+        return Map.of("message", "Protected endpoint - cần authentication");
     }
 }
