@@ -1,17 +1,15 @@
+// src/main/java/com/hotelhub/backend/repository/RoleRepository.java
 package com.hotelhub.backend.repository;
 
 import com.hotelhub.backend.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(String name);
 
-    // Lấy role theo userId (dùng UserRole entity join)
-    @Query("SELECT r FROM Role r, UserRole ur WHERE r.roleId = ur.roleId AND ur.userId = :userId")
-    List<Role> findRolesByUserId(@Param("userId") Long userId);
+    boolean existsByName(String name);
 }

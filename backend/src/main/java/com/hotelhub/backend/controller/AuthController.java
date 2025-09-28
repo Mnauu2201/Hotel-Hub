@@ -1,89 +1,153 @@
 package com.hotelhub.backend.controller;
 
-import com.hotelhub.backend.dto.request.*;
+import com.hotelhub.backend.dto.request.LoginRequest;
+import com.hotelhub.backend.dto.request.RegisterRequest;
 import com.hotelhub.backend.dto.response.JwtResponse;
-import com.hotelhub.backend.entity.RefreshToken;
 import com.hotelhub.backend.entity.User;
+import com.hotelhub.backend.repository.UserRepository;
 import com.hotelhub.backend.security.JwtTokenProvider;
-import com.hotelhub.backend.service.*;
+import com.hotelhub.backend.service.AuthService;
+import com.hotelhub.backend.service.RefreshTokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private RefreshTokenService refreshTokenService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+        @Autowired
+        private AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
-        User u = authService.register(req);
-        return ResponseEntity.ok("Registered: " + u.getEmail());
-    }
+        @Autowired
+        private JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        // authenticate
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
+        @Autowired
+        private AuthService authService;
 
-        // generate access token
-        Authentication authentication = new UsernamePasswordAuthenticationToken(req.getEmail(), null);
-        String accessToken = jwtTokenProvider.generateTokenFromUsername(req.getEmail());
+        @Autowired
+        private UserRepository userRepository;
 
-        // get user id to create refresh token
-        User user = authService.findByEmail(req.getEmail());
-        RefreshToken rt = refreshTokenService.createRefreshToken(user.getUserId());
+        @Autowired
+        private RefreshTokenService refreshTokenService;
 
-        JwtResponse resp = JwtResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(rt.getToken())
-                .expiresIn(Long.parseLong(System.getProperty("app.jwt.expiration-ms", "3600000")))
-                .build();
+        // ✅ Register
+        @PostMapping("/register")
+        public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
+                try {
+                        User u = authService.register(req);
+                        return ResponseEntity.ok(Map.of(
+                                "message", "Đăng ký thành công",
+                                "email", u.getEmail(),
+                                "name", u.getName()
+                        ));
+                } catch (Exception e) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                "error", "Đăng ký thất bại",
+                                "message", e.getMessage()
+                        ));
+                }
+        }
 
-        return ResponseEntity.ok(resp);
-    }
+        // ✅ Login
+        @PostMapping("/login")
+        public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+                try {
+                        // Xác thực user
+                        Authentication authentication = authenticationManager.authenticate(
+                                        new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestParam("refreshToken") String refreshToken) {
-        return refreshTokenService.findByToken(refreshToken)
-                .map(rt -> {
-                    if (rt.getExpiresAt().isBefore(java.time.LocalDateTime.now())
-                            || Boolean.TRUE.equals(rt.getRevoked())) {
-                        return ResponseEntity.badRequest().body("Refresh token expired or revoked");
-                    }
-                    String newAccess = jwtTokenProvider.generateTokenFromUsername(rt.getUser().getEmail());
-                    JwtResponse resp = JwtResponse.builder()
-                            .accessToken(newAccess)
-                            .refreshToken(rt.getToken())
-                            .expiresIn(Long.parseLong(System.getProperty("app.jwt.expiration-ms", "3600000")))
-                            .build();
-                    return ResponseEntity.ok(resp);
-                })
-                .orElseGet(() -> ResponseEntity.badRequest().body("Invalid refresh token"));
-    }
+                        // Sinh access token có roles
+                        String accessToken = jwtTokenProvider.generateToken(authentication);
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestParam("refreshToken") String refreshToken) {
-        return refreshTokenService.findByToken(refreshToken)
-                .map(rt -> {
-                    rt.setRevoked(true);
-                    // save
-                    refreshTokenService.findByToken(refreshToken).ifPresent(r -> {
-                    }); // just to illustrate
-                    return ResponseEntity.ok("Logged out");
-                })
-                .orElseGet(() -> ResponseEntity.badRequest().body("Invalid refresh token"));
-    }
+                        // Tạo refresh token
+                        User user = userRepository.findByEmail(req.getEmail())
+                                        .orElseThrow(() -> new RuntimeException("User not found"));
+                        var rt = refreshTokenService.createRefreshToken(user.getUserId());
+
+                        // Lấy roles từ user
+                        List<String> roles = user.getRoles().stream()
+                                        .map(role -> role.getName())
+                                        .toList();
+
+                        JwtResponse response = JwtResponse.builder()
+                                        .accessToken(accessToken)
+                                        .refreshToken(rt.getToken())
+                                        .email(user.getEmail())
+                                        .name(user.getName())
+                                        .roles(roles)
+                                        .expiresIn(3600) // 1 hour
+                                        .build();
+
+                        return ResponseEntity.ok(response);
+                } catch (BadCredentialsException e) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                        "error", "Đăng nhập thất bại",
+                                        "message", "Email hoặc mật khẩu không đúng"
+                        ));
+                } catch (Exception e) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                        "error", "Đăng nhập thất bại",
+                                        "message", e.getMessage()
+                        ));
+                }
+        }
+
+        // ✅ Refresh token
+        @PostMapping("/refresh")
+        public ResponseEntity<?> refresh(@RequestParam("refreshToken") String refreshToken) {
+                return refreshTokenService.findByToken(refreshToken)
+                                .map(rt -> {
+                                        if (rt.getExpiresAt().isBefore(java.time.LocalDateTime.now()) ||
+                                                        Boolean.TRUE.equals(rt.getRevoked())) {
+                                                return ResponseEntity.badRequest()
+                                                                .body("Refresh token expired or revoked");
+                                        }
+
+                                        // Lấy user từ refresh token
+                                        User user = rt.getUser();
+
+                                        // ⚠️ Ở đây cần convert roles sang GrantedAuthority
+                                        var authorities = user.getRoles().stream()
+                                                        .map(role -> (org.springframework.security.core.GrantedAuthority) new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                                                                        role.getName()))
+                                                        .toList();
+
+                                        // Tạo access token mới
+                                        String newAccess = jwtTokenProvider.generateTokenFromUsername(
+                                                        user.getEmail(), authorities);
+
+                                        JwtResponse res = JwtResponse.builder()
+                                                        .accessToken(newAccess)
+                                                        .refreshToken(refreshToken)
+                                                        .build();
+
+                                        return ResponseEntity.ok(res);
+                                })
+                                .orElseGet(() -> ResponseEntity.badRequest().body("Invalid refresh token"));
+        }
+
+        // ✅ Logout
+        @PostMapping("/logout")
+        public ResponseEntity<?> logout(@RequestParam("refreshToken") String refreshToken) {
+                try {
+                        refreshTokenService.revokeToken(refreshToken);
+                        return ResponseEntity.ok(Map.of(
+                                "message", "Đăng xuất thành công"
+                        ));
+                } catch (Exception e) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                "error", "Đăng xuất thất bại",
+                                "message", e.getMessage()
+                        ));
+                }
+        }
 }

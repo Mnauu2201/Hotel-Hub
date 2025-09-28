@@ -3,8 +3,6 @@ package com.hotelhub.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "roles")
 @Getter
@@ -13,19 +11,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     private Long roleId;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(nullable = false, unique = true, length = 50)
+    private String name; // e.g. ROLE_CUSTOMER, ROLE_STAFF, ROLE_ADMIN
 
     private String description;
-
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }
