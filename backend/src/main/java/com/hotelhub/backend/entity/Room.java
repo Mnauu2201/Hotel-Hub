@@ -17,11 +17,33 @@ public class Room {
     @Column(name = "room_id")
     private Long roomId;
 
+    @Column(name = "room_number")
     private String roomNumber;
 
-    private String type;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "type_id")
+    private RoomType roomType;
 
     private Double price;
 
-    private Boolean available;
+    @Column(name = "status")
+    private String status = "available";
+
+    private Integer capacity;
+
+    private String description;
+
+    // Getter cho backward compatibility
+    public Boolean getAvailable() {
+        return "available".equals(status);
+    }
+
+    public void setAvailable(Boolean available) {
+        this.status = available ? "available" : "unavailable";
+    }
+
+    // Getter cho backward compatibility
+    public String getType() {
+        return roomType != null ? roomType.getName() : null;
+    }
 }

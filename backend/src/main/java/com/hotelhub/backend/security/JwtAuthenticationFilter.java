@@ -29,9 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // ✅ Bỏ qua filter cho auth và booking guest
+        // ✅ Bỏ qua filter cho auth, guest booking và room APIs
         if (path.startsWith("/api/auth/")
-                || (path.equals("/api/bookings") && "POST".equalsIgnoreCase(method))
+                || path.startsWith("/api/bookings/guest")
+                || path.startsWith("/api/bookings/rooms")
                 || path.startsWith("/api/test/public")) {
             filterChain.doFilter(request, response);
             return;
