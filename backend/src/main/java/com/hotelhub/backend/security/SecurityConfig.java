@@ -61,6 +61,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // ✅ Cho phép đăng ký / đăng nhập
                         .requestMatchers("/api/auth/**").permitAll()
+                        // ✅ Email API - cho phép gửi email
+                        .requestMatchers("/api/email/**").permitAll()
 
                         // ✅ Cho phép guest booking (không cần login)
                         .requestMatchers(HttpMethod.POST, "/api/bookings/guest").permitAll()
