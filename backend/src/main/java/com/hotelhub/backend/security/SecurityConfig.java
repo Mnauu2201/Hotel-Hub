@@ -62,15 +62,27 @@ public class SecurityConfig {
                         // ✅ Cho phép đăng ký / đăng nhập
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // ✅ Cho phép khách vãng lai (chưa login) tạo booking
-                        .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
+                        // ✅ Cho phép guest booking (không cần login)
+                        .requestMatchers(HttpMethod.POST, "/api/bookings/guest").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/guest/**").permitAll()
+                        
+                        // ✅ Cho phép xem phòng (không cần login)
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/rooms/**").permitAll()
 
-                        // ✅ Các API booking khác (xem, hủy, lịch sử) yêu cầu login với role
-                        .requestMatchers("/api/bookings/**")
-                        .hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        // ✅ User booking APIs - yêu cầu login với role
+                        .requestMatchers(HttpMethod.GET, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
 
                         // ✅ Public test API
                         .requestMatchers("/api/test/public").permitAll()
+                        
+                        // ✅ Admin test API (không cần auth)
+                        .requestMatchers("/api/admin/test-scheduled").permitAll()
+                        
+                        // ✅ Admin API - chỉ cho phép ROLE_ADMIN
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
                         // ✅ Mặc định: các request khác phải login
                         .anyRequest().authenticated());

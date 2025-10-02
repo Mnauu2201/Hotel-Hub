@@ -60,6 +60,9 @@ public class Booking {
     @Column(name = "hold_until")
     private LocalDateTime holdUntil;
 
+    @Column(name = "booking_reference", unique = true)
+    private String bookingReference;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
