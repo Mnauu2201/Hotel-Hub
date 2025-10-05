@@ -59,6 +59,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/refresh",
+                                "/api/auth/password/forgot",      // Cho phép gửi OTP
+                                "/api/auth/password/verify-otp",   // Cho phép xác thực OTP
+                                "/api/auth/password/reset",        // Cho phép đặt lại mật khẩu
+                                "/api/auth/password/resend-otp"    // Cho phép gửi lại OTP
+                        ).permitAll()
                         // ✅ Cho phép đăng ký / đăng nhập
                         .requestMatchers("/api/auth/**").permitAll()
                         // ✅ Email API - cho phép gửi email
