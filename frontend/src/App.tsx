@@ -16,13 +16,18 @@ import TeamDetailPage from "./pages/team/team.detail";
 import PricingPage from "./pages/pricing";
 import BlogPage from "./pages/blog";
 import BlogDetail from "./pages/blog/blog.detail";
+import { UserProvider } from "./contexts/UserContext";
+// @ts-expect-error JS component
+import LoginPage from "./pages/auth/LoginPage.jsx";
+// @ts-expect-error JS component
+import RegisterPage from "./pages/auth/RegisterPage.jsx";
 
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: <UserProvider><Layout /></UserProvider>,
       children: [
         {
           index: true,
@@ -75,6 +80,14 @@ function App() {
         {
           path: "/contact",
           element: <ContactPage />,
+        },
+        {
+          path: "/login",
+          element: <LoginPage />,
+        },
+        {
+          path: "/register",
+          element: <RegisterPage />,
         },
       ]
     },

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
+import { AuthProvider } from './contexts/AuthContext'
 import './assets/css/animate.min.css'
 import './assets/css/bootstrap.min.css'
 import './assets/css/default.css'
@@ -17,6 +18,8 @@ import './assets/fontawesome/css/all.min.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 )

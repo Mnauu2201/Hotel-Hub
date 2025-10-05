@@ -1,0 +1,277 @@
+/* Header User Area Styles */
+.header-user-area {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+}
+
+.user-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border: 3px solid transparent;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.user-icon.authenticated {
+  border-color: #4CAF50;
+  background: white;
+  padding: 2px;
+}
+
+.user-icon i {
+  color: white;
+  font-size: 20px;
+}
+
+.user-icon.authenticated i {
+  color: #667eea;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #667eea;
+}
+
+/* User Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  z-index: 1000;
+  margin-top: 10px;
+  overflow: hidden;
+  animation: dropdownSlide 0.3s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-info {
+  padding: 20px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  text-align: center;
+}
+
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e1e5e9;
+}
+
+.dropdown-menu {
+  padding: 10px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  color: #667eea;
+}
+
+.dropdown-item i {
+  width: 20px;
+  margin-right: 12px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.dropdown-item span {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.dropdown-item:last-child {
+  border-top: 1px solid #f0f0f0;
+  margin-top: 5px;
+}
+
+.dropdown-item:last-child:hover {
+  background: #fff5f5;
+  color: #e74c3c;
+}
+
+.dropdown-item:last-child:hover i {
+  color: #e74c3c;
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+  .header-user-area {
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .user-dropdown {
+    right: 50%;
+    transform: translateX(50%);
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .user-icon i {
+    font-size: 18px;
+  }
+  
+  .user-dropdown {
+    min-width: 220px;
+  }
+  
+  .user-info {
+    padding: 15px;
+  }
+  
+  .user-name {
+    font-size: 1rem;
+  }
+  
+  .user-email {
+    font-size: 0.85rem;
+  }
+  
+  .dropdown-item {
+    padding: 12px 15px;
+  }
+  
+  .dropdown-item i {
+    font-size: 14px;
+  }
+  
+  .dropdown-item span {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for user icon when authenticated */
+.user-icon.authenticated::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  z-index: -1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Loading state */
+.user-icon.loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus states for accessibility */
+.user-icon:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.dropdown-item:focus {
+  outline: none;
+  background: #f8f9fa;
+  color: #667eea;
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .user-dropdown {
+    background: #2d3748;
+    color: white;
+  }
+  
+  .user-info {
+    background: linear-gradient(45deg, #4a5568, #2d3748);
+  }
+  
+  .dropdown-item {
+    color: #e2e8f0;
+  }
+  
+  .dropdown-item:hover {
+    background: #4a5568;
+    color: #90cdf4;
+  }
+  
+  .dropdown-item:last-child:hover {
+    background: #742a2a;
+    color: #fc8181;
+  }
+}
