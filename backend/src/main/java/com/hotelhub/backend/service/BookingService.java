@@ -166,7 +166,20 @@ public class BookingService {
      */
     private BigDecimal calculateTotalPrice(Room room, LocalDate checkIn, LocalDate checkOut) {
         long nights = checkIn.until(checkOut).getDays();
-        return BigDecimal.valueOf(room.getPrice()).multiply(BigDecimal.valueOf(nights));
+        BigDecimal roomPrice = BigDecimal.valueOf(room.getPrice());
+        BigDecimal totalPrice = roomPrice.multiply(BigDecimal.valueOf(nights));
+        
+        // Debug log
+        System.out.println("=== DEBUG PRICE CALCULATION ===");
+        System.out.println("Room ID: " + room.getRoomId());
+        System.out.println("Room Price: " + room.getPrice());
+        System.out.println("Check In: " + checkIn);
+        System.out.println("Check Out: " + checkOut);
+        System.out.println("Nights: " + nights);
+        System.out.println("Total Price: " + totalPrice);
+        System.out.println("===============================");
+        
+        return totalPrice;
     }
 
     /**

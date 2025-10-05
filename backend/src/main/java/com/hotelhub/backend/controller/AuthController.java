@@ -103,7 +103,8 @@ public class AuthController {
 
         // ✅ Refresh token
         @PostMapping("/refresh")
-        public ResponseEntity<?> refresh(@RequestParam("refreshToken") String refreshToken) {
+        public ResponseEntity<?> refresh(@RequestBody Map<String, String> request) {
+                String refreshToken = request.get("refreshToken");
                 return refreshTokenService.findByToken(refreshToken)
                                 .map(rt -> {
                                         if (rt.getExpiresAt().isBefore(java.time.LocalDateTime.now()) ||
@@ -137,7 +138,8 @@ public class AuthController {
 
         // ✅ Logout
         @PostMapping("/logout")
-        public ResponseEntity<?> logout(@RequestParam("refreshToken") String refreshToken) {
+        public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
+                String refreshToken = request.get("refreshToken");
                 try {
                         refreshTokenService.revokeToken(refreshToken);
                         return ResponseEntity.ok(Map.of(

@@ -77,8 +77,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
 
-                        // ✅ Public test API
-                        .requestMatchers("/api/test/public").permitAll()
+            // ✅ Public test API
+            .requestMatchers("/api/test/public").permitAll()
+            .requestMatchers("/api/test/debug-price/**").permitAll()
                         
                         // ✅ Admin test API (không cần auth)
                         .requestMatchers("/api/admin/test-scheduled").permitAll()
