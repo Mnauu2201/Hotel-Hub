@@ -166,7 +166,7 @@ public class BookingService {
      */
     private BigDecimal calculateTotalPrice(Room room, LocalDate checkIn, LocalDate checkOut) {
         long nights = checkIn.until(checkOut).getDays();
-        BigDecimal roomPrice = BigDecimal.valueOf(room.getPrice());
+        BigDecimal roomPrice = room.getPrice(); // Room.getPrice() đã trả về BigDecimal
         BigDecimal totalPrice = roomPrice.multiply(BigDecimal.valueOf(nights));
         
         // Debug log
