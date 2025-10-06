@@ -1,56 +1,51 @@
 package com.hotelhub.backend.service;
 
 import com.hotelhub.backend.dto.request.RegisterRequest;
-import com.hotelhub.backend.entity.*;
-import com.hotelhub.backend.repository.*;
+import com.hotelhub.backend.entity.Role;
+import com.hotelhub.backend.entity.User;
+import com.hotelhub.backend.repository.RoleRepository;
+import com.hotelhub.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleRepository roleRepository;
-    @Autowired
-    private UserRoleRepository userRoleRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    public User register(RegisterRequest req) {
-        if (userRepository.existsByEmail(req.getEmail())) {
-            throw new RuntimeException("Email already in use");
+    /**
+     * Đăng ký user mới với role mặc định = ROLE_CUSTOMER
+     */
+    public User register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists: " + request.getEmail());
         }
-        User user = User.builder()
-                .name(req.getName())
-                .email(req.getEmail())
-                .password(passwordEncoder.encode(req.getPassword()))
-                .phone(req.getPhone())
-                .enabled(true)
-                .emailVerified(false)
-                .build();
-        User saved = userRepository.save(user);
 
-        // gán role CUSTOMER mặc định
-        Role role = roleRepository.findByName("ROLE_CUSTOMER")
-                .orElseGet(() -> roleRepository
-                        .save(Role.builder().name("ROLE_CUSTOMER").description("Khách hàng").build()));
-        UserRole ur = UserRole.builder().userId(saved.getUserId()).roleId(role.getRoleId()).build();
-        userRoleRepository.save(ur);
-        return saved;
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEnabled(true);
+
+        // Gán role mặc định
+        Role customerRole = roleRepository.findByName("ROLE_CUSTOMER")
+                .orElseThrow(() -> new RuntimeException("ROLE_CUSTOMER not found. Please seed roles in DB."));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(customerRole);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
     }
-
-    public void authenticate(String email, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-    }
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow();
-    }
-
 }
