@@ -43,7 +43,7 @@ public class TestController {
             LocalDate checkIn = LocalDate.of(2025, 10, 10);
             LocalDate checkOut = LocalDate.of(2025, 12, 10);
             long nights = checkIn.until(checkOut).getDays();
-            BigDecimal totalPrice = BigDecimal.valueOf(r.getPrice()).multiply(BigDecimal.valueOf(nights));
+            BigDecimal totalPrice = r.getPrice().multiply(BigDecimal.valueOf(nights));
 
             return ResponseEntity.ok(Map.of(
                     "roomId", r.getRoomId(),

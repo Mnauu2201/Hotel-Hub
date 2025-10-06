@@ -68,6 +68,12 @@ public class SecurityConfig {
                         
                         // ✅ Cho phép xem phòng (không cần login)
                         .requestMatchers(HttpMethod.GET, "/api/bookings/rooms/**").permitAll()
+                        
+                        // ✅ Room CRUD APIs
+                        .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/rooms").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
 
                         // ✅ User booking APIs - yêu cầu login với role
                         .requestMatchers(HttpMethod.GET, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")

@@ -1,6 +1,7 @@
 package com.hotelhub.backend.repository;
 
 import com.hotelhub.backend.entity.Room;
+import com.hotelhub.backend.entity.RoomStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +22,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     /**
      * Lấy phòng trống trong khoảng thời gian
      */
-    @Query("SELECT r FROM Room r WHERE r.status = 'available' " +
+    @Query("SELECT r FROM Room r WHERE r.status = 'AVAILABLE' " +
            "AND r.roomId NOT IN (" +
            "SELECT b.roomId FROM Booking b WHERE " +
            "b.status IN ('pending', 'confirmed') " +
@@ -38,4 +39,14 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
            "AND ((b.checkIn <= :checkOut AND b.checkOut >= :checkIn) " +
            "OR (b.holdUntil IS NOT NULL AND b.holdUntil > CURRENT_TIMESTAMP))")
     boolean isRoomAvailable(@Param("roomId") Long roomId, @Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
+    
+    /**
+     * Lấy phòng theo trạng thái
+     */
+    List<Room> findByStatus(RoomStatus status);
+    
+    /**
+     * Lấy phòng theo loại
+     */
+    List<Room> findByRoomType_TypeId(Long roomTypeId);
 }
