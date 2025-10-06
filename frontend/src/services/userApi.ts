@@ -17,6 +17,18 @@ interface ForgotPasswordData {
   email: string;
 }
 
+interface VerifyOtpData {
+  email: string;
+  otp: string;
+}
+
+interface ResetPasswordData {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -34,8 +46,9 @@ interface RegisterResponse {
 }
 
 interface ForgotPasswordResponse {
-  message: string;
   success: boolean;
+  message: string;
+  email?: string;
 }
 
 class UserApiService {
@@ -252,7 +265,7 @@ class UserApiService {
   // Quên mật khẩu
   async forgotPassword(data: ForgotPasswordData): Promise<ForgotPasswordResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+      const response = await fetch(`${API_BASE_URL}/auth/password/forgot`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -269,6 +282,111 @@ class UserApiService {
       return responseData;
     } catch (error) {
       console.error('Forgot password error:', error);
+      throw error;
+    }
+  }
+
+  // Xác thực OTP
+  async verifyOtp(data: VerifyOtpData): Promise<{ success: boolean; message: string }>{
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/password/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res.message || 'Xác thực OTP thất bại');
+      }
+      return res;
+    } catch (error) {
+      console.error('Verify OTP error:', error);
+      throw error;
+    }
+  }
+
+  // Đặt lại mật khẩu bằng OTP
+  async resetPassword(data: ResetPasswordData): Promise<{ success: boolean; message: string }>{
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/password/reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          otp: data.otp,
+          newPassword: data.newPassword,
+          confirmPassword: data.confirmPassword,
+        }),
+      });
+
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res.message || 'Đặt lại mật khẩu thất bại');
+      }
+      return res;
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  }
+
+  // Gửi lại OTP
+  async resendOtp(email: string): Promise<{ success: boolean; message: string; email?: string }>{
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/password/resend-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res.message || 'Gửi lại OTP thất bại');
+      }
+      return res;
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      throw error;
+    }
+  }
+
+  // Gửi email thông báo đăng ký (dùng EmailController)
+  async sendRegistrationEmail(to: string, name: string): Promise<string> {
+    try {
+      const subject = 'Chào mừng bạn đến với HotelHub';
+      const htmlContent = `
+        <h2>Xin chào ${name || to},</h2>
+        <p>Cảm ơn bạn đã đăng ký tài khoản tại <b>HotelHub</b>.</p>
+        <p>Chúc bạn có trải nghiệm đặt phòng tuyệt vời!</p>
+      `;
+
+      const body = new URLSearchParams();
+      body.append('to', to);
+      body.append('subject', subject);
+      body.append('htmlContent', htmlContent);
+
+      const response = await fetch(`${API_BASE_URL}/email/send-html`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
+      });
+
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(text || 'Gửi email đăng ký thất bại');
+      }
+      return text;
+    } catch (error) {
+      console.error('Send registration email error:', error);
       throw error;
     }
   }

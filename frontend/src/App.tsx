@@ -21,6 +21,10 @@ import { UserProvider } from "./contexts/UserContext";
 import LoginPage from "./pages/auth/LoginPage.jsx";
 // @ts-expect-error JS component
 import RegisterPage from "./pages/auth/RegisterPage.jsx";
+// @ts-expect-error JS component
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
+// @ts-expect-error JS component
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
 
 
 function App() {
@@ -42,7 +46,7 @@ function App() {
           element: <RoomPage />,
         },
         {
-          path: "/room-detail",
+          path: "/room-detail/:id",
           element: <RoomDetail />,
         },
         {
@@ -88,6 +92,14 @@ function App() {
         {
           path: "/register",
           element: <RegisterPage />,
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPasswordPage />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPasswordPage />,
         },
       ]
     },

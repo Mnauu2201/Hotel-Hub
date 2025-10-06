@@ -15,8 +15,8 @@ const RoomsPage = () => {
 
   const fetchRooms = async () => {
     try {
-      const response = await api.get('/bookings/rooms');
-      setRooms(response.data.rooms || []);
+      const response = await api.get('/rooms');
+      setRooms(response.data?.rooms || []);
     } catch (error) {
       console.error('Lỗi khi tải phòng:', error);
       alert('Không thể tải danh sách phòng');
@@ -63,12 +63,12 @@ const RoomsPage = () => {
       
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
         gap: '1rem' 
       }}>
         {rooms.map(room => (
           <RoomCard
-            key={room.roomId}
+            key={room.roomId || room.id}
             room={room}
             onBook={handleBookRoom}
           />

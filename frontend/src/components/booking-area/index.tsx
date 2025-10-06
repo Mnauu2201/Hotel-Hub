@@ -8,21 +8,21 @@ const BookingArea = () => {
               <ul>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-badge-check" /> Check In Date</label>
+                    <label><i className="fal fa-badge-check" /> Ngày nhận phòng</label>
                     <input type="date" id="chackin" name="date" />
                   </div>
                 </li>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-times-octagon" /> Check Out Date</label>
+                    <label><i className="fal fa-times-octagon" /> Ngày trả phòng</label>
                     <input type="date" id="chackout" name="date" />
                   </div>
                 </li>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-users" /> Adults</label>
-                    <select name="adults" id="adu">
-                      <option value="sports-massage">Adults</option>
+                    <label><i className="fal fa-users" /> Người lớn</label>
+              <select name="adults" id="adu">
+                <option value="sports-massage">Người lớn</option>
                       <option value={1}>1</option>
                       <option value={2}>2</option>
                       <option value={3}>3</option>
@@ -33,9 +33,9 @@ const BookingArea = () => {
                 </li>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-baby" /> Child</label>
-                    <select name="child" id="cld">
-                      <option value="sports-massage">Child</option>
+                    <label><i className="fal fa-baby" /> Trẻ em</label>
+              <select name="child" id="cld">
+                <option value="sports-massage">Trẻ em</option>
                       <option value={1}>1</option>
                       <option value={2}>2</option>
                       <option value={3}>3</option>
@@ -46,9 +46,9 @@ const BookingArea = () => {
                 </li>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-concierge-bell" /> Room</label>
-                    <select name="room" id="rm">
-                      <option value="sports-massage">Room</option>
+                    <label><i className="fal fa-concierge-bell" /> Phòng</label>
+              <select name="room" id="rm">
+                <option value="sports-massage">Phòng</option>
                       <option value={1}>1</option>
                       <option value={2}>2</option>
                       <option value={3}>3</option>

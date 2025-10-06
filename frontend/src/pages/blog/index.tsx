@@ -6,7 +6,7 @@ const BlogPage = () => {
   return (
     <>
       <SearchPopup />
-      <BreadcrumbArea tag="Blog" title="Blog" />
+      <BreadcrumbArea tag="Blog" title="Tin tức" />
       <InnerBlog />
     </>
   )

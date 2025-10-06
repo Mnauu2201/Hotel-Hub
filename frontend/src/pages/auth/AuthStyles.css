@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  padding: 20px;
+  padding: 135px;
   background-color: #f8f9fa;
 }
 
@@ -90,4 +90,43 @@
 
 .auth-links a:hover {
   text-decoration: underline;
+}
+
+/* Luxurious theme for auth pages */
+.auth-lux {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0b1324 100%);
+}
+
+.auth-card-lux {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  padding: 36px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 8px;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: #64748b;
+  margin-top: -4px;
+  margin-bottom: 20px;
+}
+
+.auth-button.primary {
+  background: linear-gradient(135deg, #1f6feb, #0ea5e9);
+}
+
+.auth-button.primary:hover {
+  filter: brightness(0.95);
+}
+
+.password-hints div {
+  line-height: 1.4;
 }

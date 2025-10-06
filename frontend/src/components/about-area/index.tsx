@@ -22,23 +22,23 @@ const AboutArea = () => {
           <div className="col-lg-6 col-md-12 col-sm-12">
             <div className="about-content s-about-content  wow fadeInRight  animated pl-30" data-animation="fadeInRight" data-delay=".4s">
               <div className="about-title second-title pb-25">
-                <h5>About Us</h5>
-                <h2>Most Safe &amp; Rated Hotel In London.</h2>
+                <h5>Giới thiệu</h5>
+                <h2>Khách sạn an toàn và được đánh giá cao nhất tại London.</h2>
               </div>
-              <p>Morbi tortor urna, placerat vel arcu quis, fringilla egestas neque. Morbi sit amet porta erat, quis rutrum risus. Vivamus et gravida nibh, quis posuere felis. In commodo mi lectus, Integer ligula lorem, finibus vitae lorem vitae tincidunt dolor consequat quis.</p>
-              <p>Cras finibus laoreet felis et hendrerit. Integer ligula lorem, finibus vitae lorem at, egestas consectetur urna. Integer id ultricies elit. Maecenas sodales nibh, quis posuere felis. In commodo mi lectus venenatis metus eget fringilla. Suspendisse varius ante eget lorem tempus blandit. Aenean eu vulputate lorem, quis auctor lectus.</p>
+              <p>Chúng tôi tự hào là một trong những khách sạn hàng đầu tại London với dịch vụ chất lượng cao và môi trường an toàn. Với đội ngũ nhân viên chuyên nghiệp, chúng tôi cam kết mang đến cho quý khách trải nghiệm lưu trú tuyệt vời nhất.</p>
+              <p>Khách sạn của chúng tôi được thiết kế với phong cách hiện đại, sang trọng cùng đầy đủ tiện nghi để đáp ứng mọi nhu cầu của quý khách. Chúng tôi luôn nỗ lực không ngừng để nâng cao chất lượng dịch vụ và mang đến sự hài lòng tuyệt đối cho quý khách.</p>
               <div className="about-content3 mt-30">
                 <div className="row justify-content-center align-items-center">
                   <div className="col-md-12">
                     <ul className="green mb-30">
-                      <li> 24 Month / 24,000km Nationwide Warranty monotone</li>
-                      <li> Curabitur dapibus nisl a urna congue, in pharetra urna accumsan.</li>
-                      <li> Customer Rewards Program and excellent technology</li>
+                      <li> Bảo hành toàn quốc 24 tháng / 24.000km</li>
+                      <li> Dịch vụ chăm sóc khách hàng 24/7 với đội ngũ nhân viên chuyên nghiệp</li>
+                      <li> Chương trình khách hàng thân thiết và công nghệ hiện đại</li>
                     </ul>
                   </div>
                   <div className="col-md-6">
                     <div className="slider-btn">
-                      <Link to="about" className="btn ss-btn smoth-scroll">Discover More</Link>
+                      <Link to="about" className="btn ss-btn smoth-scroll">Tìm hiểu thêm</Link>
                     </div>
                   </div>
                   <div className="col-md-6 text-right">

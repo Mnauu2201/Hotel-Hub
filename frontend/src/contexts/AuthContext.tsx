@@ -127,6 +127,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await userApi.register(userData);
+
+      // Thử gửi email chào mừng, không chặn flow nếu lỗi
+      try {
+        await userApi.sendRegistrationEmail(userData.email, userData.name);
+      } catch (e) {
+        console.warn('Send registration email failed:', e);
+      }
+
       return response;
     } catch (error) {
       throw error;

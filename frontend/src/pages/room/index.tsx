@@ -7,7 +7,7 @@ import RoomArea2 from "../../components/room-area/index2"
 const RoomPage = () => {
   return (
     <>
-      <BreadcrumbArea title="Our Menu" tag="Our Menu" />
+      <BreadcrumbArea title="Phòng của chúng tôi" tag="Phòng của chúng tôi" />
       <RoomArea2 />
       <FeatureArea />
       <BookingArea2 />

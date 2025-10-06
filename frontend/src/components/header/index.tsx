@@ -43,7 +43,7 @@ const Header = () => {
                 <ul>
                   <li>
                     <i className="far fa-clock" />
-                    <span>Mon - Fri: 9:00 - 19:00/ Closed on Weekends</span>
+                    <span>Thứ Hai - Thứ Sáu: 9:00 - 19:00/ Đóng cửa cuối tuần</span>
                   </li>
                   <li>
                     <i className="far fa-mobile" />
@@ -80,23 +80,23 @@ const Header = () => {
                   <nav id="mobile-menu">
                     <ul>
                       <li className="has-sub">
-                        <Link to="/">Home</Link>
+                        <Link to="/">Trang chủ</Link>
                       </li>
-                      <li><Link to="/about">About</Link></li>
+                      <li><Link to="/about">Giới thiệu</Link></li>
                       <li className="has-sub">
-                        <Link to="/room">our rooms</Link>
+                        <Link to="/room">Phòng của chúng tôi</Link>
                         
                       </li>
                       <li className="has-sub">
-                        <Link to="/services">Service</Link>
+                        <Link to="/services">Dịch vụ</Link>
                         
                       </li>
-                      <li className="has-sub"><Link to="#">Pages</Link>
+                      <li className="has-sub"><Link to="#">Trang</Link>
                         <ul>
                           {/* <li><Link to="/gallery">Gallery</Link></li> */}
-                          <li><Link to="/faq">Faq</Link></li>
-                          <li><Link to="/team">Team</Link></li>
-                          <li><Link to="/pricing">Pricing</Link></li>
+                          <li><Link to="/faq">Hỏi đáp</Link></li>
+                          <li><Link to="/team">Đội ngũ</Link></li>
+                          <li><Link to="/pricing">Bảng giá</Link></li>
                           {/* <li><Link to="/shop">Shop</Link></li> */}
                           {/* <li><Link to="/shop-details">Shop Details</Link></li> */}
                         </ul>
@@ -105,7 +105,7 @@ const Header = () => {
                         <Link to="/blog">Blog</Link>
                        
                       </li>
-                      <li><Link to="/contact">Contact</Link></li>
+                      <li><Link to="/contact">Liên hệ</Link></li>
                     </ul>
                   </nav>
                 </div>

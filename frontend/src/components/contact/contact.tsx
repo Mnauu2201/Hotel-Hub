@@ -11,7 +11,7 @@ const ContactComponent = () => {
                 <div className="f-cta-icon">
                   <i className="far fa-map" />
                 </div>
-                <h5>Office Address</h5>
+                <h5>Địa chỉ văn phòng</h5>
                 <p>380 St Kilda Road, Melbourne <br />
                   VIC 3004, Australia</p>
               </div>
@@ -19,15 +19,15 @@ const ContactComponent = () => {
                 <div className="f-cta-icon">
                   <i className="far fa-clock" />
                 </div>
-                <h5>Working Hours</h5>
-                <p>Monday to Friday 09:00 to 18:30 <br />
-                  Saturday 15:30</p>
+                <h5>Giờ làm việc</h5>
+                <p>Thứ Hai đến Thứ Sáu 09:00 đến 18:30 <br />
+                  Thứ Bảy 15:30</p>
               </div>
               <div className="single-cta wow fadeInUp animated" data-animation="fadeInDown animated" data-delay=".2s">
                 <div className="f-cta-icon">
                   <i className="far fa-envelope-open" />
                 </div>
-                <h5>Message Us</h5>
+                <h5>Liên hệ với chúng tôi</h5>
                 <p> <Link to="#">support@example.com</Link><br /><Link to="#">info@example.com</Link></p>
               </div>
             </div>
@@ -36,37 +36,37 @@ const ContactComponent = () => {
             <div className="contact-bg02">
               <div className="section-title center-align mb-40 text-center wow fadeInDown animated" data-animation="fadeInDown" data-delay=".4s">
                 <h2>
-                  Get In Touch
+                  Liên hệ với chúng tôi
                 </h2>
               </div>
               <form action="https://htmldemo.zcubethemes.com/riorelax/mail.php" method="post" className="contact-form mt-30">
                 <div className="row">
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-name mb-20">
-                      <input type="text" id="firstn" name="firstn" placeholder="First Name" required />
+                      <input type="text" id="firstn" name="firstn" placeholder="Họ tên" required />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <input type="text" id="email" name="email" placeholder="Eamil" required />
+                      <input type="text" id="email" name="email" placeholder="Email" required />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <input type="text" id="phone" name="phone" placeholder="Phone No." required />
+                      <input type="text" id="phone" name="phone" placeholder="Số điện thoại" required />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <input type="text" id="subject" name="subject" placeholder="Subject" />
+                      <input type="text" id="subject" name="subject" placeholder="Tiêu đề" />
                     </div>
                   </div>
                   <div className="col-lg-12">
                     <div className="contact-field p-relative c-message mb-30">
-                      <textarea name="message" id="message" cols={30} rows={10} placeholder="Write comments" defaultValue={""} />
+                      <textarea name="message" id="message" cols={30} rows={10} placeholder="Nội dung tin nhắn" defaultValue={""} />
                     </div>
                     <div className="slider-btn">
-                      <button className="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><span>Submit Now</span></button>
+                      <button className="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><span>Gửi ngay</span></button>
                     </div>
                   </div>
                 </div>

@@ -5,7 +5,7 @@ import NewsLaterArea from "../../components/newslater-area"
 const ContactPage = () => {
   return (
     <>
-      <BreadcrumbArea title="Contact Us" tag="About" />
+      <BreadcrumbArea title="Liên hệ" tag="About" />
       <ContactComponent />
       <NewsLaterArea />
     </>
