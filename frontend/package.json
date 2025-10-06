@@ -1,8 +1,27 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "booking_hotel",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
   "dependencies": {
+
+    "@types/jquery": "^3.5.33",
+    "axios": "^1.12.2",
+    "imagesloaded": "^5.0.0",
+    "isotope-layout": "^3.0.6",
+    "jquery": "^3.7.1",
+    "magnific-popup": "^1.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.3",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1"
     "@tanstack/react-query": "^5.90.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -26,17 +45,4 @@
       "react-app",
       "react-app/jest"
     ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
-}
+
