@@ -16,15 +16,15 @@ const FeatureArea = () => {
           <div className="col-lg-6 col-md-12 col-sm-12">
             <div className="feature-content s-about-content">
               <div className="feature-title pb-20">
-                <h5>Luxury Hotel &amp; Resort</h5>
+                <h5>Khách sạn &amp; Khu nghỉ dưỡng sang trọng</h5>
                 <h2>
-                  Pearl Of The Adriatic.
+                  Viên ngọc của biển Adriatic
                 </h2>
               </div>
-              <p>Vestibulum non ornare nunc. Maecenas a metus in est iaculis pretium. Aliquam ullamcorper nibh lacus, ac suscipit ipsum consequat porttitor.Aenean vehicula ligula eu rhoncus porttitor. Duis vel lacinia quam. Nunc rutrum porta ex, in imperdiet tortor feugiat at.</p>
-              <p>Cras finibus laoreet felis et hendrerit. Integer ligula lorem, finibus vitae lorem at, egestas consectetur urna. Integer id ultricies elit. Maecenas sodales nibh, quis posuere felis. In commodo mi lectus venenatis metus eget fringilla. Suspendisse varius ante eget.</p>
+              <p>Chúng tôi tự hào mang đến không gian nghỉ dưỡng đẳng cấp với thiết kế tinh tế và dịch vụ chuyên nghiệp. Mỗi chi tiết trong khách sạn đều được chăm chút tỉ mỉ để đảm bảo kỳ nghỉ của quý khách trở nên hoàn hảo và đáng nhớ.</p>
+              <p>Với vị trí đắc địa và cảnh quan tuyệt đẹp, khách sạn chúng tôi là điểm đến lý tưởng cho những ai muốn tận hưởng kỳ nghỉ thư giãn, hội nghị sang trọng hay những dịp kỷ niệm đặc biệt. Hãy đến và trải nghiệm dịch vụ đẳng cấp của chúng tôi.</p>
               <div className="slider-btn mt-15">
-                <Link to="/about" className="btn ss-btn smoth-scroll">Discover More</Link>
+                <Link to="/about" className="btn ss-btn smoth-scroll">Tìm hiểu thêm</Link>
               </div>
             </div>
           </div>

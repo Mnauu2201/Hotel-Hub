@@ -67,6 +67,9 @@ const LoginPage = () => {
           <p>
             Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
           </p>
+          <p>
+            Quên mật khẩu? <Link to="/forgot-password">Khôi phục mật khẩu</Link>
+          </p>
         </div>
       </div>
     </div>

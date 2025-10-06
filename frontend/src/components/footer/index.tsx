@@ -36,15 +36,15 @@ const Footer = () => {
             <div className="col-xl-2 col-lg-2 col-sm-6">
               <div className="footer-widget mb-30">
                 <div className="f-widget-title">
-                  <h2>Our Links</h2>
+                  <h2>Liên kết</h2>
                 </div>
                 <div className="footer-link">
                   <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/about"> About Us</Link></li>
-                    <li><Link to="/services"> Services </Link></li>
-                    <li><Link to="/contact"> Contact Us</Link></li>
-                    <li><Link to="/blog">Blog </Link></li>
+                    <li><Link to="/">Trang chủ</Link></li>
+                    <li><Link to="/about">Giới thiệu</Link></li>
+                    <li><Link to="/services">Dịch vụ</Link></li>
+                    <li><Link to="/contact">Liên hệ</Link></li>
+                    <li><Link to="/blog">Blog</Link></li>
                   </ul>
                 </div>
               </div>
@@ -52,14 +52,14 @@ const Footer = () => {
             <div className="col-xl-2 col-lg-2 col-sm-6">
               <div className="footer-widget mb-30">
                 <div className="f-widget-title">
-                  <h2>Our Services</h2>
+                  <h2>Dịch vụ</h2>
                 </div>
                 <div className="footer-link">
                   <ul>
-                    <li><Link to="/faq">FAQ</Link></li>
-                    <li><Link to="#">Support</Link></li>
-                    <li><Link to="#">Privercy</Link></li>
-                    <li><Link to="#">Term &amp; Conditions</Link></li>
+                    <li><Link to="/faq">Câu hỏi thường gặp</Link></li>
+                    <li><Link to="#">Hỗ trợ</Link></li>
+                    <li><Link to="#">Quyền riêng tư</Link></li>
+                    <li><Link to="#">Điều khoản &amp; Điều kiện</Link></li>
                   </ul>
                 </div>
               </div>
@@ -67,12 +67,12 @@ const Footer = () => {
             <div className="col-xl-4 col-lg-4 col-sm-6">
               <div className="footer-widget mb-30">
                 <div className="f-widget-title">
-                  <h2>Subscribe To Our Newsletter</h2>
+                  <h2>Đăng ký nhận bản tin</h2>
                 </div>
                 <div className="footer-link">
                   <div className="subricbe p-relative" data-animation="fadeInDown" data-delay=".4s">
                     <form action="https://htmldemo.zcubethemes.com/riorelax/news-mail.php" method="post" className="contact-form ">
-                      <input type="text" id="email2" name="email2" className="header-input" placeholder="Your Email..." required />
+                      <input type="text" id="email2" name="email2" className="header-input" placeholder="Email của bạn..." required />
                       <button className="btn header-btn"> <i className="fas fa-location-arrow" /> </button>
                     </form>
                   </div>
@@ -86,7 +86,7 @@ const Footer = () => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-6">
-              Copyright © Riorelax 2022 . All rights reserved.
+              Bản quyền © Riorelax 2022. Tất cả các quyền được bảo lưu.
             </div>
             <div className="col-lg-6 col-md-6 text-right text-xl-right">
               <div className="footer-social">

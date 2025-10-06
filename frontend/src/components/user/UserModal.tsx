@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './UserModal.css';
 import { useAuth } from '../../contexts/AuthContext';
+import userApi from '../../services/userApi';
+import { useNavigate } from 'react-router-dom';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -20,6 +22,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
   const [loading, setLoading] = useState(false);
 
   const { login, register } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +76,20 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess('Tính năng quên mật khẩu sẽ sớm được hỗ trợ.');
+    setSuccess('');
+    setLoading(true);
+    try {
+      const res = await userApi.forgotPassword({ email });
+      setSuccess(res.message || 'Mã xác thực đã được gửi đến email của bạn');
+      setTimeout(() => {
+        onClose();
+        navigate('/reset-password', { state: { email } });
+      }, 800);
+    } catch (err: any) {
+      setError(err?.message || 'Không thể gửi email. Vui lòng thử lại');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;

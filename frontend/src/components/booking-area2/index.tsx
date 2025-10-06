@@ -18,21 +18,21 @@ const BookingArea2 = () => {
                 <div className="row">
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-name mb-20">
-                      <label><i className="fal fa-badge-check" /> Check In Date</label>
+                      <label><i className="fal fa-badge-check" /> Ngày nhận phòng</label>
                       <input type="date" id="chackin2" name="date" />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <label><i className="fal fa-times-octagon" /> Check Out Date</label>
-                      <input type="date" id="chackout2" name="date" />
+                      <label><i className="fal fa-times-octagon" /> Ngày trả phòng</label>
+      <input type="date" id="chackout2" name="date" />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <label><i className="fal fa-users" /> Adults</label>
-                      <select name="adults" id="adu2">
-                        <option value="sports-massage">Adults</option>
+                      <label><i className="fal fa-users" /> Người lớn</label>
+              <select name="adults" id="adu2">
+                <option value="sports-massage">Người lớn</option>
                         <option value={1}>1</option>
                         <option value={2}>2</option>
                         <option value={3}>3</option>
@@ -43,9 +43,9 @@ const BookingArea2 = () => {
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-option mb-20">
-                      <label><i className="fal fa-concierge-bell" /> Room</label>
-                      <select name="room" id="rm2">
-                        <option value="sports-massage">Room</option>
+                      <label><i className="fal fa-concierge-bell" /> Phòng</label>
+              <select name="room" id="rm2">
+                <option value="sports-massage">Phòng</option>
                         <option value={1}>1</option>
                         <option value={2}>2</option>
                         <option value={3}>3</option>

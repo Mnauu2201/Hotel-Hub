@@ -86,11 +86,11 @@ const SliderArea = () => {
             <div className="row justify-content-center align-items-center">
               <div className="col-lg-7 col-md-7">
                 <div className="slider-content s-slider-content mt-80 text-center">
-                  <h2 data-animation="fadeInUp" data-delay=".4s">Enjoy A Luxuary Experience</h2>
-                  <p data-animation="fadeInUp" data-delay=".6s">Donec vitae libero non enim placerat eleifend aliquam erat volutpat. Curabitur diam ex, dapibus purus sapien, cursus sed nisl tristique, commodo gravida lectus non.</p>
+                  <h2 data-animation="fadeInUp" data-delay=".4s">Tận hưởng trải nghiệm sang trọng</h2>
+                  <p data-animation="fadeInUp" data-delay=".6s">Chúng tôi mang đến cho bạn không gian nghỉ dưỡng tuyệt vời với dịch vụ đẳng cấp và tiện nghi hiện đại, đảm bảo kỳ nghỉ của bạn trở nên đáng nhớ.</p>
                   <div className="slider-btn mt-30 mb-105">
-                    <Link to="/contact" className="btn ss-btn active mr-15" data-animation="fadeInLeft" data-delay=".4s">Discover More </Link>
-                    {/* <Link to="https://www.youtube.com/watch?v=gyGsPlt06bo" className="video-i popup-video" data-animation="fadeInUp" data-delay=".8s" style={{ animationDelay: '0.8s' }} tabIndex={0}><i className="fas fa-play" /> Intro Video</Link> */}
+                    <Link to="/contact" className="btn ss-btn active mr-15" data-animation="fadeInLeft" data-delay=".4s">Khám phá thêm </Link>
+                    {/* <Link to="https://www.youtube.com/watch?v=gyGsPlt06bo" className="video-i popup-video" data-animation="fadeInUp" data-delay=".8s" style={{ animationDelay: '0.8s' }} tabIndex={0}><i className="fas fa-play" /> Video giới thiệu</Link> */}
                   </div>
                 </div>
               </div>
@@ -102,10 +102,10 @@ const SliderArea = () => {
             <div className="row justify-content-center align-items-center">
               <div className="col-lg-7 col-md-7">
                 <div className="slider-content s-slider-content mt-80 text-center">
-                  <h2 data-animation="fadeInUp" data-delay=".4s">Enjoy A Luxuary Experience</h2>
-                  <p data-animation="fadeInUp" data-delay=".6s">Donec vitae libero non enim placerat eleifend aliquam erat volutpat. Curabitur diam ex, dapibus purus sapien, cursus sed nisl tristique, commodo gravida lectus non.</p>
+                  <h2 data-animation="fadeInUp" data-delay=".4s">Tận hưởng kỳ nghỉ hoàn hảo</h2>
+                  <p data-animation="fadeInUp" data-delay=".6s">Khách sạn chúng tôi cung cấp dịch vụ chất lượng cao với đội ngũ nhân viên chuyên nghiệp, sẵn sàng đáp ứng mọi nhu cầu của quý khách.</p>
                   <div className="slider-btn mt-30 mb-105">
-                    <Link to="/contact" className="btn ss-btn active mr-15" data-animation="fadeInLeft" data-delay=".4s">Discover More </Link>
+                    <Link to="/contact" className="btn ss-btn active mr-15" data-animation="fadeInLeft" data-delay=".4s">Đặt phòng ngay </Link>
                     {/* <Link to="https://www.youtube.com/watch?v=gyGsPlt06bo" className="video-i popup-video" data-animation="fadeInUp" data-delay=".8s" style={{ animationDelay: '0.8s' }} tabIndex={0}><i className="fas fa-play" /> Intro Video</Link> */}
                   </div>
                 </div>

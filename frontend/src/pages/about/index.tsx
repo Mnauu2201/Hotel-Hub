@@ -8,7 +8,7 @@ import SkillArea from "../../components/skill-area"
 const AboutPage = () => {
   return (
     <>
-      <BreadcrumbArea title="About Us" tag="about" />
+      <BreadcrumbArea title="Giới thiệu" tag="about" />
       <AboutArea />
       <SkillArea />
       <FeatureArea />

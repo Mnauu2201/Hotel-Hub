@@ -7,7 +7,7 @@ import TestimonialArea from "../../components/testimonial-area"
 const ServicePage = () => {
   return (
     <>
-      <BreadcrumbArea title="Service" tag="Service" />
+      <BreadcrumbArea title="Dịch vụ" tag="Dịch vụ" />
       <ServiceDetails2Area />
       <FeatureArea />
       <BookingArea2 />

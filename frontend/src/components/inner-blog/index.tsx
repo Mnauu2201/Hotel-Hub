@@ -46,13 +46,13 @@ const InnerBlog = () => {
                 <img src={innerb1} alt="" />
               </div>
               <div className="bsingle__content">
-                <div className="date-home">24th March 2022</div>
+                <div className="date-home">24 tháng 3 năm 2022</div>
                 <h2>
-                  <Link to="/blog-details">Lorem ipsum dolor sit amet, consectetur cing elit...</Link>
+                  <Link to="/blog-details">Trải nghiệm nghỉ dưỡng sang trọng tại khách sạn...</Link>
                 </h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Khám phá không gian nghỉ dưỡng đẳng cấp với dịch vụ chất lượng cao...</p>
                 <div className="blog__btn">
-                  <Link to="#">Read More</Link>
+                  <Link to="#">Xem thêm</Link>
                 </div>
               </div>
             </div>
@@ -67,13 +67,13 @@ const InnerBlog = () => {
                 ))}
               </div>
               <div className="bsingle__content">
-                <div className="date-home">24th March 2022</div>
+                <div className="date-home">24 tháng 3 năm 2022</div>
                 <h2>
-                  <Link to="/blog-details">I must explain to you how all this mistaken idea...</Link>
+                  <Link to="/blog-details">Những tiện ích độc đáo tại khách sạn của chúng tôi...</Link>
                 </h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+                <p>Khám phá những tiện ích hiện đại và dịch vụ đẳng cấp tại khách sạn...</p>
                 <div className="blog__btn">
-                  <Link to="#">Read More</Link>
+                  <Link to="#">Xem thêm</Link>
                 </div>
               </div>
             </div>
