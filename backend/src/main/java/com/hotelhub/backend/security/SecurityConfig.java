@@ -86,6 +86,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
 
+
+                        // ✅ RoomType CRUD APIs
+                        .requestMatchers(HttpMethod.GET, "/api/room-types/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/room-types").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/room-types/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/room-types/**").hasAuthority("ROLE_ADMIN")
+
+                        // ✅ Amenity CRUD APIs
+                        .requestMatchers(HttpMethod.GET, "/api/amenities/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/amenities").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/amenities/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/amenities/**").hasAuthority("ROLE_ADMIN")
+
+                        // ✅ Room Image CRUD APIs
+                        .requestMatchers(HttpMethod.GET, "/api/rooms/*/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/rooms/*/images").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/rooms/*/images/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rooms/*/images/**").hasAuthority("ROLE_ADMIN")
+
+
                         // ✅ User booking APIs - yêu cầu login với role
                         .requestMatchers(HttpMethod.GET, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
