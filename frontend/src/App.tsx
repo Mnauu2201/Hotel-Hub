@@ -46,7 +46,7 @@ function App() {
           element: <RoomPage />,
         },
         {
-          path: "/room-detail",
+          path: "/room-detail/:id",
           element: <RoomDetail />,
         },
         {

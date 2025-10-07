@@ -86,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ROLE_ADMIN")
 
+
                         // ✅ RoomType CRUD APIs
                         .requestMatchers(HttpMethod.GET, "/api/room-types/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/room-types").hasAuthority("ROLE_ADMIN")
@@ -103,6 +104,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/rooms/*/images").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/rooms/*/images/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/rooms/*/images/**").hasAuthority("ROLE_ADMIN")
+
 
                         // ✅ User booking APIs - yêu cầu login với role
                         .requestMatchers(HttpMethod.GET, "/api/bookings").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
