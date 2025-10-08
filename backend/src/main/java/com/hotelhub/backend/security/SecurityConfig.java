@@ -69,7 +69,9 @@ public class SecurityConfig {
                                 "/api/auth/password/resend-otp"    // Cho phép gửi lại OTP
                         ).permitAll()
                         // ✅ Cho phép đăng ký / đăng nhập
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh", "/api/auth/logout").permitAll()
+                        // ✅ Admin tạo user - chỉ admin mới được
+                        .requestMatchers(HttpMethod.POST, "/api/auth/admin/create-user").hasAuthority("ROLE_ADMIN")
                         // ✅ Email API - cho phép gửi email
                         .requestMatchers("/api/email/**").permitAll()
 
@@ -116,6 +118,15 @@ public class SecurityConfig {
                         
                         // ✅ Admin test API (không cần auth)
                         .requestMatchers("/api/admin/test-scheduled").permitAll()
+                        
+                        // ✅ Admin Booking Management APIs
+                        .requestMatchers("/api/admin/bookings/**").hasAuthority("ROLE_ADMIN")
+                        
+                        // ✅ Admin Role Management APIs
+                        .requestMatchers("/api/admin/roles/**").hasAuthority("ROLE_ADMIN")
+                        
+                        // ✅ Staff Booking Management APIs  
+                        .requestMatchers("/api/staff/bookings/**").hasAnyAuthority("ROLE_STAFF", "ROLE_ADMIN")
                         
                         // ✅ Admin API - chỉ cho phép ROLE_ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
