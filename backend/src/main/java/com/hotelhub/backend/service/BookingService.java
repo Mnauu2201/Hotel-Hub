@@ -34,6 +34,9 @@ public class BookingService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ActivityLogService activityLogService;
+
     /**
      * Tạo booking cho guest (không cần login)
      */
@@ -105,6 +108,12 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
+        // Ghi log thao tác
+        activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
+            "Guest booking created: " + booking.getBookingReference() + 
+            " for room " + booking.getRoomId() + 
+            " from " + booking.getCheckIn() + " to " + booking.getCheckOut());
+
         return convertToResponse(booking);
     }
 
@@ -157,6 +166,77 @@ public class BookingService {
 
         booking.setStatus("cancelled");
         booking = bookingRepository.save(booking);
+
+        // Ghi log thao tác
+        activityLogService.logActivity(userEmail, "CANCEL_BOOKING", 
+            "Booking " + booking.getBookingReference() + " cancelled by user");
+
+        return convertToResponse(booking);
+    }
+
+    /**
+     * Xác nhận booking
+     */
+    public BookingResponse confirmBooking(Long bookingId, String userEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+        // Kiểm tra quyền xác nhận booking
+        if (booking.getUser() != null) {
+            User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+            if (!booking.getUser().getUserId().equals(user.getUserId())) {
+                throw new RuntimeException("Bạn không có quyền xác nhận booking này");
+            }
+        }
+
+        // Kiểm tra booking có thể xác nhận không
+        if (!"pending".equals(booking.getStatus())) {
+            throw new RuntimeException("Booking không thể xác nhận. Trạng thái hiện tại: " + booking.getStatus());
+        }
+
+        // Kiểm tra booking có hết hạn không
+        if (booking.getHoldUntil() != null && booking.getHoldUntil().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Booking đã hết hạn, không thể xác nhận");
+        }
+
+        booking.setStatus("confirmed");
+        booking.setHoldUntil(null); // Bỏ hold time
+        booking = bookingRepository.save(booking);
+
+        // Ghi log thao tác
+        activityLogService.logActivity(userEmail, "CONFIRM_BOOKING", 
+            "Booking " + booking.getBookingReference() + " confirmed by user");
+
+        return convertToResponse(booking);
+    }
+
+    /**
+     * Cập nhật trạng thái booking (Admin only)
+     */
+    public BookingResponse updateBookingStatus(Long bookingId, String newStatus, String adminEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+        // Kiểm tra trạng thái hợp lệ
+        List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid");
+        if (!validStatuses.contains(newStatus)) {
+            throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
+        }
+
+        String oldStatus = booking.getStatus();
+        booking.setStatus(newStatus);
+        
+        // Nếu chuyển sang confirmed, bỏ hold time
+        if ("confirmed".equals(newStatus)) {
+            booking.setHoldUntil(null);
+        }
+        
+        booking = bookingRepository.save(booking);
+
+        // Ghi log thao tác
+        activityLogService.logActivity(adminEmail, "UPDATE_BOOKING_STATUS", 
+            "Booking " + booking.getBookingReference() + " changed from " + oldStatus + " to " + newStatus);
 
         return convertToResponse(booking);
     }

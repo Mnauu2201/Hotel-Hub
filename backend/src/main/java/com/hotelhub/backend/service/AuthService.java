@@ -36,6 +36,7 @@ public class AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPhone(request.getPhone());
         user.setEnabled(true);
 
         // Gán role mặc định
@@ -44,6 +45,29 @@ public class AuthService {
 
         Set<Role> roles = new HashSet<>();
         roles.add(customerRole);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
+    }
+
+    /**
+     * Tạo user với role cụ thể (dành cho Admin)
+     */
+    public User createUserWithRole(User user, String roleName) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists: " + user.getEmail());
+        }
+
+        // Hash password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
+
+        // Gán role cụ thể
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
         user.setRoles(roles);
 
         return userRepository.save(user);

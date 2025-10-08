@@ -152,4 +152,39 @@ public class AuthController {
                         ));
                 }
         }
+
+        // ✅ Admin: Tạo user với role cụ thể
+        @PostMapping("/admin/create-user")
+        public ResponseEntity<?> createUserWithRole(@RequestBody Map<String, Object> request) {
+                try {
+                        String email = (String) request.get("email");
+                        String password = (String) request.get("password");
+                        String name = (String) request.get("name");
+                        String phone = (String) request.get("phone");
+                        String roleName = (String) request.get("role"); // ROLE_STAFF, ROLE_CUSTOMER, etc.
+
+                        // Tạo user mới
+                        User newUser = new User();
+                        newUser.setEmail(email);
+                        newUser.setPassword(password); // AuthService sẽ hash password
+                        newUser.setName(name);
+                        newUser.setPhone(phone);
+
+                        // Gọi AuthService để tạo user với role
+                        User createdUser = authService.createUserWithRole(newUser, roleName);
+
+                        return ResponseEntity.ok(Map.of(
+                                "message", "Tạo user thành công",
+                                "userId", createdUser.getUserId(),
+                                "email", createdUser.getEmail(),
+                                "name", createdUser.getName(),
+                                "role", roleName
+                        ));
+                } catch (Exception e) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                                "error", "Tạo user thất bại",
+                                "message", e.getMessage()
+                        ));
+                }
+        }
 }

@@ -173,6 +173,27 @@ public class BookingController {
         }
     }
 
+    /**
+     * Xác nhận booking
+     */
+    @PutMapping("/user/{bookingId}/confirm")
+    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId, 
+                                          Authentication authentication) {
+        try {
+            String userEmail = authentication.getName();
+            BookingResponse booking = bookingService.confirmBooking(bookingId, userEmail);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Xác nhận booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Xác nhận booking thất bại",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
     // ==================== ROOM APIs ====================
 
     /**
