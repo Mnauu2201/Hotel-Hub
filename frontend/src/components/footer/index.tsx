@@ -44,7 +44,7 @@ const Footer = () => {
                     <li><Link to="/about">Giới thiệu</Link></li>
                     <li><Link to="/services">Dịch vụ</Link></li>
                     <li><Link to="/contact">Liên hệ</Link></li>
-                    <li><Link to="/blog">Blog</Link></li>
+                    <li><Link to="/blog">Tin tức</Link></li>
                   </ul>
                 </div>
               </div>

@@ -12,14 +12,24 @@ import fallbackRoomImg from '../../assets/img/gallery/room-img01.png'
 
 const RoomArea2 = () => {
   const [rooms, setRooms] = useState<any[]>([])
+  const [filteredRooms, setFilteredRooms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState('')
+  const [roomTypes, setRoomTypes] = useState<string[]>([])
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const res = await api.get('/rooms')
-        setRooms(res.data?.rooms || [])
+        const roomsData = res.data?.rooms || []
+        setRooms(roomsData)
+        setFilteredRooms(roomsData)
+        
+        // Lấy danh sách các loại phòng duy nhất
+        const types = Array.from(new Set(roomsData.map((room: any) => room.roomTypeName))).filter(Boolean) as string[]
+        setRoomTypes(types)
       } catch (e: any) {
         setError('Không thể tải danh sách phòng')
       } finally {
@@ -28,10 +38,116 @@ const RoomArea2 = () => {
     }
     fetchRooms()
   }, [])
+  
+  // Xử lý tìm kiếm và lọc
+  useEffect(() => {
+    if (!rooms.length) return
+    
+    let result = [...rooms]
+    
+    // Lọc theo từ khóa tìm kiếm (ID, status, tên phòng hoặc số phòng)
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase()
+      result = result.filter(room => 
+        room.roomId?.toString().includes(term) || 
+        room.roomNumber?.toLowerCase().includes(term) ||
+        room.status?.toLowerCase().includes(term) ||
+        room.roomTypeName?.toLowerCase().includes(term) ||
+        (room.description && room.description.toLowerCase().includes(term))
+      )
+    }
+    
+    // Lọc theo loại phòng
+    if (selectedType) {
+      result = result.filter(room => room.roomTypeName === selectedType)
+    }
+    
+    setFilteredRooms(result)
+  }, [searchTerm, selectedType, rooms])
+
+  // Xử lý reset tìm kiếm
+  const handleResetSearch = () => {
+    setSearchTerm('')
+    setSelectedType('')
+    setFilteredRooms(rooms)
+  }
 
   return (
     <section id="services" className="services-area pt-120 pb-90">
       <div className="container">
+        {/* Thanh tìm kiếm */}
+        <div className="row mb-40">
+          <div className="col-12">
+            <div className="search-filter-box" style={{ 
+              padding: '20px', 
+              backgroundColor: '#f8f9fa', 
+              borderRadius: '10px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+            }}>
+              <div className="row align-items-center">
+                <div className="col-lg-5 col-md-6 mb-3 mb-md-0">
+                  <div className="search-input">
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder="Tìm theo ID, số phòng, tên phòng hoặc trạng thái..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{
+                        padding: '12px 15px',
+                        borderRadius: '5px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-5 col-md-6 mb-3 mb-md-0">
+                  <div className="d-flex flex-wrap" style={{ gap: '10px' }}>
+                    <button 
+                      className={`filter-btn ${selectedType === '' ? 'active' : ''}`}
+                      onClick={handleResetSearch}
+                      style={{
+                        padding: '10px 15px',
+                        backgroundColor: selectedType === '' ? '#644222' : '#fff',
+                        color: selectedType === '' ? '#fff' : '#333',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      <i className="fas fa-list-ul mr-2"></i> Tất cả
+                    </button>
+                    {roomTypes.map(type => (
+                      <button 
+                        key={type} 
+                        className={`filter-btn ${selectedType === type ? 'active' : ''}`}
+                        onClick={() => setSelectedType(type)}
+                        style={{
+                          padding: '10px 15px',
+                          backgroundColor: selectedType === type ? '#644222' : '#fff',
+                          color: selectedType === type ? '#fff' : '#333',
+                          border: '1px solid #ddd',
+                          borderRadius: '5px',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <i className="fas fa-bed mr-2"></i> {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="col-lg-2 text-end">
+                  <div className="results-count">
+                    <span style={{ fontWeight: 'bold' }}>{filteredRooms.length}</span> phòng
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="row" style={{ rowGap: 24 }}>
           {loading && (
             <div className="col-12"><p style={{ textAlign: 'center' }}>Đang tải danh sách phòng...</p></div>
@@ -39,7 +155,27 @@ const RoomArea2 = () => {
           {!loading && error && (
             <div className="col-12"><p style={{ textAlign: 'center', color: '#b91c1c' }}>{error}</p></div>
           )}
-          {!loading && !error && rooms.map((room: any) => {
+          {!loading && !error && filteredRooms.length === 0 && (
+            <div className="col-12">
+              <p style={{ textAlign: 'center' }}>Không tìm thấy phòng nào phù hợp với tiêu chí tìm kiếm.</p>
+              <div style={{ textAlign: 'center', marginTop: '15px' }}>
+                <button 
+                  onClick={handleResetSearch}
+                  style={{
+                    padding: '8px 15px',
+                    backgroundColor: '#644222',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Xem tất cả phòng
+                </button>
+              </div>
+            </div>
+          )}
+          {!loading && !error && filteredRooms.map((room: any) => {
             const primaryImg = room.images?.find((i: any) => i.isPrimary)?.imageUrl || room.images?.[0]?.imageUrl
             const priceText = (room.price?.toLocaleString?.() || room.price || room.priceAsDouble)?.toString()
             return (

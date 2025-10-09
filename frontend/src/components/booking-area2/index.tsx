@@ -30,9 +30,9 @@ const BookingArea2 = () => {
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <div className="contact-field p-relative c-subject mb-20">
-                      <label><i className="fal fa-users" /> Người lớn</label>
+                      <label><i className="fal fa-users" /> Số khách</label>
               <select name="adults" id="adu2">
-                <option value="sports-massage">Người lớn</option>
+                <option value="sports-massage">Số khách</option>
                         <option value={1}>1</option>
                         <option value={2}>2</option>
                         <option value={3}>3</option>

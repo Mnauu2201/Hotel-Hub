@@ -102,7 +102,7 @@ const Header = () => {
                         </ul>
                       </li>
                       <li className="has-sub">
-                        <Link to="/blog">Blog</Link>
+                        <Link to="/blog">Tin tức</Link>
                        
                       </li>
                       <li><Link to="/contact">Liên hệ</Link></li>

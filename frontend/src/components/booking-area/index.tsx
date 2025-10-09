@@ -20,9 +20,9 @@ const BookingArea = () => {
                 </li>
                 <li>
                   <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-users" /> Người lớn</label>
+                    <label><i className="fal fa-users" /> Số lượng khách</label>
               <select name="adults" id="adu">
-                <option value="sports-massage">Người lớn</option>
+                <option value="sports-massage">Số lượng khách</option>
                       <option value={1}>1</option>
                       <option value={2}>2</option>
                       <option value={3}>3</option>
@@ -31,19 +31,7 @@ const BookingArea = () => {
                     </select>
                   </div>
                 </li>
-                <li>
-                  <div className="contact-field p-relative c-name">
-                    <label><i className="fal fa-baby" /> Trẻ em</label>
-              <select name="child" id="cld">
-                <option value="sports-massage">Trẻ em</option>
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-                </li>
+                
                 <li>
                   <div className="contact-field p-relative c-name">
                     <label><i className="fal fa-concierge-bell" /> Phòng</label>
