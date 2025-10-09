@@ -25,6 +25,10 @@ import RegisterPage from "./pages/auth/RegisterPage.jsx";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
 // @ts-expect-error JS component
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
+// @ts-expect-error JS component
+import BookingPage from "./pages/BookingPage.jsx";
+// @ts-expect-error JS component
+import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 
 
 function App() {
@@ -80,6 +84,14 @@ function App() {
         {
           path: "/blog-details",
           element: <BlogDetail />,
+        },
+        {
+          path: "/booking",
+          element: <BookingPage />,
+        },
+        {
+          path: "/booking-confirmation",
+          element: <BookingConfirmation />,
         },
         {
           path: "/contact",

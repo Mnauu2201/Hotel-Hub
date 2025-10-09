@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -80,6 +82,35 @@ public class UserController {
         } catch (Exception e) {
             logger.error("Lỗi khi cập nhật thông tin người dùng", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi cập nhật thông tin người dùng");
+        }
+    }
+
+    // Endpoint để test - lấy danh sách users (chỉ để debug)
+    @GetMapping("/debug")
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            List<User> users = userRepository.findAll();
+            List<Map<String, Object>> userData = users.stream()
+                    .map(user -> {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("userId", user.getUserId());
+                        data.put("name", user.getName());
+                        data.put("email", user.getEmail());
+                        data.put("phone", user.getPhone());
+                        data.put("enabled", user.getEnabled());
+                        data.put("createdAt", user.getCreatedAt());
+                        return data;
+                    })
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Danh sách users",
+                "count", users.size(),
+                "users", userData
+            ));
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy danh sách users", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi lấy danh sách users");
         }
     }
 }

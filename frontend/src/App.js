@@ -10,16 +10,9 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 
-import Header from './components/Header';
-import HomePage from './pages/HomePage';
-import RoomsPage from './pages/RoomsPage';
-import BookingPage from './pages/BookingPage';
-
-
 function App() {
   return (
     <BrowserRouter>
-
       <AuthProvider>
         <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
           <Header />
@@ -33,16 +26,6 @@ function App() {
           </Routes>
         </div>
       </AuthProvider>
-
-      <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/rooms" element={<RoomsPage />} />
-          <Route path="/booking" element={<BookingPage />} />
-        </Routes>
-      </div>
-
     </BrowserRouter>
   );
 }
