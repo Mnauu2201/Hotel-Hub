@@ -114,9 +114,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/bookings/user/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
 
+                        // ✅ Payment APIs - cho phép guest payment (không cần login)
+                        .requestMatchers(HttpMethod.POST, "/api/payments/guest").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/payments/guest/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payments/guest/*/process").permitAll()
+                        
+                        // ✅ Payment APIs - yêu cầu login cho user payments
+                        .requestMatchers(HttpMethod.POST, "/api/payments").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/payments/booking/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/payments/user").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/payments/*/status").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/payments/*/process").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+
             // ✅ Public test API
             .requestMatchers("/api/test/public").permitAll()
             .requestMatchers("/api/test/debug-price/**").permitAll()
+            
+            // ✅ Admin Booking Management APIs
+            .requestMatchers("/api/admin/bookings/**").hasAuthority("ROLE_ADMIN")
                         
                         // ✅ Admin test API (không cần auth)
                         .requestMatchers("/api/admin/test-scheduled").permitAll()
