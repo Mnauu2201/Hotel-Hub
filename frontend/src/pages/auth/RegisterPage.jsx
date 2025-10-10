@@ -78,11 +78,12 @@ const RegisterPage = () => {
 
     setIsLoading(true);
     try {
+      const sanitizedPhone = (formData.phone || '').replace(/\D/g, '');
       await register({
         name: formData.name.trim(),
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
-        phone: formData.phone
+        phone: sanitizedPhone
       });
       
       // Show success message and redirect to login

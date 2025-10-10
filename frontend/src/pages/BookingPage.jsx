@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import userApi from '../services/userApi';
 import bookingService from '../services/bookingService';
 import fallbackRoomImg from '../assets/img/gallery/room-img01.png';
 
@@ -66,6 +67,24 @@ const BookingPage = () => {
         guestEmail: user.email || '',
         guestPhone: ''
       }));
+
+      // Fetch profile to get phone
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        userApi.getUserProfile(token)
+          .then(profile => {
+            const phone = profile?.phone || '';
+            if (phone) {
+              setFormData(prev => ({
+                ...prev,
+                guestPhone: phone
+              }));
+            }
+          })
+          .catch(() => {
+            // ignore profile fetch errors in booking flow
+          });
+      }
     }
   }, [location.state, isAuthenticated, user]);
 
@@ -159,9 +178,17 @@ const BookingPage = () => {
       return;
     }
 
-    if (!formData.guestName || !formData.guestEmail || !formData.guestPhone) {
-      setError('Vui lòng điền đầy đủ thông tin khách hàng');
-      return;
+    if (!isAuthenticated) {
+      if (!formData.guestName || !formData.guestEmail || !formData.guestPhone) {
+        setError('Vui lòng điền đầy đủ thông tin khách hàng');
+        return;
+      }
+    } else {
+      // With logged-in user, ensure phone exists; if missing, ask to fill
+      if (!formData.guestPhone) {
+        setError('Vui lòng cập nhật số điện thoại trong hồ sơ hoặc nhập tại đây');
+        return;
+      }
     }
 
     setLoading(true);
@@ -440,7 +467,7 @@ const BookingPage = () => {
                       <h4 style={{ color: themeColor, fontWeight: 700, marginBottom: 8 }}>Thông tin đã đăng nhập</h4>
                       <div className="d-flex justify-content-between"><span className="font-medium">Tên:</span><span>{user?.name}</span></div>
                       <div className="d-flex justify-content-between"><span className="font-medium">Email:</span><span>{user?.email}</span></div>
-                      <div className="d-flex justify-content-between"><span className="font-medium">SĐT:</span><span>Chưa cập nhật</span></div>
+                      <div className="d-flex justify-content-between"><span className="font-medium">SĐT:</span><span>{formData.guestPhone || 'Chưa cập nhật'}</span></div>
                     </div>
 
                     {/* Two-column layout */}

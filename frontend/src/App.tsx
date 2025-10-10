@@ -29,6 +29,8 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
 import BookingPage from "./pages/BookingPage.jsx";
 // @ts-expect-error JS component
 import BookingConfirmation from "./pages/BookingConfirmation.jsx";
+// @ts-expect-error JS component
+import MyBookings from "./pages/MyBookings.jsx";
 
 
 function App() {
@@ -92,6 +94,10 @@ function App() {
         {
           path: "/booking-confirmation",
           element: <BookingConfirmation />,
+        },
+        {
+          path: "/my-bookings",
+          element: <MyBookings />,
         },
         {
           path: "/contact",

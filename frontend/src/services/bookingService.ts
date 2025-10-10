@@ -1,4 +1,6 @@
-import api from './api';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 export type BookingCreateRequestGuest = {
   roomId: number | string;
@@ -38,7 +40,7 @@ export type GuestBookingCreateResponse = {
 const bookingService = {
   // Lấy danh sách phòng có sẵn
   getAvailableRooms: async (checkIn: string, checkOut: string) => {
-    const response = await api.get('/rooms/available', {
+    const response = await axios.get(`${API_BASE_URL}/rooms/available`, {
       params: { checkIn, checkOut }
     });
     return (response.data?.rooms as unknown[]) || [];
@@ -46,31 +48,77 @@ const bookingService = {
 
   // Đặt phòng cho khách chưa đăng nhập
   createGuestBooking: async (bookingData: BookingCreateRequestGuest) => {
-    const response = await api.post<GuestBookingCreateResponse>('/bookings/guest', bookingData);
+    const response = await axios.post<GuestBookingCreateResponse>(`${API_BASE_URL}/bookings/guest`, bookingData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   },
 
   // Đặt phòng cho người dùng đã đăng nhập
   createUserBooking: async (bookingData: BookingCreateRequestUser) => {
-    const response = await api.post('/bookings', bookingData);
+    // Ensure token is available in the request
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    
+    const response = await axios.post(`${API_BASE_URL}/bookings`, bookingData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data as BookingResponse | { booking: BookingResponse };
   },
 
   // Lấy danh sách booking của người dùng đã đăng nhập
   getUserBookings: async () => {
-    const response = await api.get('/bookings');
+    // Ensure token is available in the request
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    
+    const response = await axios.get(`${API_BASE_URL}/bookings`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return (response.data?.bookings as BookingResponse[]) || [];
   },
 
   // Lấy chi tiết booking theo ID (cho người dùng đã đăng nhập)
   getUserBookingById: async (bookingId: number | string) => {
-    const response = await api.get(`/bookings/user/${bookingId}`);
+    // Ensure token is available in the request
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    
+    const response = await axios.get(`${API_BASE_URL}/bookings/user/${bookingId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data as BookingResponse;
   },
 
   // Hủy booking
   cancelBooking: async (bookingId: number | string) => {
-    const response = await api.put(`/bookings/user/${bookingId}/cancel`);
+    // Ensure token is available in the request
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    
+    const response = await axios.put(`${API_BASE_URL}/bookings/user/${bookingId}/cancel`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data as { message: string };
   }
 };
