@@ -9,14 +9,14 @@ import sveIcon6 from '../assets/img/icon/sve-icon6.png';
 const RoomCard = ({ room, onBook }) => {
   return (
     <div style={{
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
+      border: '1px solid #eee',
+      borderRadius: 12,
       padding: '1rem',
       margin: '0.5rem',
       backgroundColor: 'white',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
       height: '100%',
-      minHeight: 460,
+      minHeight: 480,
       display: 'flex',
       flexDirection: 'column'
     }}>
@@ -80,18 +80,18 @@ const RoomCard = ({ room, onBook }) => {
           </div>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#059669' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#8a643f' }}>
           {(room.price?.toLocaleString?.() || room.price)?.toString()} VNĐ/đêm
         </span>
         <button
           onClick={() => onBook(room)}
           style={{
-            backgroundColor: '#3b82f6',
+            backgroundColor: '#644222',
             color: 'white',
             border: 'none',
             padding: '0.5rem 1rem',
-            borderRadius: '4px',
+            borderRadius: 8,
             cursor: 'pointer'
           }}
         >

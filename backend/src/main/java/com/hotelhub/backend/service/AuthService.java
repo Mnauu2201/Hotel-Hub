@@ -32,6 +32,9 @@ public class AuthService {
             throw new RuntimeException("Email already exists: " + request.getEmail());
         }
 
+        // Log để debug
+        System.out.println("Registering user with phone: " + request.getPhone());
+
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -47,7 +50,12 @@ public class AuthService {
         roles.add(customerRole);
         user.setRoles(roles);
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        
+        // Log để debug - kiểm tra phone đã được lưu chưa
+        System.out.println("User saved with phone: " + savedUser.getPhone());
+        
+        return savedUser;
     }
 
     /**

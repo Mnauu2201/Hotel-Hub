@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Booking API</title>
+</head>
+<body>
+    <h1>Test Booking API</h1>
+    <button onclick="testGuestBooking()">Test Guest Booking</button>
+    <button onclick="testUserBooking()">Test User Booking</button>
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        
+        async function testGuestBooking() {
+            const bookingData = {
+                roomId: 1,
+                checkIn: '2024-12-01',
+                checkOut: '2024-12-03',
+                guests: 2,
+                guestName: 'John Doe',
+                guestEmail: 'john@example.com',
+                guestPhone: '0123456789',
+                notes: 'Test booking'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings/guest`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>Guest Booking Result:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Guest Booking Error:</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+
+        async function testUserBooking() {
+            const bookingData = {
+                roomId: 1,
+                checkIn: '2024-12-01',
+                checkOut: '2024-12-03',
+                guests: 2,
+                notes: 'Test booking'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_TOKEN_HERE'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>User Booking Result:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>User Booking Error:</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -10,7 +10,9 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: ''
+    phone: '',
+    address: '',
+    dateOfBirth: ''
   });
 
   if (!isAuthenticated) {
@@ -39,7 +41,12 @@ const ProfilePage = () => {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
-      const payload = { name: formData.name, phone: formData.phone };
+      const payload = {
+        name: formData.name,
+        phone: formData.phone,
+        address: formData.address,
+        dateOfBirth: formData.dateOfBirth
+      };
       const updated = await userApi.updateProfile(accessToken, payload);
       // cập nhật UI và localStorage
       const nextUser = { ...user, name: updated.name, email: updated.email, roles: user?.roles || [] };
@@ -71,7 +78,7 @@ const ProfilePage = () => {
           <div className="profile-section">
             <div className="section-header">
               <h3>Thông tin cá nhân</h3>
-              <button 
+              <button
                 className="edit-btn"
                 onClick={() => setIsEditing(!isEditing)}
               >
@@ -115,6 +122,31 @@ const ProfilePage = () => {
                   disabled={!isEditing}
                   className={isEditing ? 'editable' : 'readonly'}
                   placeholder="Chưa cập nhật"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Địa chỉ</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  className={isEditing ? 'editable' : 'readonly'}
+                  placeholder="Số nhà, đường, quận/huyện, tỉnh/thành"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Ngày sinh</label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  className={isEditing ? 'editable' : 'readonly'}
                 />
               </div>
 

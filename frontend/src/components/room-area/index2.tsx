@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import sveIcon1 from '../../assets/img/icon/sve-icon1.png'
 import sveIcon2 from '../../assets/img/icon/sve-icon2.png'
 import sveIcon3 from '../../assets/img/icon/sve-icon3.png'
@@ -11,6 +11,7 @@ import api from '../../services/api'
 import fallbackRoomImg from '../../assets/img/gallery/room-img01.png'
 
 const RoomArea2 = () => {
+  const navigate = useNavigate()
   const [rooms, setRooms] = useState<any[]>([])
   const [filteredRooms, setFilteredRooms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -187,10 +188,20 @@ const RoomArea2 = () => {
                 </Link>
               </div>
                   <div className="services-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <div className="day-book">
+                    <div className="day-book">
                   <ul>
                         <li>{priceText} VNĐ/Đêm</li>
-                        <li><Link to="/contact">Đặt ngay</Link></li>
+                        <li>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              navigate('/booking', { state: { room } })
+                            }}
+                          >
+                            Đặt ngay
+                          </a>
+                        </li>
                   </ul>
                 </div>
                     <h4 style={{ marginTop: 10 }}><Link to={`/room-detail/${room.roomId}`}>{`Số phòng ${room.roomNumber || ''}`}</Link></h4>

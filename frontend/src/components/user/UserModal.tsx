@@ -56,7 +56,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
     }
 
     try {
-      await register({ name: fullName, email, password, phone });
+      const sanitizedPhone = (phone || '').replace(/\D/g, '');
+      await register({ name: fullName.trim(), email: email.trim(), password, phone: sanitizedPhone });
       setSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
       setTimeout(() => {
         setActiveTab('login');
