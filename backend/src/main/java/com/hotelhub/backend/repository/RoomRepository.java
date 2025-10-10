@@ -26,7 +26,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
            "AND r.roomId NOT IN (" +
            "SELECT b.roomId FROM Booking b WHERE " +
            "b.status IN ('pending', 'confirmed') " +
-           "AND ((b.checkIn <= :checkOut AND b.checkOut >= :checkIn) " +
+           "AND ((b.checkIn < :checkOut AND b.checkOut > :checkIn) " +
            "OR (b.holdUntil IS NOT NULL AND b.holdUntil > CURRENT_TIMESTAMP))" +
            ")")
     List<Room> findAvailableRooms(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
@@ -36,7 +36,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
      */
     @Query("SELECT COUNT(b) = 0 FROM Booking b WHERE b.roomId = :roomId " +
            "AND b.status IN ('pending', 'confirmed') " +
-           "AND ((b.checkIn <= :checkOut AND b.checkOut >= :checkIn) " +
+           "AND ((b.checkIn < :checkOut AND b.checkOut > :checkIn) " +
            "OR (b.holdUntil IS NOT NULL AND b.holdUntil > CURRENT_TIMESTAMP))")
     boolean isRoomAvailable(@Param("roomId") Long roomId, @Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
     
