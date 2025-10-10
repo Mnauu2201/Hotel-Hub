@@ -218,7 +218,7 @@ class UserApiService {
   // Lấy thông tin user (cần token)
   async getUserProfile(accessToken: string): Promise<any> {
     try {
-      const response = await fetch(`${API_BASE_URL}/test/protected`, {
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

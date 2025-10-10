@@ -23,6 +23,7 @@ public class RegisterRequest {
     @Size(min = 6, max = 50, message = "Mật khẩu phải từ 6-50 ký tự")
     private String password;
 
+    @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải có 10-11 chữ số")
     private String phone;
 }

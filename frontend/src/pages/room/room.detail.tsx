@@ -150,7 +150,7 @@ const RoomDetail = () => {
                   <h3>Children and extra beds.</h3>
                   <p>Children are welcome. Rollaway/extra beds may be available upon request.</p>
                   <div className="mb-50">
-                    <a href="/contact" className="btn ss-btn">Book This Room</a>
+                    <a href="/booking" className="btn ss-btn">Book This Room</a>
                   </div>
                 </div>
               </div>

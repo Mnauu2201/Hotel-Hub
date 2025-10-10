@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext'
 
 const Header = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, getUserAvatar } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [userIconPosition, setUserIconPosition] = useState({ top: 0, left: 0 });
@@ -102,7 +102,7 @@ const Header = () => {
                         </ul>
                       </li>
                       <li className="has-sub">
-                        <Link to="/blog">Blog</Link>
+                        <Link to="/blog">Tin tức</Link>
                        
                       </li>
                       <li><Link to="/contact">Liên hệ</Link></li>
@@ -113,15 +113,23 @@ const Header = () => {
               <div className="col-xl-2 col-lg-2 d-none d-lg-block" style={{ position: 'relative' }}>
                 <div 
                   className="user-icon-container" 
-                  style={{ cursor: 'pointer' }} 
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }} 
                   onClick={handleUserIconClick}
                 >
-                  {isAuthenticated && user?.name ? (
-                    <div className="user-name-display" style={{ color: 'white', fontWeight: 'bold' }}>
-                      {user?.name}
-                    </div>
+                  {isAuthenticated ? (
+                    // Show user avatar/icon when logged in
+                    getUserAvatar() ? (
+                      <img 
+                        src={getUserAvatar() as string} 
+                        alt="user avatar" 
+                        style={{ width: 28, height: 28, borderRadius: '50%' }}
+                      />
+                    ) : (
+                      <i className="fas fa-user" style={{ color: 'white' }} />
+                    )
                   ) : (
-                    <i className="fas fa-user" style={{ color: 'white' }} />
+                    // Show login text when not authenticated
+                    <span style={{ color: 'white', fontWeight: 'bold' }}>Đăng Nhập</span>
                   )}
                 </div>
                 
@@ -156,6 +164,17 @@ const Header = () => {
                     }}>
                       <i className="fas fa-user-edit" style={{ marginRight: '10px' }}></i>
                       Sửa thông tin cá nhân
+                    </Link>
+                    <Link to="/my-bookings" style={{ 
+                      color: '#333',
+                      padding: '12px 16px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'left'
+                    }}>
+                      <i className="fas fa-calendar-check" style={{ marginRight: '10px' }}></i>
+                      Phòng đã đặt
                     </Link>
                     <Link to="#" onClick={handleLogout} style={{ 
                       color: '#d32f2f',

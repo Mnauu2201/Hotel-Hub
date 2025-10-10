@@ -8,11 +8,12 @@ import sveIcon6 from '../../assets/img/icon/sve-icon6.png'
 import { useEffect, useState } from "react";
 import $ from "jquery";
 import "slick-carousel";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import fallbackRoomImg from '../../assets/img/gallery/room-img01.png'
 
 const RoomArea = () => {
+  const navigate = useNavigate()
   const [rooms, setRooms] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
@@ -97,7 +98,17 @@ const RoomArea = () => {
                     <div className="day-book">
                       <ul>
                         <li>{priceText} VNĐ/Đêm</li>
-                        <li><Link to="/rooms">Đặt ngay</Link></li>
+                        <li>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              navigate('/booking', { state: { room } })
+                            }}
+                          >
+                            Đặt ngay
+                          </a>
+                        </li>
                       </ul>
                     </div>
                     <h4 style={{ marginTop: 10 }}><Link to={`/room-detail/${room.roomId}`}>{`Số phòng ${room.roomNumber || ''}`}</Link></h4>
