@@ -304,16 +304,7 @@ const BookingPage = () => {
                 <div className="contact-bg02" style={{ background: '#fff', border: '1px solid #ececec', borderRadius: 14, padding: 20, marginBottom: 16, boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
                   <div className="d-flex align-items-center justify-content-between" style={{ marginBottom: 16 }}>
                     <h3 style={{ margin: 0, color: '#374151', fontSize: 18, fontWeight: 700 }}>Phòng đã chọn</h3>
-                    {selectedRooms.length === 0 && (
-                      <button
-                        type="button"
-                        onClick={() => navigate('/room', { state: { bookingInProgress: true, selectedRooms } })}
-                        className="btn ss-btn"
-                        style={{ background: themeColor, borderColor: themeColor }}
-                      >
-                        + Chọn phòng
-                      </button>
-                    )}
+                    
                   </div>
 
                   {selectedRooms.length > 0 && (
