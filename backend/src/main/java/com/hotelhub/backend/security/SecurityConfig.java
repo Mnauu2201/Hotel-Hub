@@ -130,6 +130,12 @@ public class SecurityConfig {
                         // ✅ Staff Booking Management APIs  
                         .requestMatchers("/api/staff/bookings/**").hasAnyAuthority("ROLE_STAFF", "ROLE_ADMIN")
                         
+                        // ✅ Activity Log APIs (Admin only)
+                        .requestMatchers("/api/admin/activity-logs/**").hasAuthority("ROLE_ADMIN")
+                        
+                        // ✅ Notification APIs (All authenticated users)
+                        .requestMatchers("/api/notifications/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
+                        
                         // ✅ Admin API - chỉ cho phép ROLE_ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 

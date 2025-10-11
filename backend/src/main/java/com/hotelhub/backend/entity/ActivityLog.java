@@ -1,39 +1,56 @@
 package com.hotelhub.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "activity_logs")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ActivityLog {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id")
     private Long logId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true)
-    private User user;
-
+    
+    @Column(name = "user_id")
+    private Integer userId;
+    
     @Column(name = "action", nullable = false, length = 100)
     private String action;
-
+    
     @Column(name = "detail", columnDefinition = "TEXT")
     private String detail;
-
-    @Column(name = "created_at", updatable = false)
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
+    
+    // Relationship với User (optional)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private User user;
+    
+    // Constructor cho system logs (không có user)
+    public ActivityLog(String action, String detail) {
+        this.action = action;
+        this.detail = detail;
+        this.userId = null;
+    }
+    
+    // Constructor cho user logs
+    public ActivityLog(Integer userId, String action, String detail) {
+        this.userId = userId;
+        this.action = action;
+        this.detail = detail;
     }
 }
