@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,10 +130,9 @@ public class AdminRoleController {
 
             // Log activity
             String adminEmail = authentication.getName();
-            activityLogService.logActivity(
-                    adminEmail,
+            activityLogService.logSystemActivity(
                     "ADD_ROLE_TO_USER",
-                    "Thêm role " + roleName + " cho user " + user.getEmail() + " (User ID: " + userId + ")"
+                    "Thêm role " + roleName + " cho user " + user.getEmail() + " (User ID: " + userId + ") by admin: " + adminEmail
             );
 
             return ResponseEntity.ok(Map.of(
@@ -197,10 +195,9 @@ public class AdminRoleController {
 
             // Log activity
             String adminEmail = authentication.getName();
-            activityLogService.logActivity(
-                    adminEmail,
+            activityLogService.logSystemActivity(
                     "REMOVE_ROLE_FROM_USER",
-                    "Xóa role " + roleName + " khỏi user " + user.getEmail() + " (User ID: " + userId + ")"
+                    "Xóa role " + roleName + " khỏi user " + user.getEmail() + " (User ID: " + userId + ") by admin: " + adminEmail
             );
 
             return ResponseEntity.ok(Map.of(
@@ -271,10 +268,9 @@ public class AdminRoleController {
 
             // Log activity
             String adminEmail = authentication.getName();
-            activityLogService.logActivity(
-                    adminEmail,
+            activityLogService.logSystemActivity(
                     "UPDATE_USER_ROLES",
-                    "Cập nhật roles cho user " + user.getEmail() + " (User ID: " + userId + ", Old: " + oldRoles + ", New: " + newRolesStr + ")"
+                    "Cập nhật roles cho user " + user.getEmail() + " (User ID: " + userId + ", Old: " + oldRoles + ", New: " + newRolesStr + ") by admin: " + adminEmail
             );
 
             return ResponseEntity.ok(Map.of(
