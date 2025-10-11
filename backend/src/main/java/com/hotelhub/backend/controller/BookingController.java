@@ -27,10 +27,8 @@ public class BookingController {
     @Autowired
     private RoomService roomService;
 
-    // ==================== GUEST BOOKING APIs ====================
-
     /**
-     * Tạo booking cho guest (không cần login)
+     * booking cho guest (không cần login)
      */
     @PostMapping("/guest")
     public ResponseEntity<?> createGuestBooking(@Valid @RequestBody GuestBookingRequest request) {
@@ -38,13 +36,11 @@ public class BookingController {
             BookingResponse booking = bookingService.createGuestBooking(request);
             return ResponseEntity.ok(Map.of(
                     "message", "Tạo booking thành công",
-                    "booking", booking
-            ));
+                    "booking", booking));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Tạo booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -63,8 +59,7 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Tra cứu booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -77,36 +72,30 @@ public class BookingController {
             List<BookingResponse> bookings = bookingService.findByGuestEmail(email);
             return ResponseEntity.ok(Map.of(
                     "bookings", bookings,
-                    "count", bookings.size()
-            ));
+                    "count", bookings.size()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Tra cứu booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
-    // ==================== USER BOOKING APIs ====================
-
     /**
-     * Tạo booking cho user đã login
+     * booking cho user đã login
      */
     @PostMapping
-    public ResponseEntity<?> createUserBooking(@Valid @RequestBody UserBookingRequest request, 
-                                             Authentication authentication) {
+    public ResponseEntity<?> createUserBooking(@Valid @RequestBody UserBookingRequest request,
+            Authentication authentication) {
         try {
             String userEmail = authentication.getName();
             BookingResponse booking = bookingService.createUserBooking(request, userEmail);
             return ResponseEntity.ok(Map.of(
                     "message", "Tạo booking thành công",
-                    "booking", booking
-            ));
+                    "booking", booking));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Tạo booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -120,13 +109,11 @@ public class BookingController {
             List<BookingResponse> bookings = bookingService.getUserBookings(userEmail);
             return ResponseEntity.ok(Map.of(
                     "bookings", bookings,
-                    "count", bookings.size()
-            ));
+                    "count", bookings.size()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -134,8 +121,8 @@ public class BookingController {
      * Lấy chi tiết booking của user
      */
     @GetMapping("/user/{bookingId}")
-    public ResponseEntity<?> getUserBooking(@PathVariable Long bookingId, 
-                                          Authentication authentication) {
+    public ResponseEntity<?> getUserBooking(@PathVariable Long bookingId,
+            Authentication authentication) {
         try {
             String userEmail = authentication.getName();
             Optional<BookingResponse> booking = bookingService.getUserBookingById(bookingId, userEmail);
@@ -147,8 +134,7 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy chi tiết booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -156,20 +142,18 @@ public class BookingController {
      * Hủy booking
      */
     @PutMapping("/user/{bookingId}/cancel")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId, 
-                                        Authentication authentication) {
+    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId,
+            Authentication authentication) {
         try {
             String userEmail = authentication.getName();
             BookingResponse booking = bookingService.cancelBooking(bookingId, userEmail);
             return ResponseEntity.ok(Map.of(
                     "message", "Hủy booking thành công",
-                    "booking", booking
-            ));
+                    "booking", booking));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Hủy booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -177,20 +161,18 @@ public class BookingController {
      * Xác nhận booking
      */
     @PutMapping("/user/{bookingId}/confirm")
-    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId, 
-                                          Authentication authentication) {
+    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId,
+            Authentication authentication) {
         try {
             String userEmail = authentication.getName();
             BookingResponse booking = bookingService.confirmBooking(bookingId, userEmail);
             return ResponseEntity.ok(Map.of(
                     "message", "Xác nhận booking thành công",
-                    "booking", booking
-            ));
+                    "booking", booking));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Xác nhận booking thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -205,13 +187,11 @@ public class BookingController {
             List<Room> rooms = roomService.getAllRooms();
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
-                    "count", rooms.size()
-            ));
+                    "count", rooms.size()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -219,21 +199,19 @@ public class BookingController {
      * Lấy phòng trống trong khoảng thời gian
      */
     @GetMapping("/rooms/available")
-    public ResponseEntity<?> getAvailableRooms(@RequestParam LocalDate checkIn, 
-                                            @RequestParam LocalDate checkOut) {
+    public ResponseEntity<?> getAvailableRooms(@RequestParam LocalDate checkIn,
+            @RequestParam LocalDate checkOut) {
         try {
             List<Room> rooms = roomService.getAvailableRooms(checkIn, checkOut);
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size(),
                     "checkIn", checkIn,
-                    "checkOut", checkOut
-            ));
+                    "checkOut", checkOut));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy phòng trống thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -252,8 +230,7 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy chi tiết phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 }

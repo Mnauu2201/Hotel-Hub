@@ -39,6 +39,9 @@ public class PaymentService {
 
     @Autowired
     private ActivityLogService activityLogService;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Tạo payment cho booking
@@ -92,10 +95,18 @@ public class PaymentService {
         payment = paymentRepository.save(payment);
 
         // Ghi log
-        activityLogService.logActivity(userEmail, "CREATE_PAYMENT", 
+        activityLogService.logActivity(user.getUserId().intValue(), "CREATE_PAYMENT", 
             "Payment created for booking " + booking.getBookingReference() + 
             " with amount " + request.getAmount() + 
             " using method " + request.getMethod());
+
+        // Tạo notification cho user
+        notificationService.createNotification(
+            user.getUserId().intValue(),
+            "PAYMENT_CREATED",
+            "Payment created for booking " + booking.getBookingReference() + " with amount " + request.getAmount(),
+            "/payments/" + payment.getPaymentId()
+        );
 
         return convertToResponse(payment);
     }
@@ -148,6 +159,14 @@ public class PaymentService {
             "Guest payment created for booking " + booking.getBookingReference() + 
             " with amount " + request.getAmount() + 
             " using method " + request.getMethod());
+
+        // Tạo notification cho admin (guest payment)
+        notificationService.createNotification(
+            1, // Admin user ID
+            "GUEST_PAYMENT_CREATED",
+            "Guest payment created for booking " + booking.getBookingReference() + " with amount " + request.getAmount(),
+            "/admin/payments/" + payment.getPaymentId()
+        );
 
         return convertToResponse(payment);
     }
@@ -279,7 +298,7 @@ public class PaymentService {
         payment = paymentRepository.save(payment);
 
         // Ghi log
-        activityLogService.logActivity(userEmail, "UPDATE_PAYMENT_STATUS", 
+        activityLogService.logActivity(user.getUserId().intValue(), "UPDATE_PAYMENT_STATUS", 
             "Payment " + payment.getPaymentId() + " status changed from " + oldStatus + " to " + request.getStatus());
 
         return convertToResponse(payment);
@@ -333,14 +352,46 @@ public class PaymentService {
                 room.setStatus(RoomStatus.BOOKED);
                 roomRepository.save(room);
             }
+            
+            // Tạo notification cho user (payment success)
+            notificationService.createNotification(
+                user.getUserId().intValue(),
+                "PAYMENT_SUCCESS",
+                "Payment successful for booking " + booking.getBookingReference() + " with amount " + payment.getAmount(),
+                "/payments/" + payment.getPaymentId()
+            );
+            
+            // Tạo notification cho admin
+            notificationService.createNotification(
+                1, // Admin user ID
+                "PAYMENT_SUCCESS",
+                "Payment received for booking " + booking.getBookingReference() + " with amount " + payment.getAmount(),
+                "/admin/payments/" + payment.getPaymentId()
+            );
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
+            
+            // Tạo notification cho user (payment failed)
+            notificationService.createNotification(
+                user.getUserId().intValue(),
+                "PAYMENT_FAILED",
+                "Payment failed for booking " + payment.getBooking().getBookingReference() + " with amount " + payment.getAmount(),
+                "/payments/" + payment.getPaymentId()
+            );
+            
+            // Tạo notification cho admin
+            notificationService.createNotification(
+                1, // Admin user ID
+                "PAYMENT_FAILED",
+                "Payment failed for booking " + payment.getBooking().getBookingReference() + " with amount " + payment.getAmount(),
+                "/admin/payments/" + payment.getPaymentId()
+            );
         }
 
         payment = paymentRepository.save(payment);
 
         // Ghi log
-        activityLogService.logActivity(userEmail, "PROCESS_PAYMENT", 
+        activityLogService.logActivity(user.getUserId().intValue(), "PROCESS_PAYMENT", 
             "Payment " + payment.getPaymentId() + " processed with result: " + payment.getStatus());
 
         return convertToResponse(payment);
@@ -385,8 +436,24 @@ public class PaymentService {
                 room.setStatus(RoomStatus.BOOKED);
                 roomRepository.save(room);
             }
+            
+            // Tạo notification cho admin (guest payment success)
+            notificationService.createNotification(
+                1, // Admin user ID
+                "GUEST_PAYMENT_SUCCESS",
+                "Guest payment successful for booking " + booking.getBookingReference() + " with amount " + payment.getAmount(),
+                "/admin/payments/" + payment.getPaymentId()
+            );
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
+            
+            // Tạo notification cho admin (guest payment failed)
+            notificationService.createNotification(
+                1, // Admin user ID
+                "GUEST_PAYMENT_FAILED",
+                "Guest payment failed for booking " + payment.getBooking().getBookingReference() + " with amount " + payment.getAmount(),
+                "/admin/payments/" + payment.getPaymentId()
+            );
         }
 
         payment = paymentRepository.save(payment);

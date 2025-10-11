@@ -198,8 +198,8 @@ public class AdminBookingService {
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
-        activityLogService.logActivity(adminEmail, "ADMIN_UPDATE_BOOKING_STATUS", 
-            "Admin updated booking " + booking.getBookingReference() + " from " + oldStatus + " to " + newStatus);
+        activityLogService.logSystemActivity("ADMIN_UPDATE_BOOKING_STATUS", 
+            "Admin updated booking " + booking.getBookingReference() + " from " + oldStatus + " to " + newStatus + " by admin: " + adminEmail);
 
         return convertToResponse(booking);
     }
@@ -218,8 +218,8 @@ public class AdminBookingService {
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
-        activityLogService.logActivity(adminEmail, "ADMIN_CANCEL_BOOKING", 
-            "Admin cancelled booking " + booking.getBookingReference() + ". Reason: " + reason);
+        activityLogService.logSystemActivity("ADMIN_CANCEL_BOOKING", 
+            "Admin cancelled booking " + booking.getBookingReference() + ". Reason: " + reason + " by admin: " + adminEmail);
 
         return convertToResponse(booking);
     }

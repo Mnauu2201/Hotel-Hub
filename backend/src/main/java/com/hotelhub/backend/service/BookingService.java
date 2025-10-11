@@ -37,6 +37,9 @@ public class BookingService {
 
     @Autowired
     private ActivityLogService activityLogService;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Tạo booking cho guest (không cần login)
@@ -74,6 +77,17 @@ public class BookingService {
         // Cập nhật room status thành LOCKED (tạm khóa)
         room.setStatus(RoomStatus.LOCKED);
         roomRepository.save(room);
+
+        // Ghi log hoạt động
+        activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
+            "Guest booking created: " + booking.getBookingReference() + 
+            " for room " + booking.getRoomId() + 
+            " from " + booking.getCheckIn() + " to " + booking.getCheckOut());
+
+        // Tạo thông báo cho admin
+        notificationService.createAdminNotification("GUEST_BOOKING_CREATED", 
+            "New guest booking: " + booking.getBookingReference() + " for room " + room.getRoomNumber(), 
+            "/admin/bookings/" + booking.getBookingId());
 
         return convertToResponse(booking);
     }
@@ -118,10 +132,15 @@ public class BookingService {
         roomRepository.save(room);
 
         // Ghi log thao tác
-        activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
-            "Guest booking created: " + booking.getBookingReference() + 
+        activityLogService.logActivity(user.getUserId().intValue(), "CREATE_USER_BOOKING", 
+            "User booking created: " + booking.getBookingReference() + 
             " for room " + booking.getRoomId() + 
             " from " + booking.getCheckIn() + " to " + booking.getCheckOut());
+
+        // Tạo thông báo cho user
+        String dates = String.format("%s to %s", request.getCheckIn(), request.getCheckOut());
+        notificationService.createBookingNotification(user.getUserId().intValue(), "BOOKING_CREATED", 
+            booking.getBookingReference(), room.getRoomNumber(), dates);
 
         return convertToResponse(booking);
     }
@@ -177,8 +196,8 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
-        activityLogService.logActivity(userEmail, "CANCEL_BOOKING", 
-            "Booking " + booking.getBookingReference() + " cancelled by user");
+        activityLogService.logSystemActivity("CANCEL_BOOKING", 
+            "Booking " + booking.getBookingReference() + " cancelled by user: " + userEmail);
 
         return convertToResponse(booking);
     }
@@ -214,8 +233,8 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
-        activityLogService.logActivity(userEmail, "CONFIRM_BOOKING", 
-            "Booking " + booking.getBookingReference() + " confirmed by user");
+        activityLogService.logSystemActivity("CONFIRM_BOOKING",
+            "Booking " + booking.getBookingReference() + " confirmed by user: " + userEmail);
 
         return convertToResponse(booking);
     }
@@ -253,8 +272,8 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
-        activityLogService.logActivity(adminEmail, "UPDATE_BOOKING_STATUS", 
-            "Booking " + booking.getBookingReference() + " changed from " + oldStatus + " to " + newStatus);
+        activityLogService.logSystemActivity("UPDATE_BOOKING_STATUS", 
+            "Booking " + booking.getBookingReference() + " changed from " + oldStatus + " to " + newStatus + " by admin: " + adminEmail);
 
         return convertToResponse(booking);
     }
