@@ -352,6 +352,7 @@ public class PaymentService {
                 room.setStatus(RoomStatus.BOOKED);
                 roomRepository.save(room);
             }
+
             
             // Tạo notification cho user (payment success)
             notificationService.createNotification(
@@ -368,6 +369,7 @@ public class PaymentService {
                 "Payment received for booking " + booking.getBookingReference() + " with amount " + payment.getAmount(),
                 "/admin/payments/" + payment.getPaymentId()
             );
+
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
             
@@ -436,6 +438,7 @@ public class PaymentService {
                 room.setStatus(RoomStatus.BOOKED);
                 roomRepository.save(room);
             }
+
             
             // Tạo notification cho admin (guest payment success)
             notificationService.createNotification(
@@ -444,6 +447,7 @@ public class PaymentService {
                 "Guest payment successful for booking " + booking.getBookingReference() + " with amount " + payment.getAmount(),
                 "/admin/payments/" + payment.getPaymentId()
             );
+
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
             

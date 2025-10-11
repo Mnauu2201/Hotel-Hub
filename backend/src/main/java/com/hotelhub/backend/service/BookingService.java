@@ -78,6 +78,7 @@ public class BookingService {
         room.setStatus(RoomStatus.LOCKED);
         roomRepository.save(room);
 
+
         // Ghi log hoạt động
         activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
             "Guest booking created: " + booking.getBookingReference() + 
@@ -88,6 +89,8 @@ public class BookingService {
         notificationService.createAdminNotification("GUEST_BOOKING_CREATED", 
             "New guest booking: " + booking.getBookingReference() + " for room " + room.getRoomNumber(), 
             "/admin/bookings/" + booking.getBookingId());
+
+
 
         return convertToResponse(booking);
     }
