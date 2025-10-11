@@ -2,6 +2,7 @@ package com.hotelhub.backend.entity;
 
 public enum RoomStatus {
     AVAILABLE("available"),
+    LOCKED("locked"),
     BOOKED("booked"),
     MAINTENANCE("maintenance");
     

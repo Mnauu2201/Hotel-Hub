@@ -5,6 +5,7 @@ import com.hotelhub.backend.dto.request.UserBookingRequest;
 import com.hotelhub.backend.dto.response.BookingResponse;
 import com.hotelhub.backend.entity.Booking;
 import com.hotelhub.backend.entity.Room;
+import com.hotelhub.backend.entity.RoomStatus;
 import com.hotelhub.backend.entity.User;
 import com.hotelhub.backend.repository.BookingRepository;
 import com.hotelhub.backend.repository.RoomRepository;
@@ -70,6 +71,10 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
+        // Cập nhật room status thành LOCKED (tạm khóa)
+        room.setStatus(RoomStatus.LOCKED);
+        roomRepository.save(room);
+
         return convertToResponse(booking);
     }
 
@@ -107,6 +112,10 @@ public class BookingService {
         booking.setBookingReference(generateBookingReference());
 
         booking = bookingRepository.save(booking);
+
+        // Cập nhật room status thành LOCKED (tạm khóa)
+        room.setStatus(RoomStatus.LOCKED);
+        roomRepository.save(room);
 
         // Ghi log thao tác
         activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
@@ -230,6 +239,15 @@ public class BookingService {
         // Nếu chuyển sang confirmed, bỏ hold time
         if ("confirmed".equals(newStatus)) {
             booking.setHoldUntil(null);
+        }
+        
+        // Nếu booking bị hủy, cập nhật room status về AVAILABLE
+        if ("cancelled".equals(newStatus)) {
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+            if (room != null) {
+                room.setStatus(RoomStatus.AVAILABLE);
+                roomRepository.save(room);
+            }
         }
         
         booking = bookingRepository.save(booking);

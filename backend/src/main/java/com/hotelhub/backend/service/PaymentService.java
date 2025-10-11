@@ -6,6 +6,7 @@ import com.hotelhub.backend.dto.response.PaymentResponse;
 import com.hotelhub.backend.entity.Booking;
 import com.hotelhub.backend.entity.Payment;
 import com.hotelhub.backend.entity.Room;
+import com.hotelhub.backend.entity.RoomStatus;
 import com.hotelhub.backend.entity.User;
 import com.hotelhub.backend.repository.BookingRepository;
 import com.hotelhub.backend.repository.PaymentRepository;
@@ -325,6 +326,13 @@ public class PaymentService {
             Booking booking = payment.getBooking();
             booking.setStatus("paid");
             bookingRepository.save(booking);
+            
+            // Cập nhật room status từ LOCKED → BOOKED (đã thanh toán)
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+            if (room != null) {
+                room.setStatus(RoomStatus.BOOKED);
+                roomRepository.save(room);
+            }
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
         }
@@ -370,6 +378,13 @@ public class PaymentService {
             Booking booking = payment.getBooking();
             booking.setStatus("paid");
             bookingRepository.save(booking);
+            
+            // Cập nhật room status từ LOCKED → BOOKED (đã thanh toán)
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+            if (room != null) {
+                room.setStatus(RoomStatus.BOOKED);
+                roomRepository.save(room);
+            }
         } else {
             payment.setStatus(Payment.PaymentStatus.failed);
         }
