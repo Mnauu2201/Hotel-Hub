@@ -159,7 +159,10 @@ class UserApiService {
         ...data,
         email: data.email || data.username || data.emailAddress || credentials.email,
         name: data.name || data.fullName || data.displayName || (data.email ? data.email.split('@')[0] : credentials.email.split('@')[0]),
+        roles: data.roles || [] // Đảm bảo roles được giữ lại
       };
+      
+      console.log('Normalized login response:', normalized);
       return normalized as LoginResponse;
     } catch (error) {
       console.error('Login error:', error);

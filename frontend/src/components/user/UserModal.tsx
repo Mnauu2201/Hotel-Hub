@@ -31,11 +31,27 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
     setLoading(true);
 
     try {
-      await login({ email, password });
+      const response = await login({ email, password });
+      
+      // Debug: Log response để kiểm tra
+      console.log('UserModal Login response:', response);
+      console.log('UserModal User roles:', response.roles);
+      
       setSuccess('Đăng nhập thành công!');
-      setTimeout(() => {
-        onClose();
-      }, 800);
+      
+      // Kiểm tra role admin và redirect tương ứng
+      if (response.roles && response.roles.includes('ROLE_ADMIN')) {
+        console.log('UserModal Admin detected, redirecting to /admin');
+        setTimeout(() => {
+          onClose();
+          navigate('/admin');
+        }, 800);
+      } else {
+        console.log('UserModal Regular user, staying on home page');
+        setTimeout(() => {
+          onClose();
+        }, 800);
+      }
     } catch (err: any) {
       setError(err?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
     } finally {
