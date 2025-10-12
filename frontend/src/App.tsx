@@ -17,6 +17,7 @@ import PricingPage from "./pages/pricing";
 import BlogPage from "./pages/blog";
 import BlogDetail from "./pages/blog/blog.detail";
 import { UserProvider } from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthContext";
 // @ts-expect-error JS component
 import LoginPage from "./pages/auth/LoginPage.jsx";
 // @ts-expect-error JS component
@@ -31,6 +32,18 @@ import BookingPage from "./pages/BookingPage.jsx";
 import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 // @ts-expect-error JS component
 import MyBookings from "./pages/MyBookings.jsx";
+import AdminPage from "./pages/AdminPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import BookingManagement from "./pages/admin/BookingManagement";
+import RoomManagement from "./pages/admin/RoomManagement";
+import UserManagement from "./pages/admin/UserManagement";
+import StatisticsReport from "./pages/admin/StatisticsReport";
+import RoleManagement from "./pages/admin/RoleManagement";
+import SystemSettings from "./pages/admin/SystemSettings";
+import ActivityLog from "./pages/admin/ActivityLog";
+import Notifications from "./pages/admin/Notifications";
+import Profile from "./pages/admin/Profile";
+import EditAccount from "./pages/admin/EditAccount";
 
 
 function App() {
@@ -121,11 +134,99 @@ function App() {
         },
       ]
     },
+    {
+      path: "/admin",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <AdminPage />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/bookings",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <BookingManagement />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/rooms",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <RoomManagement />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/users",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <UserManagement />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/reports",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <StatisticsReport />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/roles",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <RoleManagement />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/settings",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <SystemSettings />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/activity-log",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <ActivityLog />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/notifications",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <Notifications />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/profile",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <Profile />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/edit-account",
+      element: (
+        <ProtectedRoute requiredRole="ROLE_ADMIN">
+          <EditAccount />
+        </ProtectedRoute>
+      ),
+    },
   ]);
   return (
-    <>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </>
+    </AuthProvider>
   );
 }
 
