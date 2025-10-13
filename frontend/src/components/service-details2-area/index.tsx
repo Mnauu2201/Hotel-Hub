@@ -33,7 +33,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Phòng chất lượng</Link></h3>
                 <p>Phòng nghỉ sang trọng với đầy đủ tiện nghi hiện đại, mang đến trải nghiệm thoải mái nhất cho quý khách.</p>
-                <Link to="/service-detail">Xem thêm <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -48,7 +47,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Bãi biển riêng</Link></h3>
                 <p>Tận hưởng không gian riêng tư tuyệt đối với bãi biển dành riêng cho khách của khách sạn.</p>
-                <Link to="/service-detail">Xem thêm <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -63,7 +61,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Chỗ ở tốt nhất</Link></h3>
                 <p>Chúng tôi cung cấp chỗ ở tốt nhất với đầy đủ tiện nghi và dịch vụ chất lượng cao.</p>
-                <Link to="/service-detail">Xem thêm <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -78,7 +75,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail"> Spa & Spa</Link></h3>
                 <p>Nullam molestie lacus sit amet velit fermentum feugiat. Mauris auctor eget nunc sit amet.</p>
-                <Link to="/service-detail">Read More <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -93,7 +89,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Spa & Chăm sóc sức khỏe</Link></h3>
                 <p>Thư giãn và tái tạo năng lượng với các dịch vụ spa và chăm sóc sức khỏe đẳng cấp.</p>
-                <Link to="/service-detail">Xem thêm <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -108,7 +103,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Nhà hàng & Quầy bar</Link></h3>
                 <p>Thưởng thức ẩm thực đa dạng và đồ uống thượng hạng tại nhà hàng và quầy bar của chúng tôi.</p>
-                <Link to="/service-detail">Xem thêm <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>
@@ -123,7 +117,6 @@ const ServiceDetails2Area = () => {
               <div className="services-08-content">
                 <h3><Link to="/service-detail">Special Offers</Link></h3>
                 <p>Nullam molestie lacus sit amet velit fermentum feugiat. Mauris auctor eget nunc sit amet.</p>
-                <Link to="/service-detail">Read More <i className="fal fa-long-arrow-right" /></Link>
               </div>
             </div>
           </div>

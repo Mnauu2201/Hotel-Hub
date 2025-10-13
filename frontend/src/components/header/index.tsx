@@ -96,7 +96,7 @@ const Header = () => {
                           {/* <li><Link to="/gallery">Gallery</Link></li> */}
                           <li><Link to="/faq">Hỏi đáp</Link></li>
                           <li><Link to="/team">Đội ngũ</Link></li>
-                          <li><Link to="/pricing">Bảng giá</Link></li>
+                          
                           {/* <li><Link to="/shop">Shop</Link></li> */}
                           {/* <li><Link to="/shop-details">Shop Details</Link></li> */}
                         </ul>

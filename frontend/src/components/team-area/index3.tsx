@@ -45,14 +45,7 @@ const TeamArea3 = () => {
                     <div className="icon"><i className="fal fa-phone" /> <strong>Phone</strong></div>
                     <div className="text">980-786-098-09</div>
                   </li>
-                  <li>
-                    <div className="icon"><i className="fal fa-map-marker-alt" /><strong>Address</strong></div>
-                    <div className="text">12/A, Miranda City Hall, NYC</div>
-                  </li>
-                  <li>
-                    <div className="icon"><i className="fal fa-globe" /><strong>Website</strong></div>
-                    <div className="text">www.webexample.com</div>
-                  </li>
+                  
                 </ul>
               </div>
             </div>
@@ -87,14 +80,7 @@ const TeamArea3 = () => {
                   </div>
                 </div>
                 <div className="two-column mt-30">
-                  <div className="row">
-                    <div className="image-column col-xl-6 col-lg-12 col-md-12">
-                      <figure className="image"><img src={portfolioImg02} alt="" /></figure>
-                    </div>
-                    <div className="text-column col-xl-6 col-lg-12 col-md-12">
-                      <figure className="image"><img src={portfolioImg03} alt="" /></figure>
-                    </div>
-                  </div>
+                  
                 </div>
               </div>
             </div>
