@@ -337,8 +337,6 @@ const RoomDetail = () => {
                     {room.roomDetail?.petFriendly && <li><i className="fal fa-paw" /> Pet Friendly</li>}
                     {room.roomDetail?.smokingAllowed && <li><i className="fal fa-smoking" /> Smoking</li>}
                   </ul>
-                  <h3>Children and extra beds.</h3>
-                  <p>Children are welcome. Rollaway/extra beds may be available upon request.</p>
                   
                 </div>
               </div>

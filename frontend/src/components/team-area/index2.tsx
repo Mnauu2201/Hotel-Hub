@@ -18,8 +18,8 @@ const TeamArea2 = () => {
                 </div>
               </div>
               <div className="team-info">
-                <h4><Link to="/team-detail">Bableo Dablo</Link></h4>
-                <p>Worker</p>
+                <h4><Link to="#">Nguyễn Minh Khánh</Link></h4>
+                <p>Frontend</p>
                 <div className="team-social">
                   <ul>
                     <li><Link to="#"><i className="fab fa-facebook-f" /></Link></li>
@@ -38,8 +38,8 @@ const TeamArea2 = () => {
                 </div>
               </div>
               <div className="team-info">
-                <h4><Link to="/team-detail">Dawon Crisen</Link></h4>
-                <p>Worker</p>
+                <h4><Link to="#">Phạm Chí Dững</Link></h4>
+                <p>Frontend</p>
                 <div className="team-social">
                   <ul>
                     <li><Link to="#"><i className="fab fa-facebook-f" /></Link></li>
@@ -58,8 +58,8 @@ const TeamArea2 = () => {
                 </div>
               </div>
               <div className="team-info">
-                <h4><Link to="/team-detail">David Suarez</Link></h4>
-                <p>Worker</p>
+                <h4><Link to="#">Nguyễn Quang Anh</Link></h4>
+                <p>Backend</p>
                 <div className="team-social">
                   <ul>
                     <li><Link to="#"><i className="fab fa-facebook-f" /></Link></li>
@@ -78,8 +78,8 @@ const TeamArea2 = () => {
                 </div>
               </div>
               <div className="team-info">
-                <h4><Link to="/team-detail">Gerard Peano</Link></h4>
-                <p>Worker</p>
+                <h4><Link to="#">Phạm Đức Anh</Link></h4>
+                <p>Backend</p>
                 <div className="team-social">
                   <ul>
                     <li><Link to="#"><i className="fab fa-facebook-f" /></Link></li>
