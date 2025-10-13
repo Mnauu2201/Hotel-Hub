@@ -89,6 +89,17 @@ const bookingService = {
     return (response.data?.bookings as BookingResponse[]) || [];
   },
 
+  // Lấy thông tin phòng theo ID
+  getRoomById: async (roomId: number | string) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/rooms/${roomId}`);
+      return response.data?.room || response.data;
+    } catch (error) {
+      console.error('Error fetching room:', error);
+      throw error;
+    }
+  },
+
   // Lấy chi tiết booking theo ID (cho người dùng đã đăng nhập)
   getUserBookingById: async (bookingId: number | string) => {
     // Ensure token is available in the request

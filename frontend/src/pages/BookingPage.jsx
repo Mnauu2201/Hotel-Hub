@@ -53,7 +53,26 @@ const BookingPage = () => {
   };
 
   useEffect(() => {
-    if (location.state?.selectedRooms && Array.isArray(location.state.selectedRooms)) {
+    // Lấy roomId từ URL query parameters
+    const params = new URLSearchParams(location.search);
+    const roomId = params.get('roomId');
+
+    // Nếu có roomId trong URL, fetch thông tin phòng và thêm vào selectedRooms
+    if (roomId) {
+      const fetchRoomById = async () => {
+        try {
+          const response = await bookingService.getRoomById(roomId);
+          if (response) {
+            const room = response.room || response;
+            setSelectedRooms([room]);
+          }
+        } catch (error) {
+          console.error('Error fetching room:', error);
+          setError('Không thể tải thông tin phòng');
+        }
+      };
+      fetchRoomById();
+    } else if (location.state?.selectedRooms && Array.isArray(location.state.selectedRooms)) {
       setSelectedRooms(location.state.selectedRooms);
     } else if (location.state?.room) {
       setSelectedRooms([location.state.room]);

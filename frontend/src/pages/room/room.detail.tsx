@@ -128,7 +128,7 @@ const RoomDetail = () => {
                             <div className="col-lg-12">
                               <div className="slider-btn mt-15">
                               <div className="mb-50">
-                    <a href="/booking" className="btn ss-btn">Book This Room</a>
+                    <a href={`/booking?roomId=${id}`} className="btn ss-btn">Book This Room</a>
                   </div>
                               </div>
                             </div>
