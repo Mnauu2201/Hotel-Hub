@@ -82,8 +82,9 @@ const RoomManagement: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusMap: { [key: string]: { class: string; text: string } } = {
-      'AVAILABLE': { class: 'status-available', text: 'Có sẵn' },
+      'AVAILABLE': { class: 'status-available', text: 'Available' },
       'OCCUPIED': { class: 'status-occupied', text: 'Đã thuê' },
+      'LOCKED': { class: 'status-locked', text: 'LOCKED' },
       'MAINTENANCE': { class: 'status-maintenance', text: 'Bảo trì' }
     };
     

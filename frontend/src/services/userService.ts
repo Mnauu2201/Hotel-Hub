@@ -42,6 +42,8 @@ export const userLogin = async (email: string, password: string) => {
       }
     });
     
+    console.log('🔍 Login response data:', response.data);
+    
     if (response.data && (response.data.accessToken || response.data.token)) {
       const accessToken = response.data.accessToken || response.data.token;
       const refreshToken = response.data.refreshToken;
@@ -50,12 +52,21 @@ export const userLogin = async (email: string, password: string) => {
         name: response.data.name,
         roles: response.data.roles
       };
+      
+      console.log('✅ Saving to localStorage:', {
+        accessToken: accessToken ? accessToken.substring(0, 20) + '...' : null,
+        refreshToken: refreshToken ? refreshToken.substring(0, 20) + '...' : null,
+        user: user
+      });
+      
       localStorage.setItem('accessToken', accessToken);
       if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
       if (user) localStorage.setItem('user', JSON.stringify(user));
       
       // Thêm thông báo đăng nhập thành công
       alert('Đăng nhập thành công!');
+    } else {
+      console.error('❌ No accessToken found in response:', response.data);
     }
     
     return response.data;

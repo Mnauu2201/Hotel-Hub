@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import userApi from '../services/userApi';
+import { userLogin, userRegister } from '../services/userService';
 
 interface User {
   email: string;
@@ -49,6 +49,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUser = localStorage.getItem('user') || localStorage.getItem('userData');
         const storedAccessToken = localStorage.getItem('accessToken') || localStorage.getItem('userToken');
         const storedRefreshToken = localStorage.getItem('refreshToken');
+        
+        console.log('🔍 AuthContext initialization:', {
+          storedUser,
+          storedAccessToken: storedAccessToken ? storedAccessToken.substring(0, 20) + '...' : null,
+          storedRefreshToken: storedRefreshToken ? storedRefreshToken.substring(0, 20) + '...' : null
+        });
 
         if (storedUser && storedAccessToken) {
           const parsedUser = JSON.parse(storedUser);
@@ -94,25 +100,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }) => {
     try {
       setLoading(true);
-      const response = await userApi.login(credentials);
+      const response = await userLogin(credentials.email, credentials.password);
 
-      // Dựa vào userApi đã chuẩn hoá sẵn name/email
+      // userService đã lưu token vào localStorage, chỉ cần cập nhật state
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const storedToken = localStorage.getItem('accessToken');
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+
       setUser({
-        email: response.email,
-        name: response.name,
-        roles: response.roles
+        email: storedUser.email,
+        name: storedUser.name,
+        roles: storedUser.roles
       });
-      setAccessToken(response.accessToken);
-      setRefreshToken(response.refreshToken ?? null);
-
-      // Lưu vào localStorage
-      localStorage.setItem('user', JSON.stringify({
-        email: response.email,
-        name: response.name,
-        roles: response.roles
-      }));
-      if (response.accessToken) localStorage.setItem('accessToken', response.accessToken);
-      if (response.refreshToken) localStorage.setItem('refreshToken', response.refreshToken);
+      setAccessToken(storedToken);
+      setRefreshToken(storedRefreshToken);
+      
+      // Debug: Kiểm tra localStorage sau khi lưu
+      console.log('🔍 localStorage after login:', {
+        user: localStorage.getItem('user'),
+        accessToken: localStorage.getItem('accessToken'),
+        refreshToken: localStorage.getItem('refreshToken')
+      });
 
       return response;
     } catch (error) {
@@ -126,14 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: { name: string; email: string; password: string; phone: string }) => {
     try {
       setLoading(true);
-      const response = await userApi.register(userData);
-
-      // Thử gửi email chào mừng, không chặn flow nếu lỗi
-      try {
-        await userApi.sendRegistrationEmail(userData.email, userData.name);
-      } catch (e) {
-        console.warn('Send registration email failed:', e);
-      }
+      const response = await userRegister(userData.email, userData.password, userData.name, userData.phone);
 
       return response;
     } catch (error) {
@@ -146,12 +147,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Đăng xuất
   const logout = async () => {
     try {
-      if (refreshToken) {
-        await userApi.logout(refreshToken);
-      }
-    } catch (error) {
-      console.error('Logout API error:', error);
-    } finally {
       // Clear state và localStorage
       setUser(null);
       setAccessToken(null);
@@ -159,6 +154,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem('user');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
@@ -169,12 +166,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('No refresh token available');
       }
 
-      const response = await userApi.refreshToken(refreshToken);
-      
-      setAccessToken(response.accessToken);
-      localStorage.setItem('accessToken', response.accessToken);
-
-      return response.accessToken;
+      // TODO: Implement refresh token logic
+      throw new Error('Refresh token not implemented');
     } catch (error) {
       console.error('Refresh token error:', error);
       // Nếu refresh token thất bại, logout user
