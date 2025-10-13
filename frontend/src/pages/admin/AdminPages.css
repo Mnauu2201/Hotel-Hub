@@ -145,50 +145,59 @@
   color: #0c5460;
 }
 
-/* Dark mode status badges */
+/* Dark mode status badges - improved contrast */
 .dark-mode .status-available {
-  background-color: #1e4d2b;
-  color: #a8e6a3;
+  background-color: #065f46;
+  color: #6ee7b7;
+  border: 1px solid #10b981;
 }
 
 .dark-mode .status-occupied {
-  background-color: #4d1e1e;
-  color: #ffb3b3;
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
 }
 
 .dark-mode .status-maintenance {
-  background-color: #4d3d1e;
-  color: #ffd93d;
+  background-color: #92400e;
+  color: #fbbf24;
+  border: 1px solid #f59e0b;
 }
 
 .dark-mode .status-locked {
-  background-color: #4d1e1e;
-  color: #ffb3b3;
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
 }
 
 .dark-mode .status-booked {
-  background-color: #1e3d4d;
-  color: #a3d9ff;
+  background-color: #1e3a8a;
+  color: #93c5fd;
+  border: 1px solid #3b82f6;
 }
 
 .dark-mode .status-pending {
-  background-color: #4d3d1e;
-  color: #ffd93d;
+  background-color: #92400e;
+  color: #fbbf24;
+  border: 1px solid #f59e0b;
 }
 
 .dark-mode .status-confirmed {
-  background-color: #1e4d2b;
-  color: #a8e6a3;
+  background-color: #065f46;
+  color: #6ee7b7;
+  border: 1px solid #10b981;
 }
 
 .dark-mode .status-cancelled {
-  background-color: #4d1e1e;
-  color: #ffb3b3;
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
 }
 
 .dark-mode .status-completed {
-  background-color: #1e3d4d;
-  color: #a3d9ff;
+  background-color: #1e3a8a;
+  color: #93c5fd;
+  border: 1px solid #3b82f6;
 }
 
 .status-active {
@@ -202,13 +211,40 @@
 }
 
 .status-verified {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
 }
 
 .status-unverified {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+/* Dark mode status badges - improved contrast */
+.dark-mode .status-active {
+  background-color: #065f46;
+  color: #6ee7b7;
+  border: 1px solid #10b981;
+}
+
+.dark-mode .status-inactive {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+}
+
+.dark-mode .status-verified {
+  background-color: #065f46;
+  color: #6ee7b7;
+  border: 1px solid #10b981;
+}
+
+.dark-mode .status-unverified {
+  background-color: #92400e;
+  color: #fbbf24;
+  border: 1px solid #f59e0b;
 }
 
 /* Role Badges */
