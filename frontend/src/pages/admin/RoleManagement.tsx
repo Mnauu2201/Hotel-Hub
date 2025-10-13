@@ -53,7 +53,6 @@ const RoleManagement: React.FC = () => {
       ];
       setRoles(mockRoles);
     } catch (error) {
-      console.error('Error fetching roles:', error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +74,6 @@ const RoleManagement: React.FC = () => {
           setRoles(roles.filter(role => role.id !== roleId));
         }
       } catch (error) {
-        console.error('Error deleting role:', error);
       }
     }
   };

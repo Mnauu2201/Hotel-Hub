@@ -80,7 +80,6 @@ const Notifications: React.FC = () => {
       ];
       setNotifications(mockNotifications);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
     } finally {
       setLoading(false);
     }
@@ -105,7 +104,6 @@ const Notifications: React.FC = () => {
         ));
       }
     } catch (error) {
-      console.error('Error sending notification:', error);
     }
   };
 
@@ -125,7 +123,6 @@ const Notifications: React.FC = () => {
           setNotifications(notifications.filter(notif => notif.id !== notificationId));
         }
       } catch (error) {
-        console.error('Error deleting notification:', error);
       }
     }
   };
