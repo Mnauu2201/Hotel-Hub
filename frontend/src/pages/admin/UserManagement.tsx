@@ -61,7 +61,6 @@ const UserManagement: React.FC = () => {
       ];
       setUsers(mockUsers);
     } catch (error) {
-      console.error('Error fetching users:', error);
       setUsers([]); // Set empty array on error
     } finally {
       setLoading(false);
@@ -88,7 +87,6 @@ const UserManagement: React.FC = () => {
         ));
       }
     } catch (error) {
-      console.error('Error toggling user status:', error);
     }
   };
 

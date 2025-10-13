@@ -127,7 +127,6 @@ const BookingManagement: React.FC = () => {
       }
       
     } catch (error: any) {
-      console.error('Error fetching bookings:', error);
       showNotification('error', `Lỗi kết nối: ${error.message || 'Unknown error'}`);
       setBookings([]);
       setTotalPages(0);
@@ -204,7 +203,6 @@ const BookingManagement: React.FC = () => {
         setRoomInfo(roomData);
       }
     } catch (error) {
-      console.error('Error fetching room info:', error);
     }
   };
 
@@ -230,7 +228,6 @@ const BookingManagement: React.FC = () => {
         setRoomsData(roomsMap);
       }
     } catch (error) {
-      console.error('Error fetching rooms:', error);
     }
   };
 
@@ -291,7 +288,6 @@ const BookingManagement: React.FC = () => {
         showNotification('error', `Lỗi khi hủy booking: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error cancelling booking:', error);
       showNotification('error', 'Lỗi khi hủy booking!');
     }
   };
@@ -301,7 +297,6 @@ const BookingManagement: React.FC = () => {
       // Kiểm tra bookingId có tồn tại không (có thể là bookingId hoặc id)
       const bookingId = updatedBooking.id || (updatedBooking as any).bookingId;
       if (!bookingId) {
-        console.error('Booking ID not found in:', updatedBooking);
         showNotification('error', 'Không tìm thấy ID booking!');
         return;
       }
@@ -434,7 +429,6 @@ const BookingManagement: React.FC = () => {
                         className="btn-action btn-view"
                         onClick={(e) => {
                           e.preventDefault();
-                          console.log('View button clicked for booking:', booking.id);
                           handleViewBooking(booking);
                         }}
                       >
@@ -444,7 +438,6 @@ const BookingManagement: React.FC = () => {
                         className="btn-action btn-edit"
                         onClick={(e) => {
                           e.preventDefault();
-                          console.log('Edit button clicked for booking:', booking.id);
                           handleEditBooking(booking);
                         }}
                       >

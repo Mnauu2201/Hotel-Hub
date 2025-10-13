@@ -36,7 +36,6 @@ const Profile: React.FC = () => {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
-      console.error('Error saving profile:', error);
     } finally {
       setLoading(false);
     }

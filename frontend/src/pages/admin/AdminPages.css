@@ -140,6 +140,11 @@
   color: #721c24;
 }
 
+.status-booked {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
 /* Dark mode status badges */
 .dark-mode .status-available {
   background-color: #1e4d2b;
@@ -159,6 +164,11 @@
 .dark-mode .status-locked {
   background-color: #4d1e1e;
   color: #ffb3b3;
+}
+
+.dark-mode .status-booked {
+  background-color: #1e3d4d;
+  color: #a3d9ff;
 }
 
 .dark-mode .status-pending {
@@ -433,6 +443,18 @@
 .dark-mode .amenity-tag {
   background-color: #4a5568;
   color: #e2e8f0;
+}
+
+/* Notification Animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Modal Styles */

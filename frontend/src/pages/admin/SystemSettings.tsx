@@ -41,7 +41,6 @@ const SystemSettings: React.FC = () => {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
-      console.error('Error saving settings:', error);
     } finally {
       setLoading(false);
     }
