@@ -59,13 +59,34 @@ const BookingPage = () => {
       setSelectedRooms([location.state.room]);
     }
 
+    // Prefill form data with search criteria if available
+    const searchCriteria = location.state?.searchCriteria;
+    const storedSearch = localStorage.getItem('searchCriteria');
+    
+    if (searchCriteria) {
+      setFormData(prev => ({
+        ...prev,
+        checkIn: searchCriteria.checkIn || '',
+        checkOut: searchCriteria.checkOut || '',
+        guests: searchCriteria.guests || 1
+      }));
+    } else if (storedSearch) {
+      const parsedSearch = JSON.parse(storedSearch);
+      setFormData(prev => ({
+        ...prev,
+        checkIn: parsedSearch.checkIn || '',
+        checkOut: parsedSearch.checkOut || '',
+        guests: parsedSearch.guests || 1
+      }));
+    }
+
     // Prefill form data if user is authenticated
     if (isAuthenticated && user) {
       setFormData(prev => ({
         ...prev,
         guestName: user.name || '',
         guestEmail: user.email || '',
-        guestPhone: ''
+        guestPhone: prev.guestPhone || ''
       }));
 
       // Fetch profile to get phone

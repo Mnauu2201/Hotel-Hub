@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Room Gallery - HotelHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #644222;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #8a643f;
+            margin-top: 0;
+        }
+        .gallery-demo {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .main-image-container {
+            position: relative;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
+        }
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease-in-out;
+            z-index: 10;
+        }
+        .nav-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .nav-arrow.prev {
+            left: 15px;
+        }
+        .nav-arrow.next {
+            right: 15px;
+        }
+        .thumbnail-gallery {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        .thumbnail {
+            min-width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.7;
+        }
+        .thumbnail.active {
+            border: 3px solid #644222;
+            opacity: 1;
+        }
+        .thumbnail:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-counter {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 0.5rem;
+        }
+        .demo-images {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Test Room Gallery - HotelHub</h1>
+        
+        <div class="test-section">
+            <h3>1. Gallery Demo</h3>
+            <p>Mô phỏng gallery ảnh phòng với các tính năng:</p>
+            
+            <div class="gallery-demo">
+                <!-- Main Image -->
+                <div class="main-image-container">
+                    <img id="mainImage" class="main-image" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=400&fit=crop" alt="Room Image">
+                    
+                    <!-- Navigation Arrows -->
+                    <button class="nav-arrow prev" onclick="previousImage()">‹</button>
+                    <button class="nav-arrow next" onclick="nextImage()">›</button>
+                </div>
+                
+                <!-- Thumbnail Gallery -->
+                <div class="thumbnail-gallery">
+                    <div class="thumbnail active" onclick="selectImage(0)">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=80&h=80&fit=crop" alt="Thumbnail 1">
+                    </div>
+                    <div class="thumbnail" onclick="selectImage(1)">
+                        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=80&h=80&fit=crop" alt="Thumbnail 2">
+                    </div>
+                    <div class="thumbnail" onclick="selectImage(2)">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=80&h=80&fit=crop" alt="Thumbnail 3">
+                    </div>
+                    <div class="thumbnail" onclick="selectImage(3)">
+                        <img src="https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=80&h=80&fit=crop" alt="Thumbnail 4">
+                    </div>
+                    <div class="thumbnail" onclick="selectImage(4)">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=80&h=80&fit=crop" alt="Thumbnail 5">
+                    </div>
+                </div>
+                
+                <!-- Image Counter -->
+                <div class="image-counter">
+                    <span id="imageCounter">1 / 5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Tính năng đã thực hiện</h3>
+            <ul class="feature-list">
+                <li><strong>Ảnh chính lớn:</strong> Hiển thị ảnh phòng với kích thước 400px height</li>
+                <li><strong>Thumbnail gallery:</strong> Ảnh nhỏ 80x80px với scroll horizontal</li>
+                <li><strong>Click để chuyển đổi:</strong> Click vào thumbnail để thay đổi ảnh chính</li>
+                <li><strong>Navigation arrows:</strong> Nút mũi tên trái/phải để chuyển ảnh</li>
+                <li><strong>Keyboard navigation:</strong> Sử dụng phím mũi tên trái/phải</li>
+                <li><strong>Image counter:</strong> Hiển thị vị trí ảnh hiện tại (1/5)</li>
+                <li><strong>Active state:</strong> Thumbnail được chọn có border màu đậm</li>
+                <li><strong>Hover effects:</strong> Hiệu ứng hover cho thumbnails và arrows</li>
+                <li><strong>Fallback images:</strong> Ảnh mặc định khi không load được</li>
+                <li><strong>Responsive design:</strong> Tự động điều chỉnh theo màn hình</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Tích hợp Database</h3>
+            <p>Gallery sẽ tự động hiển thị ảnh từ database:</p>
+            <ul class="feature-list">
+                <li><strong>API Integration:</strong> Lấy ảnh từ endpoint `/rooms/{id}`</li>
+                <li><strong>Dynamic loading:</strong> Tự động cập nhật khi có ảnh mới</li>
+                <li><strong>Image metadata:</strong> Hiển thị altText và imageId từ DB</li>
+                <li><strong>Primary image:</strong> Ưu tiên ảnh có isPrimary = true</li>
+                <li><strong>Error handling:</strong> Xử lý lỗi khi không load được ảnh</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Cách sử dụng</h3>
+            <ol>
+                <li><strong>Click thumbnail:</strong> Click vào ảnh nhỏ để xem ảnh lớn</li>
+                <li><strong>Navigation arrows:</strong> Sử dụng nút ‹ › để chuyển ảnh</li>
+                <li><strong>Keyboard:</strong> Nhấn phím mũi tên trái/phải</li>
+                <li><strong>Scroll thumbnails:</strong> Cuộn ngang để xem thêm ảnh</li>
+                <li><strong>Image counter:</strong> Xem vị trí ảnh hiện tại</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Technical Details</h3>
+            <ul class="feature-list">
+                <li><strong>TypeScript interfaces:</strong> RoomImage và Room types</li>
+                <li><strong>State management:</strong> selectedImageIndex state</li>
+                <li><strong>Event handling:</strong> onClick, onMouseOver, onMouseOut</li>
+                <li><strong>CSS styling:</strong> Inline styles với responsive design</li>
+                <li><strong>Performance:</strong> Lazy loading và error handling</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const images = [
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop'
+        ];
+        
+        let currentIndex = 0;
+        
+        function selectImage(index) {
+            currentIndex = index;
+            updateMainImage();
+            updateThumbnails();
+            updateCounter();
+        }
+        
+        function previousImage() {
+            currentIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+            updateMainImage();
+            updateThumbnails();
+            updateCounter();
+        }
+        
+        function nextImage() {
+            currentIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+            updateMainImage();
+            updateThumbnails();
+            updateCounter();
+        }
+        
+        function updateMainImage() {
+            document.getElementById('mainImage').src = images[currentIndex];
+        }
+        
+        function updateThumbnails() {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                if (index === currentIndex) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+        
+        function updateCounter() {
+            document.getElementById('imageCounter').textContent = `${currentIndex + 1} / ${images.length}`;
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                previousImage();
+            } else if (e.key === 'ArrowRight') {
+                nextImage();
+            }
+        });
+        
+        // Auto-play demo (optional)
+        // setInterval(nextImage, 3000);
+    </script>
+</body>
+</html>

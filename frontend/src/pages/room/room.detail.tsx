@@ -3,11 +3,42 @@ import { useParams } from "react-router-dom"
 import BreadcrumbArea from "../../components/breadcrumb-area"
 import api from "../../services/api"
 
+interface RoomImage {
+  imageId?: number;
+  imageUrl: string;
+  altText?: string;
+  isPrimary?: boolean;
+}
+
+interface Room {
+  roomId?: number;
+  id?: number;
+  roomNumber?: string;
+  roomTypeName?: string;
+  price?: number;
+  priceAsDouble?: number;
+  capacity?: number;
+  description?: string;
+  images?: RoomImage[];
+  roomDetail?: {
+    roomSize?: string;
+    bedType?: string;
+    wifiSpeed?: string;
+    airConditioning?: boolean;
+    minibar?: boolean;
+    balcony?: boolean;
+    oceanView?: boolean;
+    petFriendly?: boolean;
+    smokingAllowed?: boolean;
+  };
+}
+
 const RoomDetail = () => {
   const { id } = useParams()
-  const [room, setRoom] = useState<any>(null)
+  const [room, setRoom] = useState<Room | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -30,21 +61,50 @@ const RoomDetail = () => {
     if (id) fetchDetail()
   }, [id])
 
+  // Get all images or create fallback
+  const allImages = room?.images && room.images.length > 0 
+    ? room.images 
+    : [{ imageUrl: '/src/assets/img/gallery/room-img01.png', altText: 'Room Image' }]
+  
+  const currentImage = allImages[selectedImageIndex] || allImages[0]
+  
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index)
+  }
+  
+  const handlePreviousImage = () => {
+    setSelectedImageIndex(prev => 
+      prev === 0 ? allImages.length - 1 : prev - 1
+    )
+  }
+  
+  const handleNextImage = () => {
+    setSelectedImageIndex(prev => 
+      prev === allImages.length - 1 ? 0 : prev + 1
+    )
+  }
+
+  // Keyboard navigation for image gallery
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (allImages.length <= 1) return
+      
+      if (e.key === 'ArrowLeft') {
+        handlePreviousImage()
+      } else if (e.key === 'ArrowRight') {
+        handleNextImage()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [allImages.length])
+
   if (loading) return <div style={{ padding: 24, textAlign: 'center' }}>Đang tải chi tiết phòng...</div>
   if (error) return <div style={{ padding: 24, textAlign: 'center', color: '#b91c1c' }}>{error}</div>
   if (!room) return null
 
-  const primaryImg = room.images?.find((i: any) => i.isPrimary)?.imageUrl || room.images?.[0]?.imageUrl
   const priceText = (room.price?.toLocaleString?.() || room.price || room.priceAsDouble)?.toString()
-  const formatDate = (d: any) => {
-    try {
-      const dt = typeof d === 'string' ? new Date(d) : d
-      if (!dt || isNaN(dt as any)) return ''
-      return new Date(dt).toLocaleString()
-    } catch {
-      return ''
-    }
-  }
 
   return (
     <>
@@ -62,33 +122,14 @@ const RoomDetail = () => {
                       <div className="contact-bg">
                         <form className="contact-form mt-30" onSubmit={(e) => e.preventDefault()}>
                           <div className="row">
-                            <div className="col-lg-12">
-                              <div className="contact-field p-relative c-name mb-20">
-                                <label><i className="fal fa-badge-check" /> Check In Date</label>
-                                <input type="date" name="checkin" />
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="contact-field p-relative c-subject mb-20">
-                                <label><i className="fal fa-times-octagon" /> Check Out Date</label>
-                                <input type="date" name="checkout" />
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="contact-field p-relative c-subject mb-20">
-                                <label><i className="fal fa-users" /> Adults</label>
-                                <select name="adults" defaultValue={2}>
-                                  <option value={1}>1</option>
-                                  <option value={2}>2</option>
-                                  <option value={3}>3</option>
-                                  <option value={4}>4</option>
-                                  <option value={5}>5</option>
-                                </select>
-                              </div>
-                            </div>
+                            
+                           
+                            
                             <div className="col-lg-12">
                               <div className="slider-btn mt-15">
-                                <button className="btn ss-btn"><span>Book This Room</span></button>
+                              <div className="mb-50">
+                    <a href="/booking" className="btn ss-btn">Book This Room</a>
+                  </div>
                               </div>
                             </div>
                           </div>
@@ -106,17 +147,166 @@ const RoomDetail = () => {
             {/* #right side end */}
             <div className="col-lg-8 col-md-12 col-sm-12 order-1">
               <div className="service-detail">
-                <div className="two-column">
-                  <div className="row">
-                    <div className="image-column col-xl-6 col-lg-12 col-md-12">
-                      <figure className="image"><img src={primaryImg} alt="room" /></figure>
+                {/* Image Gallery */}
+                <div className="room-gallery" style={{ marginBottom: '2rem' }}>
+                  {/* Main Image */}
+                  <div className="main-image-container" style={{ 
+                    marginBottom: '1rem',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+                    position: 'relative'
+                  }}>
+                    <img 
+                      src={currentImage.imageUrl} 
+                      alt={currentImage.altText || `Room ${room.roomNumber}`}
+                      style={{
+                        width: '100%',
+                        height: '400px',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease-in-out'
+                      }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MDAgMjAwQzQwMCAxNzkuMDQ1IDQxNy4wNDUgMTYyIDQzOCAxNjJDNDU4Ljk1NSAxNjIgNDc2IDE3OS4wNDUgNDc2IDIwMEM0NzYgMjIwLjk1NSA0NTguOTU1IDIzOCA0MzggMjM4QzQxNy4wNDUgMjM4IDQwMCAyMjAuOTU1IDQwMCAyMDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zNTAgMjgwSDQ1MFYzMjBIMzUwVjI4MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                      }}
+                    />
+                    
+                    {/* Navigation Arrows */}
+                    {allImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={handlePreviousImage}
+                          style={{
+                            position: 'absolute',
+                            left: '15px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '18px',
+                            transition: 'all 0.2s ease-in-out',
+                            zIndex: 10
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                            e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                            e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                          }}
+                        >
+                          ‹
+                        </button>
+                        <button
+                          onClick={handleNextImage}
+                          style={{
+                            position: 'absolute',
+                            right: '15px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '18px',
+                            transition: 'all 0.2s ease-in-out',
+                            zIndex: 10
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                            e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                            e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                          }}
+                        >
+                          ›
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Thumbnail Gallery */}
+                  {allImages.length > 1 && (
+                    <div className="thumbnail-gallery" style={{
+                      display: 'flex',
+                      gap: '0.75rem',
+                      overflowX: 'auto',
+                      padding: '0.5rem 0',
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: '#cbd5e1 #f1f5f9'
+                    }}>
+                      {allImages.map((img, index) => (
+                        <div
+                          key={img.imageId || index}
+                          onClick={() => handleImageClick(index)}
+                          style={{
+                            minWidth: '80px',
+                            height: '80px',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                            border: selectedImageIndex === index ? '3px solid #644222' : '2px solid #e5e7eb',
+                            transition: 'all 0.2s ease-in-out',
+                            opacity: selectedImageIndex === index ? 1 : 0.7
+                          }}
+                          onMouseOver={(e) => {
+                            if (selectedImageIndex !== index) {
+                              e.currentTarget.style.opacity = '0.9';
+                              e.currentTarget.style.transform = 'scale(1.05)';
+                            }
+                          }}
+                          onMouseOut={(e) => {
+                            if (selectedImageIndex !== index) {
+                              e.currentTarget.style.opacity = '0.7';
+                              e.currentTarget.style.transform = 'scale(1)';
+                            }
+                          }}
+                        >
+                          <img 
+                            src={img.imageUrl} 
+                            alt={img.altText || `Thumbnail ${index + 1}`}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA0MEM0MCAzNS41ODE3IDQzLjU4MTcgMzIgNDggMzJDNTIuNDE4MyAzMiA1NiAzNS41ODE3IDU2IDQwQzU2IDQ0LjQxODMgNTIuNDE4MyA0OCA0OCA0OEM0My41ODE3IDQ4IDQwIDQ0LjQxODMgNDAgNDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zNSA1NUg0NVY2NUgzNVY1NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                            }}
+                          />
                     </div>
-                    <div className="text-column col-xl-6 col-lg-12 col-md-12">
-                      {room.images?.slice(0, 2).map((img: any) => (
-                        <figure className="image" key={img.imageId || img.imageUrl}><img src={img.imageUrl} alt={img.altText || ''} /></figure>
                       ))}
                     </div>
+                  )}
+                  
+                  {/* Image Counter */}
+                  {allImages.length > 1 && (
+                    <div style={{
+                      textAlign: 'center',
+                      marginTop: '0.5rem',
+                      color: '#6b7280',
+                      fontSize: '0.875rem'
+                    }}>
+                      {selectedImageIndex + 1} / {allImages.length}
                   </div>
+                  )}
                 </div>
                 <div className="content-box">
                   <div className="row align-items-center mb-50">
@@ -149,9 +339,7 @@ const RoomDetail = () => {
                   </ul>
                   <h3>Children and extra beds.</h3>
                   <p>Children are welcome. Rollaway/extra beds may be available upon request.</p>
-                  <div className="mb-50">
-                    <a href="/booking" className="btn ss-btn">Book This Room</a>
-                  </div>
+                  
                 </div>
               </div>
             </div>

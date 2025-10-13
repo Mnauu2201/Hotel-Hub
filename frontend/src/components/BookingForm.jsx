@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BookingForm = ({ room, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +10,20 @@ const BookingForm = ({ room, onSubmit, onCancel }) => {
     guestEmail: '',
     guestPhone: ''
   });
+
+  useEffect(() => {
+    // Auto-fill form with search criteria if available
+    const storedSearch = localStorage.getItem('searchCriteria');
+    if (storedSearch) {
+      const searchCriteria = JSON.parse(storedSearch);
+      setFormData(prev => ({
+        ...prev,
+        checkIn: searchCriteria.checkIn || '',
+        checkOut: searchCriteria.checkOut || '',
+        guests: searchCriteria.guests || 1
+      }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
