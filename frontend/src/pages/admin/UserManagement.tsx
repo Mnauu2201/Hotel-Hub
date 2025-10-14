@@ -22,9 +22,28 @@ const UserManagement: React.FC = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [notification, setNotification] = useState<{type: 'success' | 'error' | 'info', message: string} | null>(null);
   const [actionLoading, setActionLoading] = useState<{userId: number, action: string} | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark-mode'));
 
   useEffect(() => {
     fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.body.classList.contains('dark-mode'));
+    };
+
+    // Check initial state
+    checkDarkMode();
+
+    // Listen for class changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
@@ -178,12 +197,22 @@ const UserManagement: React.FC = () => {
     // Đảm bảo roles là array
     const rolesArray = Array.isArray(roles) ? roles : [];
     
+    const badgeStyle = isDarkMode ? {
+      backgroundColor: '#e3f2fd',
+      color: '#1976d2',
+      border: '1px solid #bbdefb'
+    } : {
+      backgroundColor: '#f8f9fa',
+      color: '#2c3e50',
+      border: '1px solid #dee2e6'
+    };
+    
     if (rolesArray.includes('ROLE_ADMIN')) {
-      return <span className="role-badge role-admin">Admin</span>;
+      return <span className="role-badge role-admin" style={badgeStyle}>Admin</span>;
     } else if (rolesArray.includes('ROLE_STAFF')) {
-      return <span className="role-badge role-staff">Staff</span>;
+      return <span className="role-badge role-staff" style={badgeStyle}>Staff</span>;
     } else {
-      return <span className="role-badge role-customer">Customer</span>;
+      return <span className="role-badge role-customer" style={badgeStyle}>Customer</span>;
     }
   };
 
