@@ -78,13 +78,17 @@ public class AuthController {
                                         .map(role -> role.getName())
                                         .toList();
 
+                        // ✅ Kiểm tra nếu user có role ADMIN hoặc STAFF thì token không hết hạn
+                        boolean isAdminOrStaff = roles.contains("ROLE_ADMIN") || roles.contains("ROLE_STAFF");
+                        long expiresIn = isAdminOrStaff ? -1 : 3600; // -1 = không hết hạn
+
                         JwtResponse response = JwtResponse.builder()
                                         .accessToken(accessToken)
                                         .refreshToken(rt.getToken())
                                         .email(user.getEmail())
                                         .name(user.getName())
                                         .roles(roles)
-                                        .expiresIn(3600) // 1 hour
+                                        .expiresIn(expiresIn) // -1 cho admin/staff, 3600 cho customer
                                         .build();
 
                         return ResponseEntity.ok(response);
