@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { userLogin, userRegister } from '../services/userService';
+import { userLogin, userRegister, updateUserProfile } from '../services/userService';
 
 interface User {
   email: string;
   name: string;
+  phone?: string;
   roles: string[];
 }
 
@@ -14,6 +15,7 @@ interface AuthContextType {
   loading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<any>;
   register: (userData: { name: string; email: string; password: string; phone: string }) => Promise<any>;
+  updateProfile: (name: string, phone: string) => Promise<any>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string>;
   getUserAvatar: () => string | null;
@@ -60,6 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const parsedUser = JSON.parse(storedUser);
           const mappedEmail = parsedUser.email || parsedUser.username || parsedUser.emailAddress;
           const mappedName = parsedUser.name || parsedUser.fullName || parsedUser.displayName || '';
+          const mappedPhone = parsedUser.phone || '';
           const mappedRoles = parsedUser.roles || parsedUser.authorities || [];
 
           // Chỉ khởi tạo user nếu có email hợp lệ
@@ -67,6 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser({
               email: mappedEmail,
               name: mappedName,
+              phone: mappedPhone,
               roles: mappedRoles
             });
             setAccessToken(storedAccessToken);
@@ -110,6 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser({
         email: storedUser.email,
         name: storedUser.name,
+        phone: storedUser.phone,
         roles: storedUser.roles
       });
       setAccessToken(storedToken);
@@ -135,6 +140,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await userRegister(userData.email, userData.password, userData.name, userData.phone);
+
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cập nhật thông tin profile
+  const updateProfile = async (name: string, phone: string) => {
+    try {
+      setLoading(true);
+      const response = await updateUserProfile(name, phone);
+
+      // Cập nhật lại thông tin user trong state
+      if (user) {
+        const updatedUser = {
+          ...user,
+          name: name.trim(),
+          phone: phone.trim()
+        };
+        setUser(updatedUser);
+      }
 
       return response;
     } catch (error) {
@@ -199,6 +228,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     login,
     register,
+    updateProfile,
     logout,
     refreshAuthToken,
     getUserAvatar,

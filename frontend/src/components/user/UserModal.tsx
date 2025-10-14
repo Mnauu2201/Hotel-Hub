@@ -3,6 +3,7 @@ import './UserModal.css';
 import { useAuth } from '../../contexts/AuthContext';
 import userApi from '../../services/userApi';
 import { useNavigate } from 'react-router-dom';
+import EditProfileModal from './EditProfileModal';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface UserModalProps {
 }
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
-  const [activeTab, setActiveTab] = useState<'login' | 'register' | 'forgot'>('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'register' | 'forgot' | 'profile'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,8 +21,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -109,6 +111,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      onClose();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   const modalStyle = position ? {
@@ -124,18 +135,29 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
       <div className="user-modal" style={modalStyle}>
         <div className="user-modal-header">
           <div className="user-modal-tabs">
-            <button 
-              className={`user-modal-tab ${activeTab === 'login' ? 'active' : ''}`}
-              onClick={() => setActiveTab('login')}
-            >
-              Đăng nhập
-            </button>
-            <button 
-              className={`user-modal-tab ${activeTab === 'register' ? 'active' : ''}`}
-              onClick={() => setActiveTab('register')}
-            >
-              Đăng ký
-            </button>
+            {user ? (
+              <button 
+                className={`user-modal-tab ${activeTab === 'profile' ? 'active' : ''}`}
+                onClick={() => setActiveTab('profile')}
+              >
+                Thông tin cá nhân
+              </button>
+            ) : (
+              <>
+                <button 
+                  className={`user-modal-tab ${activeTab === 'login' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('login')}
+                >
+                  Đăng nhập
+                </button>
+                <button 
+                  className={`user-modal-tab ${activeTab === 'register' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('register')}
+                >
+                  Đăng ký
+                </button>
+              </>
+            )}
           </div>
           <button className="user-modal-close" onClick={onClose}>×</button>
         </div>
@@ -253,8 +275,51 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, position }) => {
               </div>
             </form>
           )}
+
+          {activeTab === 'profile' && user && (
+            <div className="profile-info">
+              <div className="user-info-display">
+                <div className="user-info-item">
+                  <label>Họ và tên:</label>
+                  <span>{user.name || 'Chưa cập nhật'}</span>
+                </div>
+                <div className="user-info-item">
+                  <label>Email:</label>
+                  <span>{user.email}</span>
+                </div>
+                <div className="user-info-item">
+                  <label>Số điện thoại:</label>
+                  <span>{user.phone || 'Chưa cập nhật'}</span>
+                </div>
+              </div>
+              
+              <div className="profile-actions">
+                <button 
+                  className="user-modal-button" 
+                  onClick={() => setShowEditProfile(true)}
+                >
+                  Sửa thông tin
+                </button>
+                <button 
+                  className="user-modal-button user-modal-button-secondary" 
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      {showEditProfile && (
+        <EditProfileModal
+          isOpen={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          position={position}
+        />
+      )}
     </div>
   );
 };

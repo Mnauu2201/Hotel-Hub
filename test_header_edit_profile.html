@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Header Edit Profile Feature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            color: #7a5429;
+            border-bottom: 2px solid #7a5429;
+            padding-bottom: 10px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .api-endpoint {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .highlight {
+            background: #e8f5e9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Test Header Edit Profile Feature</h1>
+    
+    <div class="test-section">
+        <h2 class="test-title">📋 Tính năng đã hoàn thành</h2>
+        <ul class="feature-list">
+            <li>Tích hợp chức năng sửa thông tin trực tiếp vào header dropdown</li>
+            <li>Hiển thị thông tin người dùng hiện tại (tên, email, số điện thoại)</li>
+            <li>Nút "Sửa thông tin" trong dropdown menu</li>
+            <li>Form sửa thông tin inline trong dropdown (không cần modal riêng)</li>
+            <li>Validation cho số điện thoại (10-11 chữ số)</li>
+            <li>Email không thể chỉnh sửa (chỉ hiển thị)</li>
+            <li>Nút "Hủy" và "Lưu" trong form</li>
+            <li>Thông báo lỗi và thành công</li>
+            <li>Loading state khi đang lưu</li>
+            <li>Dropdown tự động mở rộng khi ở chế độ sửa</li>
+            <li>Responsive design</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎨 Giao diện người dùng</h2>
+        <p><strong>Khi chưa đăng nhập:</strong> Hiển thị "Đăng Nhập" - click để mở modal đăng nhập</p>
+        <p><strong>Khi đã đăng nhập:</strong> Hiển thị avatar/icon user - click để mở dropdown menu</p>
+        
+        <h3>Dropdown Menu có 2 chế độ:</h3>
+        <div class="code-block">
+            <strong>1. Chế độ xem thông tin:</strong>
+            - Hiển thị tên, email, số điện thoại
+            - Nút "Sửa thông tin" 
+            - Link "Phòng đã đặt"
+            - Nút "Đăng xuất"
+
+            <strong>2. Chế độ sửa thông tin:</strong>
+            - Form với các trường: Họ tên, Số điện thoại, Email (disabled)
+            - Nút "Hủy" và "Lưu"
+            - Thông báo lỗi/thành công
+            - Dropdown tự động mở rộng (320px)
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔧 API Backend</h2>
+        <div class="api-endpoint">
+            <strong>Endpoint:</strong> PUT /api/users/me<br>
+            <strong>Headers:</strong> Authorization: Bearer {accessToken}<br>
+            <strong>Body:</strong> { "name": "string", "phone": "string" }<br>
+            <strong>Response:</strong> UserResponse object với thông tin đã cập nhật
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">📱 Cách sử dụng</h2>
+        <ol>
+            <li><span class="highlight">Đăng nhập</span> vào hệ thống</li>
+            <li><span class="highlight">Click vào avatar/icon user</span> ở header (góc phải)</li>
+            <li>Dropdown menu sẽ hiện với thông tin cá nhân</li>
+            <li><span class="highlight">Click "Sửa thông tin"</span> để chuyển sang chế độ chỉnh sửa</li>
+            <li>Form sửa thông tin sẽ hiện trong dropdown</li>
+            <li>Chỉnh sửa <span class="highlight">tên và số điện thoại</span></li>
+            <li><span class="highlight">Click "Lưu"</span> để cập nhật thông tin</li>
+            <li>Thông tin sẽ được cập nhật ngay lập tức</li>
+            <li><span class="highlight">Click "Hủy"</span> để quay lại chế độ xem</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">✨ Ưu điểm của cách tiếp cận mới</h2>
+        <ul class="feature-list">
+            <li><strong>Không cần modal riêng:</strong> Tất cả trong dropdown menu</li>
+            <li><strong>Giao diện gọn gàng:</strong> Không chiếm nhiều không gian màn hình</li>
+            <li><strong>Trải nghiệm mượt mà:</strong> Chuyển đổi giữa xem và sửa ngay trong dropdown</li>
+            <li><strong>Responsive tốt:</strong> Tự động điều chỉnh kích thước</li>
+            <li><strong>Dễ sử dụng:</strong> Chỉ cần 2 click để sửa thông tin</li>
+            <li><strong>Tích hợp hoàn hảo:</strong> Không cần component riêng</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔍 Files đã sửa đổi</h2>
+        <div class="code-block">
+            <strong>File chính:</strong><br>
+            - frontend/src/components/header/index.tsx<br><br>
+            
+            <strong>Thay đổi chính:</strong><br>
+            - Thêm state quản lý chế độ sửa thông tin<br>
+            - Thêm form sửa thông tin inline trong dropdown<br>
+            - Tích hợp API updateProfile từ AuthContext<br>
+            - Thêm validation và error handling<br>
+            - Cập nhật UI để hiển thị số điện thoại<br>
+            - Tự động điều chỉnh kích thước dropdown
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">⚠️ Lưu ý quan trọng</h2>
+        <div class="note">
+            <strong>Backend API:</strong> Đảm bảo backend đang chạy và endpoint PUT /api/users/me hoạt động đúng.<br>
+            <strong>Authentication:</strong> Cần có accessToken hợp lệ trong localStorage.<br>
+            <strong>Validation:</strong> Số điện thoại phải có 10-11 chữ số.<br>
+            <strong>Email:</strong> Không thể thay đổi email, chỉ có thể sửa tên và số điện thoại.<br>
+            <strong>UI/UX:</strong> Dropdown sẽ tự động mở rộng khi ở chế độ sửa để chứa form.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🚀 Test Steps</h2>
+        <ol>
+            <li>Khởi động backend server</li>
+            <li>Khởi động frontend development server</li>
+            <li>Đăng nhập với tài khoản có sẵn</li>
+            <li>Click vào avatar/icon user ở header</li>
+            <li>Kiểm tra dropdown hiển thị thông tin cá nhân</li>
+            <li>Click "Sửa thông tin"</li>
+            <li>Kiểm tra form sửa thông tin hiện trong dropdown</li>
+            <li>Thay đổi tên và số điện thoại</li>
+            <li>Click "Lưu"</li>
+            <li>Kiểm tra thông tin đã được cập nhật</li>
+            <li>Test validation với số điện thoại không hợp lệ</li>
+            <li>Test nút "Hủy" để quay lại chế độ xem</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎯 Kết quả mong đợi</h2>
+        <ul class="feature-list">
+            <li>Dropdown menu hiển thị thông tin người dùng đầy đủ</li>
+            <li>Form sửa thông tin hiện ngay trong dropdown</li>
+            <li>Validation hoạt động chính xác</li>
+            <li>Thông tin được cập nhật real-time</li>
+            <li>Giao diện responsive trên mọi thiết bị</li>
+            <li>Trải nghiệm người dùng mượt mà và trực quan</li>
+        </ul>
+    </div>
+</body>
+</html>

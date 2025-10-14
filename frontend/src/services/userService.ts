@@ -148,6 +148,57 @@ export const getCurrentUser = () => {
   return null;
 };
 
+// Hàm cập nhật thông tin người dùng
+export const updateUserProfile = async (name: string, phone: string) => {
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      throw new Error('Chưa đăng nhập');
+    }
+
+    const response = await axiosInstance.put('/users/me', {
+      name: name.trim(),
+      phone: phone.trim()
+    }, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log('✅ Profile updated successfully:', response.data);
+    
+    // Cập nhật thông tin user trong localStorage
+    if (response.data) {
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = {
+        ...currentUser,
+        name: response.data.name || currentUser.name,
+        phone: response.data.phone || currentUser.phone
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Lỗi cập nhật thông tin:", error);
+    if (error.response) {
+      // Lỗi từ server với status code
+      if (error.response.status === 401) {
+        throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      }
+      if (error.response.data && error.response.data.phone) {
+        throw new Error(error.response.data.phone);
+      }
+      throw new Error(error.response.data.message || 'Cập nhật thông tin thất bại');
+    } else if (error.request) {
+      throw new Error('Không thể kết nối đến server');
+    } else {
+      throw new Error('Đã xảy ra lỗi khi cập nhật thông tin');
+    }
+  }
+};
+
 // Hàm đăng xuất
 export const logout = () => {
   localStorage.removeItem('userToken');

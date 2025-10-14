@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Edit Profile Feature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            color: #7a5429;
+            border-bottom: 2px solid #7a5429;
+            padding-bottom: 10px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .api-endpoint {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Edit Profile Feature</h1>
+    
+    <div class="test-section">
+        <h2 class="test-title">📋 Tính năng đã hoàn thành</h2>
+        <ul class="feature-list">
+            <li>Tạo API endpoint PUT /api/users/me để cập nhật thông tin người dùng</li>
+            <li>Tạo component EditProfileModal với form sửa thông tin</li>
+            <li>Tích hợp API cập nhật thông tin vào userService.ts</li>
+            <li>Cập nhật AuthContext để hỗ trợ cập nhật profile</li>
+            <li>Thêm tab "Thông tin cá nhân" vào UserModal khi đã đăng nhập</li>
+            <li>Hiển thị thông tin người dùng hiện tại (tên, email, số điện thoại)</li>
+            <li>Nút "Sửa thông tin" mở modal chỉnh sửa</li>
+            <li>Nút "Đăng xuất" để đăng xuất khỏi hệ thống</li>
+            <li>Validation cho số điện thoại (10-11 chữ số)</li>
+            <li>Email không thể chỉnh sửa (chỉ hiển thị)</li>
+            <li>Responsive design cho mobile</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔧 API Backend</h2>
+        <div class="api-endpoint">
+            <strong>Endpoint:</strong> PUT /api/users/me<br>
+            <strong>Headers:</strong> Authorization: Bearer {accessToken}<br>
+            <strong>Body:</strong> { "name": "string", "phone": "string" }<br>
+            <strong>Response:</strong> UserResponse object với thông tin đã cập nhật
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎨 Giao diện người dùng</h2>
+        <p><strong>Khi chưa đăng nhập:</strong> Hiển thị tab "Đăng nhập" và "Đăng ký"</p>
+        <p><strong>Khi đã đăng nhập:</strong> Hiển thị tab "Thông tin cá nhân" với:</p>
+        <ul>
+            <li>Thông tin hiện tại của người dùng</li>
+            <li>Nút "Sửa thông tin" (mở modal chỉnh sửa)</li>
+            <li>Nút "Đăng xuất"</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">📱 Cách sử dụng</h2>
+        <ol>
+            <li>Đăng nhập vào hệ thống</li>
+            <li>Click vào icon user ở header</li>
+            <li>Chọn tab "Thông tin cá nhân"</li>
+            <li>Click "Sửa thông tin" để mở modal chỉnh sửa</li>
+            <li>Chỉnh sửa tên và số điện thoại (email không thể sửa)</li>
+            <li>Click "Cập nhật" để lưu thay đổi</li>
+            <li>Thông tin sẽ được cập nhật ngay lập tức</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔍 Files đã tạo/sửa đổi</h2>
+        <div class="code-block">
+            <strong>Files mới:</strong><br>
+            - frontend/src/components/user/EditProfileModal.tsx<br><br>
+            
+            <strong>Files đã sửa:</strong><br>
+            - frontend/src/services/userService.ts (thêm updateUserProfile)<br>
+            - frontend/src/contexts/AuthContext.tsx (thêm updateProfile)<br>
+            - frontend/src/components/user/UserModal.tsx (thêm tab profile)<br>
+            - frontend/src/components/user/UserModal.css (thêm styles)
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">⚠️ Lưu ý quan trọng</h2>
+        <div class="note">
+            <strong>Backend API:</strong> Đảm bảo backend đang chạy và endpoint PUT /api/users/me hoạt động đúng.<br>
+            <strong>Authentication:</strong> Cần có accessToken hợp lệ trong localStorage.<br>
+            <strong>Validation:</strong> Số điện thoại phải có 10-11 chữ số.<br>
+            <strong>Email:</strong> Không thể thay đổi email, chỉ có thể sửa tên và số điện thoại.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🚀 Test Steps</h2>
+        <ol>
+            <li>Khởi động backend server</li>
+            <li>Khởi động frontend development server</li>
+            <li>Đăng nhập với tài khoản có sẵn</li>
+            <li>Click vào icon user ở header</li>
+            <li>Kiểm tra tab "Thông tin cá nhân" hiển thị</li>
+            <li>Click "Sửa thông tin"</li>
+            <li>Thay đổi tên và số điện thoại</li>
+            <li>Click "Cập nhật"</li>
+            <li>Kiểm tra thông tin đã được cập nhật</li>
+            <li>Test validation với số điện thoại không hợp lệ</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">✨ Tính năng nổi bật</h2>
+        <ul class="feature-list">
+            <li>Modal popup nhỏ gọn như form đăng nhập</li>
+            <li>Giao diện thân thiện và dễ sử dụng</li>
+            <li>Validation real-time</li>
+            <li>Responsive design</li>
+            <li>Tích hợp hoàn hảo với hệ thống authentication hiện có</li>
+            <li>Không cần reload trang sau khi cập nhật</li>
+        </ul>
+    </div>
+</body>
+</html>
