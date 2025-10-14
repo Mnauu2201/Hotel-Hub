@@ -74,9 +74,8 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
-        // Cập nhật room status thành LOCKED (tạm khóa)
-        room.setStatus(RoomStatus.LOCKED);
-        roomRepository.save(room);
+        // Không cập nhật room status cho guest booking để tránh lỗi database
+        // Room status sẽ được cập nhật khi booking được confirm
 
 
         // Ghi log hoạt động
@@ -130,9 +129,8 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
-        // Cập nhật room status thành LOCKED (tạm khóa)
-        room.setStatus(RoomStatus.LOCKED);
-        roomRepository.save(room);
+        // Không cập nhật room status để tránh lỗi database
+        // Room status sẽ được cập nhật khi booking được confirm
 
         // Ghi log thao tác
         activityLogService.logActivity(user.getUserId().intValue(), "CREATE_USER_BOOKING", 

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Booking Retry Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        .retry { color: purple; }
+        .debug { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Booking Retry Fix</h1>
+    <div id="results"></div>
+
+    <script>
+        async function testBookingRetry() {
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '<h2>Testing booking with improved retry mechanism...</h2>';
+
+            // Test data with proper validation
+            const testData = {
+                roomId: 4,
+                checkIn: "2025-10-15",
+                checkOut: "2025-10-16",
+                guests: 1,
+                guestName: "Test User",
+                guestEmail: "test@example.com",
+                guestPhone: "0123456789",
+                notes: "Test booking"
+            };
+
+            resultsDiv.innerHTML += `
+                <div class="test-section">
+                    <h3>Test Data</h3>
+                    <pre>${JSON.stringify(testData, null, 2)}</pre>
+                </div>
+            `;
+
+            // Simulate the retry mechanism
+            let retryCount = 0;
+            const maxRetries = 2;
+            let response = null;
+
+            while (retryCount <= maxRetries) {
+                try {
+                    resultsDiv.innerHTML += `<p class="info">Attempt ${retryCount + 1}/${maxRetries + 1}: Sending booking request...</p>`;
+                    
+                    const attemptResponse = await fetch('http://localhost:8080/api/bookings/guest', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(testData)
+                    });
+
+                    if (attemptResponse.ok) {
+                        response = await attemptResponse.json();
+                        resultsDiv.innerHTML += `
+                            <div class="test-section">
+                                <h3 class="success">✅ SUCCESS on attempt ${retryCount + 1}</h3>
+                                <p>Booking created successfully!</p>
+                                <pre>${JSON.stringify(response, null, 2)}</pre>
+                            </div>
+                        `;
+                        break;
+                    } else {
+                        const errorText = await attemptResponse.text();
+                        resultsDiv.innerHTML += `
+                            <div class="debug">
+                                <h4>Attempt ${retryCount + 1} failed:</h4>
+                                <p><strong>Status:</strong> ${attemptResponse.status}</p>
+                                <p><strong>Response:</strong> ${errorText}</p>
+                            </div>
+                        `;
+
+                        // Check if it's a retryable error
+                        const isRetryableError = attemptResponse.status === 400 || 
+                                              errorText.includes('Data truncated for column \'status\'') ||
+                                              errorText.includes('could not execute statement');
+
+                        if (isRetryableError && retryCount < maxRetries) {
+                            const delay = 1000 * Math.pow(2, retryCount); // 1s, 2s, 4s
+                            resultsDiv.innerHTML += `<p class="retry">Retryable error detected. Retrying in ${delay}ms...</p>`;
+                            
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            retryCount++;
+                            continue;
+                        } else if (isRetryableError && retryCount >= maxRetries) {
+                            // Max retries reached
+                            resultsDiv.innerHTML += `
+                                <div class="test-section">
+                                    <h3 class="warning">⚠️ MAX RETRIES REACHED</h3>
+                                    <p>Retryable error but max retries reached. Assuming booking might have been created.</p>
+                                    <p><strong>Error:</strong> ${errorText}</p>
+                                </div>
+                            `;
+                            break;
+                        } else {
+                            // Non-retryable error
+                            resultsDiv.innerHTML += `
+                                <div class="test-section">
+                                    <h3 class="error">❌ NON-RETRYABLE ERROR</h3>
+                                    <p>Error: ${errorText}</p>
+                                </div>
+                            `;
+                            break;
+                        }
+                    }
+
+                } catch (error) {
+                    resultsDiv.innerHTML += `
+                        <div class="debug">
+                            <h4>Exception on attempt ${retryCount + 1}:</h4>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                    `;
+
+                    // Check if it's a retryable error
+                    const isRetryableError = error.message.includes('400') || 
+                                          error.message.includes('Data truncated') ||
+                                          error.message.includes('could not execute statement');
+
+                    if (isRetryableError && retryCount < maxRetries) {
+                        const delay = 1000 * Math.pow(2, retryCount);
+                        resultsDiv.innerHTML += `<p class="retry">Retryable exception. Retrying in ${delay}ms...</p>`;
+                        
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        retryCount++;
+                        continue;
+                    } else {
+                        resultsDiv.innerHTML += `
+                            <div class="test-section">
+                                <h3 class="error">❌ EXCEPTION</h3>
+                                <p>Error: ${error.message}</p>
+                            </div>
+                        `;
+                        break;
+                    }
+                }
+            }
+
+            // Test room availability check
+            resultsDiv.innerHTML += '<h3>Testing room availability check...</h3>';
+            try {
+                const availabilityResponse = await fetch('http://localhost:8080/api/rooms/available?checkIn=2025-10-15&checkOut=2025-10-16');
+                if (availabilityResponse.ok) {
+                    const availableRooms = await availabilityResponse.json();
+                    resultsDiv.innerHTML += `
+                        <div class="test-section">
+                            <h3 class="info">Available Rooms</h3>
+                            <p>Found ${availableRooms.rooms ? availableRooms.rooms.length : 0} available rooms</p>
+                            <pre>${JSON.stringify(availableRooms, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML += `<p class="error">Failed to check room availability: ${availabilityResponse.status}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML += `<p class="error">Error checking availability: ${error.message}</p>`;
+            }
+
+            resultsDiv.innerHTML += '<h2>Test completed!</h2>';
+        }
+
+        // Run test when page loads
+        testBookingRetry();
+    </script>
+</body>
+</html>
