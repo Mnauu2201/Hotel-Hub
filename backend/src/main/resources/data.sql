@@ -300,3 +300,4 @@ SELECT
     '2025-10-01 09:15:00'
 FROM users u, rooms r
 WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';
+
