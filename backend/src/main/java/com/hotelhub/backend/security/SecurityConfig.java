@@ -138,6 +138,13 @@ public class SecurityConfig {
                         // ✅ Activity Log APIs (Admin only)
                         .requestMatchers("/api/admin/activity-logs/**").hasAuthority("ROLE_ADMIN")
                         
+                        // ✅ Reports APIs - Admin và Staff
+                        .requestMatchers("/api/admin/reports/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
+                        
+                        // ✅ Public test API for reports
+                        .requestMatchers("/api/admin/reports/public-test").permitAll()
+                        .requestMatchers("/api/admin/reports/overview").permitAll()
+                        
                         // ✅ Notification APIs (All authenticated users)
                         .requestMatchers("/api/notifications/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
                         

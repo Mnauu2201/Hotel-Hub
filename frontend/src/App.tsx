@@ -37,7 +37,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BookingManagement from "./pages/admin/BookingManagement";
 import RoomManagement from "./pages/admin/RoomManagement";
 import UserManagement from "./pages/admin/UserManagement";
-import StatisticsReport from "./pages/admin/StatisticsReport";
+import Reports from "./pages/admin/Reports";
 import RoleManagement from "./pages/admin/RoleManagement";
 import SystemSettings from "./pages/admin/SystemSettings";
 import ActivityLog from "./pages/admin/ActivityLog";
@@ -170,7 +170,7 @@ function App() {
       path: "/admin/reports",
       element: (
         <ProtectedRoute requiredRole="ROLE_ADMIN">
-          <StatisticsReport />
+          <Reports />
         </ProtectedRoute>
       ),
     },
