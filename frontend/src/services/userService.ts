@@ -50,6 +50,7 @@ export const userLogin = async (email: string, password: string) => {
       const user = response.data.user || {
         email: response.data.email,
         name: response.data.name,
+        phone: response.data.phone || '',
         roles: response.data.roles
       };
       

@@ -115,17 +115,29 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
+            System.out.println(">>> [DEBUG] JWT Provider: Validating token, length: " + token.length());
+            System.out.println(">>> [DEBUG] JWT Provider: Token start: " + token.substring(0, Math.min(50, token.length())) + "...");
+            
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            System.out.println(">>> [DEBUG] JWT Provider: Token parsed successfully");
+            System.out.println(">>> [DEBUG] JWT Provider: Subject: " + claims.getSubject());
+            System.out.println(">>> [DEBUG] JWT Provider: Expiration: " + claims.getExpiration());
+            System.out.println(">>> [DEBUG] JWT Provider: Issued at: " + claims.getIssuedAt());
             
             // ✅ Kiểm tra nếu token có expiration date
             if (claims.getExpiration() != null) {
                 // Token có expiration, kiểm tra hết hạn
-                return !claims.getExpiration().before(new Date());
+                boolean isValid = !claims.getExpiration().before(new Date());
+                System.out.println(">>> [DEBUG] JWT Provider: Token with expiration, valid: " + isValid);
+                return isValid;
             } else {
                 // Token không có expiration (admin/staff), luôn valid
+                System.out.println(">>> [DEBUG] JWT Provider: Token without expiration (admin/staff), valid: true");
                 return true;
             }
         } catch (JwtException | IllegalArgumentException ex) {
+            System.out.println(">>> [ERROR] JWT Provider: Token validation failed - " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }

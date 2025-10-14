@@ -243,8 +243,18 @@ class UserApiService {
   }
 
   // Cập nhật thông tin người dùng hiện tại
-  async updateProfile(accessToken: string, data: { name?: string; phone?: string }): Promise<any> {
+  async updateProfile(accessToken: string, data: { name?: string; email?: string; phone?: string }): Promise<any> {
     try {
+      console.log('Update profile API call:', {
+        url: `${API_BASE_URL}/users/me`,
+        method: 'PUT',
+        hasToken: !!accessToken,
+        tokenLength: accessToken ? accessToken.length : 0,
+        tokenStart: accessToken ? accessToken.substring(0, 20) + '...' : 'none',
+        data: data,
+        timestamp: new Date().toISOString()
+      });
+
       const response = await fetch(`${API_BASE_URL}/users/me`, {
         method: 'PUT',
         headers: {
@@ -254,13 +264,108 @@ class UserApiService {
         body: JSON.stringify(data),
       });
 
-      const respData = await response.json();
-      if (!response.ok) {
-        throw new Error(respData.message || 'Cập nhật thông tin thất bại');
+      console.log('Update profile response status:', response.status);
+      console.log('Update profile response headers:', Object.fromEntries(response.headers.entries()));
+
+      const responseText = await response.text();
+      console.log('Update profile response text:', responseText);
+
+      let respData;
+      try {
+        respData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', responseText);
+        if (!response.ok) {
+          throw new Error(responseText || 'Cập nhật thông tin thất bại');
+        }
+        return { message: responseText, success: true };
       }
-      return respData;
+
+      if (!response.ok) {
+        console.error('Update profile failed:', respData);
+        if (response.status === 400) {
+          throw new Error(respData.message || 'Dữ liệu không hợp lệ');
+        } else if (response.status === 401) {
+          throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        } else if (response.status === 403) {
+          throw new Error('Không có quyền cập nhật thông tin. Token có thể đã hết hạn hoặc không hợp lệ.');
+        } else if (response.status === 404) {
+          throw new Error('API endpoint không tồn tại. Vui lòng liên hệ quản trị viên.');
+        } else if (response.status === 500) {
+          throw new Error('Lỗi máy chủ. Vui lòng thử lại sau.');
+        } else {
+          throw new Error(respData.message || 'Cập nhật thông tin thất bại');
+        }
+      }
+
+      console.log('Update profile success:', respData);
+      return { ...respData, success: true };
     } catch (error) {
       console.error('Update profile error:', error);
+      throw error;
+    }
+  }
+
+  // Đổi mật khẩu
+  async changePassword(accessToken: string, data: { currentPassword: string; newPassword: string }): Promise<any> {
+    try {
+      console.log('Change password API call:', {
+        url: `${API_BASE_URL}/users/change-password`,
+        method: 'POST',
+        hasToken: !!accessToken,
+        dataKeys: Object.keys(data),
+        timestamp: new Date().toISOString()
+      });
+
+      const response = await fetch(`${API_BASE_URL}/users/change-password`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      console.log('Change password response status:', response.status);
+      console.log('Change password response headers:', Object.fromEntries(response.headers.entries()));
+
+      // Xử lý response text trước khi parse JSON
+      const responseText = await response.text();
+      console.log('Change password response text:', responseText);
+
+      let respData;
+      try {
+        respData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', responseText);
+        if (!response.ok) {
+          throw new Error(responseText || 'Đổi mật khẩu thất bại');
+        }
+        return { message: responseText, success: true };
+      }
+
+      if (!response.ok) {
+        console.error('Change password failed:', respData);
+        // Xử lý các lỗi cụ thể
+        if (response.status === 400) {
+          throw new Error(respData.message || 'Mật khẩu hiện tại không đúng');
+        } else if (response.status === 401) {
+          throw new Error('Phiên đăng nhập đã hết hạn');
+        } else if (response.status === 403) {
+          throw new Error('Không có quyền thay đổi mật khẩu');
+        } else if (response.status === 404) {
+          throw new Error('API endpoint không tồn tại. Vui lòng liên hệ quản trị viên.');
+        } else if (response.status === 500) {
+          throw new Error('Lỗi máy chủ. Vui lòng thử lại sau.');
+        } else {
+          throw new Error(respData.message || 'Đổi mật khẩu thất bại');
+        }
+      }
+
+      console.log('Change password success:', respData);
+      return { ...respData, success: true };
+    } catch (error) {
+      console.error('Change password error:', error);
       throw error;
     }
   }

@@ -32,6 +32,8 @@ import BookingPage from "./pages/BookingPage.jsx";
 import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 // @ts-expect-error JS component
 import MyBookings from "./pages/MyBookings.jsx";
+// @ts-expect-error JS component
+import ProfilePage from "./pages/ProfilePage.jsx";
 import AdminPage from "./pages/AdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BookingManagement from "./pages/admin/BookingManagement";
@@ -131,6 +133,10 @@ function App() {
         {
           path: "/reset-password",
           element: <ResetPasswordPage />,
+        },
+        {
+          path: "/profile",
+          element: <ProfilePage />,
         },
       ]
     },

@@ -6,14 +6,8 @@ import { useAuth } from '../../contexts/AuthContext'
 
 const Header = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const { user, isAuthenticated, logout, getUserAvatar, updateProfile } = useAuth();
+  const { user, isAuthenticated, logout, getUserAvatar } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editPhone, setEditPhone] = useState('');
-  const [editError, setEditError] = useState('');
-  const [editSuccess, setEditSuccess] = useState('');
-  const [editLoading, setEditLoading] = useState(false);
 
   const [userIconPosition, setUserIconPosition] = useState({ top: 0, left: 0 });
 
@@ -37,42 +31,6 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-  };
-
-  const handleEditProfile = () => {
-    setIsEditingProfile(true);
-    setEditName(user?.name || '');
-    setEditPhone(user?.phone || '');
-    setEditError('');
-    setEditSuccess('');
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditingProfile(false);
-    setEditName('');
-    setEditPhone('');
-    setEditError('');
-    setEditSuccess('');
-  };
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setEditError('');
-    setEditSuccess('');
-    setEditLoading(true);
-
-    try {
-      await updateProfile(editName, editPhone);
-      setEditSuccess('Cập nhật thông tin thành công!');
-      setTimeout(() => {
-        setIsEditingProfile(false);
-        setEditSuccess('');
-      }, 1500);
-    } catch (err: any) {
-      setEditError(err?.message || 'Cập nhật thông tin thất bại');
-    } finally {
-      setEditLoading(false);
-    }
   };
 
   return (
@@ -183,7 +141,7 @@ const Header = () => {
                       display: isMenuOpen ? 'block' : 'none',
                       position: 'absolute',
                       backgroundColor: 'white',
-                      minWidth: isEditingProfile ? '320px' : '200px',
+                      minWidth: '200px',
                       boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
                       zIndex: 1,
                       right: 0,
@@ -192,226 +150,50 @@ const Header = () => {
                       padding: '10px 0'
                     }}
                   >
-                    {!isEditingProfile ? (
-                      <>
-                        <div style={{ padding: '10px 16px', borderBottom: '1px solid #eee', marginBottom: '5px' }}>
-                          <div style={{ fontWeight: 'bold' }}>{user?.name}</div>
-                          <div style={{ fontSize: '12px', color: '#666' }}>{user?.email}</div>
-                          {user?.phone && (
-                            <div style={{ fontSize: '12px', color: '#666' }}>📞 {user.phone}</div>
-                          )}
-                        </div>
-                        <div 
-                          onClick={handleEditProfile}
-                          style={{ 
-                            color: '#333',
-                            padding: '12px 16px',
-                            textDecoration: 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            textAlign: 'left',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <i className="fas fa-edit" style={{ marginRight: '10px' }}></i>
-                          Sửa thông tin người dùng
-                        </div>
-                        <Link to="/my-bookings" style={{ 
-                          color: '#333',
-                          padding: '12px 16px',
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          textAlign: 'left'
-                        }}>
-                          <i className="fas fa-calendar-check" style={{ marginRight: '10px' }}></i>
-                          Phòng đã đặt
-                        </Link>
-                        <div 
-                          onClick={handleLogout}
-                          style={{ 
-                            color: '#d32f2f',
-                            padding: '12px 16px',
-                            textDecoration: 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            textAlign: 'left',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <i className="fas fa-sign-out-alt" style={{ marginRight: '10px' }}></i>
-                          Đăng xuất
-                        </div>
-                      </>
-                    ) : (
-                      <div style={{ padding: '0 16px' }}>
-                        <div style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between', 
-                          alignItems: 'center',
-                          marginBottom: '15px',
-                          paddingBottom: '10px',
-                          borderBottom: '1px solid #eee'
-                        }}>
-                          <h4 style={{ margin: 0, fontSize: '16px' }}>Sửa thông tin</h4>
-                          <button 
-                            onClick={handleCancelEdit}
-                            style={{ 
-                              background: 'none', 
-                              border: 'none', 
-                              fontSize: '18px', 
-                              cursor: 'pointer',
-                              color: '#666'
-                            }}
-                          >
-                            ×
-                          </button>
-                        </div>
-
-                        {editError && (
-                          <div style={{ 
-                            background: '#ffebee', 
-                            color: '#d32f2f', 
-                            padding: '8px', 
-                            borderRadius: '4px', 
-                            marginBottom: '10px',
-                            fontSize: '12px'
-                          }}>
-                            {editError}
-                          </div>
-                        )}
-
-                        {editSuccess && (
-                          <div style={{ 
-                            background: '#e8f5e9', 
-                            color: '#2e7d32', 
-                            padding: '8px', 
-                            borderRadius: '4px', 
-                            marginBottom: '10px',
-                            fontSize: '12px'
-                          }}>
-                            {editSuccess}
-                          </div>
-                        )}
-
-                        <form onSubmit={handleSaveProfile}>
-                          <div style={{ marginBottom: '10px' }}>
-                            <label style={{ 
-                              display: 'block', 
-                              marginBottom: '4px', 
-                              fontSize: '12px', 
-                              fontWeight: 'bold' 
-                            }}>
-                              Họ và tên:
-                            </label>
-                            <input
-                              type="text"
-                              value={editName}
-                              onChange={(e) => setEditName(e.target.value)}
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px',
-                                fontSize: '14px'
-                              }}
-                              required
-                            />
-                          </div>
-
-                          <div style={{ marginBottom: '10px' }}>
-                            <label style={{ 
-                              display: 'block', 
-                              marginBottom: '4px', 
-                              fontSize: '12px', 
-                              fontWeight: 'bold' 
-                            }}>
-                              Số điện thoại:
-                            </label>
-                            <input
-                              type="tel"
-                              value={editPhone}
-                              onChange={(e) => setEditPhone(e.target.value)}
-                              pattern="[0-9]{10,11}"
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px',
-                                fontSize: '14px'
-                              }}
-                              required
-                            />
-                          </div>
-
-                          <div style={{ marginBottom: '10px' }}>
-                            <label style={{ 
-                              display: 'block', 
-                              marginBottom: '4px', 
-                              fontSize: '12px', 
-                              fontWeight: 'bold' 
-                            }}>
-                              Email:
-                            </label>
-                            <input
-                              type="email"
-                              value={user?.email || ''}
-                              disabled
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px',
-                                fontSize: '14px',
-                                backgroundColor: '#f5f5f5',
-                                color: '#666'
-                              }}
-                            />
-                            <small style={{ color: '#666', fontSize: '10px' }}>
-                              Email không thể thay đổi
-                            </small>
-                          </div>
-
-                          <div style={{ 
-                            display: 'flex', 
-                            gap: '8px', 
-                            marginTop: '15px' 
-                          }}>
-                            <button
-                              type="button"
-                              onClick={handleCancelEdit}
-                              style={{
-                                flex: 1,
-                                padding: '8px',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px',
-                                backgroundColor: '#f5f5f5',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
-                              Hủy
-                            </button>
-                            <button
-                              type="submit"
-                              disabled={editLoading}
-                              style={{
-                                flex: 1,
-                                padding: '8px',
-                                border: 'none',
-                                borderRadius: '4px',
-                                backgroundColor: editLoading ? '#ccc' : '#7a5429',
-                                color: 'white',
-                                cursor: editLoading ? 'not-allowed' : 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
-                              {editLoading ? 'Đang lưu...' : 'Lưu'}
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    )}
+                    <div style={{ padding: '10px 16px', borderBottom: '1px solid #eee', marginBottom: '5px' }}>
+                      <div style={{ fontWeight: 'bold' }}>{user?.name}</div>
+                      <div style={{ fontSize: '12px', color: '#666' }}>{user?.email}</div>
+                      {user?.phone && (
+                        <div style={{ fontSize: '12px', color: '#666' }}>📞 {user.phone}</div>
+                      )}
+                    </div>
+                    <Link to="/profile" style={{ 
+                      color: '#333',
+                      padding: '12px 16px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'left'
+                    }}>
+                      <i className="fas fa-user" style={{ marginRight: '10px' }}></i>
+                      Thông tin người dùng
+                    </Link>
+                    <Link to="/my-bookings" style={{ 
+                      color: '#333',
+                      padding: '12px 16px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'left'
+                    }}>
+                      <i className="fas fa-calendar-check" style={{ marginRight: '10px' }}></i>
+                      Phòng đã đặt
+                    </Link>
+                    <div 
+                      onClick={handleLogout}
+                      style={{ 
+                        color: '#d32f2f',
+                        padding: '12px 16px',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <i className="fas fa-sign-out-alt" style={{ marginRight: '10px' }}></i>
+                      Đăng xuất
+                    </div>
                   </div>
                 )}
               </div>
