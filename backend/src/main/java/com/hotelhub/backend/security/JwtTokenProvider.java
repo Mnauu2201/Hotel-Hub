@@ -6,7 +6,6 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -45,15 +44,23 @@ public class JwtTokenProvider {
                 .toList();
 
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpirationMs);
+        
+        // ✅ Kiểm tra nếu user có role ADMIN hoặc STAFF thì token không hết hạn
+        boolean isAdminOrStaff = roles.contains("ROLE_ADMIN") || roles.contains("ROLE_STAFF");
+        Date expiry = isAdminOrStaff ? null : new Date(now.getTime() + jwtExpirationMs);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .setSubject(username) // email/username
                 .claim("roles", roles) // thêm roles vào token
                 .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(key, SignatureAlgorithm.HS256);
+        
+        // ✅ Chỉ set expiration nếu không phải admin/staff
+        if (!isAdminOrStaff) {
+            builder.setExpiration(expiry);
+        }
+        
+        return builder.compact();
     }
 
     /**
@@ -65,15 +72,23 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
 
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpirationMs);
+        
+        // ✅ Kiểm tra nếu user có role ADMIN hoặc STAFF thì token không hết hạn
+        boolean isAdminOrStaff = roles.contains("ROLE_ADMIN") || roles.contains("ROLE_STAFF");
+        Date expiry = isAdminOrStaff ? null : new Date(now.getTime() + jwtExpirationMs);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles) // thêm roles
                 .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(key, SignatureAlgorithm.HS256);
+        
+        // ✅ Chỉ set expiration nếu không phải admin/staff
+        if (!isAdminOrStaff) {
+            builder.setExpiration(expiry);
+        }
+        
+        return builder.compact();
     }
 
     /**
@@ -88,6 +103,7 @@ public class JwtTokenProvider {
     /**
      * Lấy roles từ token.
      */
+    @SuppressWarnings("unchecked")
     public List<String> getRolesFromToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody();
@@ -99,8 +115,16 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            
+            // ✅ Kiểm tra nếu token có expiration date
+            if (claims.getExpiration() != null) {
+                // Token có expiration, kiểm tra hết hạn
+                return !claims.getExpiration().before(new Date());
+            } else {
+                // Token không có expiration (admin/staff), luôn valid
+                return true;
+            }
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
