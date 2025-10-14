@@ -16,9 +16,28 @@ const RoleManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark-mode'));
 
   useEffect(() => {
     fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.body.classList.contains('dark-mode'));
+    };
+
+    // Check initial state
+    checkDarkMode();
+
+    // Listen for class changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const fetchRoles = async () => {
@@ -128,7 +147,14 @@ const RoleManagement: React.FC = () => {
                   <tr key={role.id}>
                     <td>{role.id}</td>
                     <td>
-                      <span className="role-name">{role.name}</span>
+                      <span 
+                        className="role-name"
+                        style={{
+                          color: isDarkMode ? '#e2e8f0' : '#6c757d'
+                        }}
+                      >
+                        {role.name}
+                      </span>
                     </td>
                     <td>{role.description}</td>
                     <td>

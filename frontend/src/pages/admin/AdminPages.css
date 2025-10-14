@@ -91,6 +91,55 @@
   background-color: #f8f9fa;
 }
 
+/* Dark mode table */
+.dark-mode .admin-table-container {
+  background: #2d3748;
+}
+
+.dark-mode .admin-table th {
+  background-color: #4a5568;
+  color: #e2e8f0;
+  border-bottom-color: #4a5568;
+}
+
+.dark-mode .admin-table td {
+  color: #e2e8f0;
+  border-bottom-color: #4a5568;
+}
+
+.dark-mode .admin-table tr:hover {
+  background-color: #4a5568;
+}
+
+/* Dark mode filters */
+.dark-mode .admin-filters {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+.dark-mode .filter-group label {
+  color: #e2e8f0;
+}
+
+.dark-mode .filter-select,
+.dark-mode .filter-input {
+  background-color: #4a5568;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.dark-mode .filter-select:focus,
+.dark-mode .filter-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark mode page */
+.dark-mode .admin-page {
+  background-color: #1a202c;
+  color: #e2e8f0;
+}
+
 /* Status Badges */
 .status-badge {
   padding: 0.25rem 0.75rem;
@@ -256,18 +305,39 @@
 }
 
 .role-admin {
-  background-color: #dc3545;
-  color: white;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 1px solid #dee2e6;
 }
 
 .role-staff {
-  background-color: #fd7e14;
-  color: white;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 1px solid #dee2e6;
 }
 
 .role-customer {
-  background-color: #6c757d;
-  color: white;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 1px solid #dee2e6;
+}
+
+/* Dark mode role badges - màu sáng với specificity cao nhất */
+.dark-mode .role-badge,
+.dark-mode .role-badge.role-admin,
+.dark-mode .role-badge.role-staff,
+.dark-mode .role-badge.role-customer,
+.dark-mode .admin-table .role-badge,
+.dark-mode .admin-table td .role-badge,
+body.dark-mode .role-badge,
+body.dark-mode .role-badge.role-admin,
+body.dark-mode .role-badge.role-staff,
+body.dark-mode .role-badge.role-customer,
+body.dark-mode .admin-table .role-badge,
+body.dark-mode .admin-table td .role-badge {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+  border: 1px solid #bbdefb !important;
 }
 
 /* Buttons */
@@ -988,7 +1058,12 @@
 /* Role Management */
 .role-name {
   font-weight: 600;
-  color: #2c3e50;
+  color: #6c757d;
+}
+
+/* Dark mode role name */
+.dark-mode .role-name {
+  color: #e2e8f0 !important;
 }
 
 .permissions-list {
