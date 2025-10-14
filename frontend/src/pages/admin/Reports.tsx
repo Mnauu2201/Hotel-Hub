@@ -109,95 +109,38 @@ const Reports: React.FC = () => {
         return;
       }
       
-      console.log('Token found:', token.substring(0, 20) + '...');
-      console.log('Token length:', token.length);
-      
-      // Decode token to check roles
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Token payload:', payload);
-        console.log('User roles:', payload.roles || payload.authorities);
-      } catch (error) {
-        console.error('Error decoding token:', error);
-      }
 
       const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       };
 
-      console.log('Fetching reports data...');
-      console.log('From date:', fromDate, 'To date:', toDate);
 
-      // Test public API first (no auth required)
-      try {
-        const publicTestRes = await fetch('http://localhost:8080/api/admin/reports/public-test');
-        console.log('Public test API status:', publicTestRes.status);
-        if (publicTestRes.ok) {
-          const publicTestData = await publicTestRes.json();
-          console.log('Public test API response:', publicTestData);
-        } else {
-          console.error('Public test API failed:', publicTestRes.status);
-        }
-      } catch (error) {
-        console.error('Public test API error:', error);
-      }
-
-      // Test API authentication
-      try {
-        const testRes = await fetch('http://localhost:8080/api/admin/reports/test', { headers });
-        console.log('Test API status:', testRes.status);
-        if (testRes.ok) {
-          const testData = await testRes.json();
-          console.log('Test API response:', testData);
-        } else {
-          console.error('Test API failed:', testRes.status);
-        }
-      } catch (error) {
-        console.error('Test API error:', error);
-      }
 
       // Fetch overview data
       try {
         const overviewUrl = `http://localhost:8080/api/admin/reports/overview?fromDate=${fromDate}&toDate=${toDate}`;
-        console.log('Overview URL:', overviewUrl);
-        
         const overviewRes = await fetch(overviewUrl, { headers });
-        console.log('Overview response status:', overviewRes.status);
         
         if (overviewRes.ok) {
           const overviewData = await overviewRes.json();
-          console.log('Overview data received:', overviewData);
           setOverview(overviewData);
-        } else {
-          console.error('Overview API error:', overviewRes.status);
-          const errorText = await overviewRes.text();
-          console.error('Overview error details:', errorText);
         }
       } catch (error) {
-        console.error('Overview fetch error:', error);
+        // Handle error silently
       }
 
       // Fetch monthly revenue data
       try {
         const monthlyUrl = 'http://localhost:8080/api/admin/reports/revenue-monthly?year=2025';
-        console.log('Monthly revenue URL:', monthlyUrl);
-        
         const monthlyRes = await fetch(monthlyUrl, { headers });
-        console.log('Monthly revenue response status:', monthlyRes.status);
         
         if (monthlyRes.ok) {
           const monthlyData = await monthlyRes.json();
-          console.log('Monthly revenue data received:', monthlyData);
-          console.log('Monthly revenue data length:', monthlyData.length);
           setMonthlyRevenue(monthlyData);
-        } else {
-          console.error('Monthly revenue API error:', monthlyRes.status);
-          const errorText = await monthlyRes.text();
-          console.error('Monthly revenue error details:', errorText);
         }
       } catch (error) {
-        console.error('Monthly revenue fetch error:', error);
+        // Handle error silently
       }
 
       // Fetch booking status data
@@ -205,15 +148,10 @@ const Reports: React.FC = () => {
         const statusRes = await fetch(`http://localhost:8080/api/admin/reports/booking-status?fromDate=${fromDate}&toDate=${toDate}`, { headers });
         if (statusRes.ok) {
           const statusData = await statusRes.json();
-          console.log('Booking status data:', statusData);
           setBookingStatus(statusData);
-        } else {
-          console.error('Booking status API error:', statusRes.status);
-          const errorText = await statusRes.text();
-          console.error('Booking status error details:', errorText);
         }
       } catch (error) {
-        console.error('Booking status fetch error:', error);
+        // Handle error silently
       }
 
       // Fetch popular rooms data
@@ -221,19 +159,14 @@ const Reports: React.FC = () => {
         const roomsRes = await fetch(`http://localhost:8080/api/admin/reports/popular-rooms?fromDate=${fromDate}&toDate=${toDate}`, { headers });
         if (roomsRes.ok) {
           const roomsData = await roomsRes.json();
-          console.log('Popular rooms data:', roomsData);
           setPopularRooms(roomsData);
-        } else {
-          console.error('Popular rooms API error:', roomsRes.status);
-          const errorText = await roomsRes.text();
-          console.error('Popular rooms error details:', errorText);
         }
       } catch (error) {
-        console.error('Popular rooms fetch error:', error);
+        // Handle error silently
       }
 
     } catch (error) {
-      console.error('Error fetching reports data:', error);
+      // Handle error silently
     } finally {
       setLoading(false);
     }
@@ -515,12 +448,11 @@ const Reports: React.FC = () => {
             Doanh thu theo tháng
           </h3>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'end', height: '200px' }}>
-            {(monthlyRevenue && monthlyRevenue.length > 0 ? monthlyRevenue : fallbackMonthlyRevenue).slice(0, 6).map((month, index) => {
+            {(monthlyRevenue && monthlyRevenue.length > 0 ? monthlyRevenue : fallbackMonthlyRevenue).map((month, index) => {
               const data = monthlyRevenue && monthlyRevenue.length > 0 ? monthlyRevenue : fallbackMonthlyRevenue;
               const maxRevenue = Math.max(...data.map(m => m.revenue), 1);
               const barHeight = Math.max((month.revenue / maxRevenue) * 150, 10);
               
-              console.log(`Month ${index}: ${month.month}, Revenue: ${month.revenue}, Bar Height: ${barHeight}px`);
               
               return (
                 <div key={index} style={{ flex: 1, textAlign: 'center' }}>

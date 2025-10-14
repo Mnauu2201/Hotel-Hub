@@ -51,10 +51,6 @@ public class ReportController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         
         try {
-            System.out.println("=== DEBUG: Overview API Called ===");
-            System.out.println("FromDate: " + fromDate);
-            System.out.println("ToDate: " + toDate);
-            
             // Nếu không có fromDate, lấy 30 ngày gần nhất
             if (fromDate == null) {
                 fromDate = LocalDate.now().minusDays(30);
@@ -63,44 +59,19 @@ public class ReportController {
             if (toDate == null) {
                 toDate = LocalDate.now();
             }
-            
-            // Tạo final variables để sử dụng trong lambda
-            final LocalDate finalFromDate = fromDate;
-            final LocalDate finalToDate = toDate;
-
-            System.out.println("Start Date: " + fromDate);
-            System.out.println("End Date: " + toDate);
 
             // Tổng đặt phòng - sử dụng method có sẵn
             long totalBookings = bookingRepository.countByCreatedAtBetween(fromDate.atStartOfDay(), toDate.atTime(23, 59, 59));
-            System.out.println("Total bookings: " + totalBookings);
 
             // Tổng doanh thu - sử dụng method có sẵn
             var totalRevenue = bookingRepository.getRevenueByDateRange(fromDate, toDate);
             double revenue = totalRevenue != null ? totalRevenue.doubleValue() : 0.0;
-            System.out.println("Total revenue: " + revenue);
-            
-            // Debug: Kiểm tra tất cả booking trong khoảng thời gian
-            System.out.println("=== DEBUG: All bookings in date range ===");
-            var allBookings = bookingRepository.findAll().stream()
-                .filter(b -> !b.getCheckIn().isBefore(finalFromDate) && !b.getCheckIn().isAfter(finalToDate))
-                .filter(b -> b.getStatus().equals("paid"))
-                .collect(java.util.stream.Collectors.toList());
-            
-            for (var booking : allBookings) {
-                System.out.println("Booking: " + booking.getBookingReference() + 
-                    ", CheckIn: " + booking.getCheckIn() + 
-                    ", Price: " + booking.getTotalPrice() + 
-                    ", Status: " + booking.getStatus());
-            }
 
             // Tổng người dùng - sử dụng method có sẵn
             long totalUsers = userRepository.count();
-            System.out.println("Total users: " + totalUsers);
 
             // Tổng phòng - sử dụng method có sẵn
             long totalRooms = roomRepository.count();
-            System.out.println("Total rooms: " + totalRooms);
 
             Map<String, Object> overview = new HashMap<>();
             overview.put("totalBookings", totalBookings);
@@ -110,7 +81,6 @@ public class ReportController {
             overview.put("fromDate", fromDate);
             overview.put("toDate", toDate);
 
-            System.out.println("Final result: " + overview);
             return ResponseEntity.ok(overview);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Lỗi khi lấy thống kê tổng quan: " + e.getMessage()));
@@ -125,27 +95,12 @@ public class ReportController {
         try {
             List<Map<String, Object>> monthlyRevenue = new ArrayList<>();
             
-            System.out.println("=== DEBUG: Revenue Monthly API ===");
-            System.out.println("Year: " + year);
-            
-            // Debug: Kiểm tra tổng số booking
-            long totalBookings = bookingRepository.count();
-            System.out.println("Total bookings in database: " + totalBookings);
-            
-            // Debug: Kiểm tra booking với status completed
-            long completedBookings = bookingRepository.countByStatus("completed");
-            System.out.println("Completed bookings: " + completedBookings);
-            
             for (int month = 1; month <= 12; month++) {
                 LocalDate startOfMonth = LocalDate.of(year, month, 1);
                 LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
                 
-                System.out.println("Month " + month + ": " + startOfMonth + " to " + endOfMonth);
-                
                 var revenue = bookingRepository.getRevenueByDateRange(startOfMonth, endOfMonth);
-                
                 double monthRevenue = revenue != null ? revenue.doubleValue() : 0.0;
-                System.out.println("Revenue for month " + month + ": " + monthRevenue);
                 
                 Map<String, Object> monthData = new HashMap<>();
                 monthData.put("month", "T" + month);
@@ -156,7 +111,6 @@ public class ReportController {
                 monthlyRevenue.add(monthData);
             }
 
-            System.out.println("Final result: " + monthlyRevenue);
             return ResponseEntity.ok(monthlyRevenue);
         } catch (Exception e) {
             System.out.println("Error in revenue-monthly: " + e.getMessage());
