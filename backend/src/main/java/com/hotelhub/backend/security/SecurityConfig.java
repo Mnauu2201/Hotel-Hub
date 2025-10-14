@@ -138,6 +138,7 @@ public class SecurityConfig {
                         // ✅ Activity Log APIs (Admin only)
                         .requestMatchers("/api/admin/activity-logs/**").hasAuthority("ROLE_ADMIN")
                         
+                        
                         // ✅ Reports APIs - Admin và Staff
                         .requestMatchers("/api/admin/reports/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
                         

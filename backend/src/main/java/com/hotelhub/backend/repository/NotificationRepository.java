@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -56,4 +55,15 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query("DELETE FROM Notification n WHERE n.createdAt < :cutoffDate")
     void deleteOldNotifications(@Param("cutoffDate") LocalDateTime cutoffDate);
+    
+    // ==================== ADMIN FILTERING METHODS ====================
+    
+    // Tìm notifications theo action (admin)
+    Page<Notification> findByAction(String action, Pageable pageable);
+    
+    // Tìm notifications theo isRead (admin)
+    Page<Notification> findByIsRead(boolean isRead, Pageable pageable);
+    
+    // Tìm notifications theo action và isRead (admin)
+    Page<Notification> findByActionAndIsRead(String action, boolean isRead, Pageable pageable);
 }

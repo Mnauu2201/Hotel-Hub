@@ -1185,9 +1185,18 @@ body.dark-mode .admin-table td .role-badge {
 .ip-address {
   font-family: monospace;
   background-color: #f8f9fa;
+  color: #495057;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.8rem;
+  border: 1px solid #dee2e6;
+}
+
+/* Dark mode for IP address */
+body.dark-mode .ip-address {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  border-color: #4a5568;
 }
 
 .action-badge {
@@ -1235,16 +1244,44 @@ body.dark-mode .admin-table td .role-badge {
 .status-success {
   background-color: #d4edda;
   color: #155724;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .status-failed {
   background-color: #f8d7da;
   color: #721c24;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .status-warning {
   background-color: #fff3cd;
   color: #856404;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Dark mode for status badges */
+body.dark-mode .status-success {
+  background-color: #1a4d1a;
+  color: #a8e6a8;
+}
+
+body.dark-mode .status-failed {
+  background-color: #4d1a1a;
+  color: #ffb3b3;
+}
+
+body.dark-mode .status-warning {
+  background-color: #4d3d1a;
+  color: #ffd700;
 }
 
 /* Notifications */

@@ -263,6 +263,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
     
+    
     /**
      * Extract current user ID from JWT token
      */
