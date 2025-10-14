@@ -28,6 +28,14 @@ VALUES ('Test User', 'test@hotelhub.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3R
 ON DUPLICATE KEY UPDATE email = VALUES(email);
 
 -- -------------------------
+-- User staff mặc định
+-- Password: staff123 (đã hash bằng BCrypt)
+-- -------------------------
+INSERT INTO users (name, email, password, phone, enabled, email_verified)
+VALUES ('Staff User', 'staff@hotelhub.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0987654321', 1, 1)
+ON DUPLICATE KEY UPDATE email = VALUES(email);
+
+-- -------------------------
 -- Gán ROLE_ADMIN cho user admin
 -- -------------------------
 INSERT IGNORE INTO user_roles (user_id, role_id)
@@ -42,6 +50,14 @@ INSERT IGNORE INTO user_roles (user_id, role_id)
 SELECT u.user_id, r.role_id
 FROM users u, roles r
 WHERE u.email = 'test@hotelhub.com' AND r.name = 'ROLE_CUSTOMER';
+
+-- -------------------------
+-- Gán ROLE_STAFF cho user staff
+-- -------------------------
+INSERT IGNORE INTO user_roles (user_id, role_id)
+SELECT u.user_id, r.role_id
+FROM users u, roles r
+WHERE u.email = 'staff@hotelhub.com' AND r.name = 'ROLE_STAFF';
 
 -- -------------------------
 -- Loại phòng mặc định

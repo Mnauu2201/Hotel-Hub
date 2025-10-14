@@ -127,6 +127,11 @@ public class SecurityConfig {
                         // ✅ Admin Role Management APIs
                         .requestMatchers("/api/admin/roles/**").hasAuthority("ROLE_ADMIN")
                         
+                        // ✅ User Management APIs (Admin only)
+                        .requestMatchers(HttpMethod.GET, "/api/users/public").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/*/public").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/*/toggle-status").hasAuthority("ROLE_ADMIN")
+                        
                         // ✅ Staff Booking Management APIs  
                         .requestMatchers("/api/staff/bookings/**").hasAnyAuthority("ROLE_STAFF", "ROLE_ADMIN")
                         

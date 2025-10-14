@@ -21,6 +21,7 @@ const UserManagement: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [notification, setNotification] = useState<{type: 'success' | 'error' | 'info', message: string} | null>(null);
+  const [actionLoading, setActionLoading] = useState<{userId: number, action: string} | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -41,18 +42,12 @@ const UserManagement: React.FC = () => {
         return;
       }
       
-      // Debug: Log token info
-      console.log('Token found:', token.substring(0, 20) + '...');
-
       const response = await fetch('/api/users/public', {
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
-      // Debug: Log response info
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
       
       if (response.ok) {
         const data = await response.json();
@@ -83,79 +78,9 @@ const UserManagement: React.FC = () => {
         }
         
         showNotification('error', errorMessage);
-        
-        // Fallback to mock data for development
-        const mockUsers: User[] = [
-          {
-            id: 1,
-            name: 'Nguyễn Văn A',
-            email: 'user1@example.com',
-            phone: '0123456789',
-            enabled: true,
-            emailVerified: true,
-            roles: ['ROLE_CUSTOMER'],
-            createdAt: '2024-01-15'
-          },
-          {
-            id: 2,
-            name: 'Trần Thị B',
-            email: 'user2@example.com',
-            phone: '0987654321',
-            enabled: true,
-            emailVerified: false,
-            roles: ['ROLE_CUSTOMER'],
-            createdAt: '2024-01-20'
-          },
-          {
-            id: 3,
-            name: 'Admin User',
-            email: 'admin@hotelhub.com',
-            phone: '0123456789',
-            enabled: true,
-            emailVerified: true,
-            roles: ['ROLE_ADMIN'],
-            createdAt: '2024-01-01'
-          }
-        ];
-        setUsers(mockUsers);
       }
     } catch (error) {
       showNotification('error', `Lỗi kết nối: ${error}`);
-      
-      // Fallback to mock data for development
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          name: 'Nguyễn Văn A',
-          email: 'user1@example.com',
-          phone: '0123456789',
-          enabled: true,
-          emailVerified: true,
-          roles: ['ROLE_CUSTOMER'],
-          createdAt: '2024-01-15'
-        },
-        {
-          id: 2,
-          name: 'Trần Thị B',
-          email: 'user2@example.com',
-          phone: '0987654321',
-          enabled: true,
-          emailVerified: false,
-          roles: ['ROLE_CUSTOMER'],
-          createdAt: '2024-01-20'
-        },
-        {
-          id: 3,
-          name: 'Admin User',
-          email: 'admin@hotelhub.com',
-          phone: '0123456789',
-          enabled: true,
-          emailVerified: true,
-          roles: ['ROLE_ADMIN'],
-          createdAt: '2024-01-01'
-        }
-      ];
-      setUsers(mockUsers);
     } finally {
       setLoading(false);
     }
@@ -163,6 +88,7 @@ const UserManagement: React.FC = () => {
 
   const handleToggleUserStatus = async (userId: number, currentStatus: boolean) => {
     try {
+      setActionLoading({ userId, action: 'toggle' });
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
@@ -192,6 +118,8 @@ const UserManagement: React.FC = () => {
       }
     } catch (error) {
       showNotification('error', `Lỗi kết nối: ${error}`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -202,6 +130,7 @@ const UserManagement: React.FC = () => {
 
   const handleUpdateUser = async (updatedUser: User) => {
     try {
+      setActionLoading({ userId: updatedUser.id, action: 'update' });
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
@@ -212,6 +141,7 @@ const UserManagement: React.FC = () => {
       const response = await fetch(`/api/users/${updatedUser.id}/public`, {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -221,9 +151,6 @@ const UserManagement: React.FC = () => {
       });
       
       if (response.ok) {
-        const responseData = await response.json();
-        console.log('Update response:', responseData);
-        
         setUsers(users.map(user => 
           user.id === updatedUser.id ? updatedUser : user
         ));
@@ -236,14 +163,14 @@ const UserManagement: React.FC = () => {
           const errorData = await response.json();
           errorMessage = errorData.message || errorData.error || errorMessage;
         } catch (parseError) {
-          console.error('Error parsing response:', parseError);
           errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
         }
         showNotification('error', `Lỗi: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Update user error:', error);
       showNotification('error', `Lỗi kết nối: ${error}`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -341,12 +268,25 @@ const UserManagement: React.FC = () => {
                       <button 
                         className="btn-action btn-toggle"
                         onClick={() => handleToggleUserStatus(user.id, user.enabled)}
+                        disabled={actionLoading?.userId === user.id && actionLoading?.action === 'toggle'}
+                        style={{
+                          opacity: actionLoading?.userId === user.id && actionLoading?.action === 'toggle' ? 0.6 : 1,
+                          cursor: actionLoading?.userId === user.id && actionLoading?.action === 'toggle' ? 'not-allowed' : 'pointer'
+                        }}
                       >
-                        {user.enabled ? '🔒 Khóa' : '🔓 Mở khóa'}
+                        {actionLoading?.userId === user.id && actionLoading?.action === 'toggle' 
+                          ? '⏳ Đang xử lý...' 
+                          : (user.enabled ? '🔒 Khóa' : '🔓 Mở khóa')
+                        }
                       </button>
                       <button 
                         className="btn-action btn-edit"
                         onClick={() => handleEditUser(user)}
+                        disabled={actionLoading?.userId === user.id}
+                        style={{
+                          opacity: actionLoading?.userId === user.id ? 0.6 : 1,
+                          cursor: actionLoading?.userId === user.id ? 'not-allowed' : 'pointer'
+                        }}
                       >
                         ✏️ Sửa
                       </button>
@@ -659,6 +599,7 @@ const UserManagement: React.FC = () => {
                     <button 
                       type="submit" 
                       className="btn-save"
+                      disabled={actionLoading?.userId === editingUser.id && actionLoading?.action === 'update'}
                       style={{
                         padding: '10px 20px',
                         backgroundColor: document.body.classList.contains('dark-mode') ? '#3b82f6' : '#2563eb',
@@ -667,17 +608,23 @@ const UserManagement: React.FC = () => {
                         borderRadius: '8px',
                         fontSize: '14px',
                         fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
+                        cursor: actionLoading?.userId === editingUser.id && actionLoading?.action === 'update' ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s ease',
+                        opacity: actionLoading?.userId === editingUser.id && actionLoading?.action === 'update' ? 0.6 : 1
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#2563eb' : '#1d4ed8';
+                        if (!(actionLoading?.userId === editingUser.id && actionLoading?.action === 'update')) {
+                          e.currentTarget.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#2563eb' : '#1d4ed8';
+                        }
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#3b82f6' : '#2563eb';
                       }}
                     >
-                      💾 Lưu thay đổi
+                      {actionLoading?.userId === editingUser.id && actionLoading?.action === 'update' 
+                        ? '⏳ Đang lưu...' 
+                        : '💾 Lưu thay đổi'
+                      }
                     </button>
                   </div>
                 </form>
