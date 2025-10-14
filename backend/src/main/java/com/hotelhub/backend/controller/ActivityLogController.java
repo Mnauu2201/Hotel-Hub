@@ -41,8 +41,32 @@ public class ActivityLogController {
         
         Page<ActivityLog> logs = activityLogService.getAllLogs(pageable);
         
+        // Transform logs to include user information properly
+        List<Map<String, Object>> transformedLogs = logs.getContent().stream()
+            .map(log -> {
+                Map<String, Object> logMap = new HashMap<>();
+                logMap.put("logId", log.getLogId());
+                logMap.put("userId", log.getUserId());
+                logMap.put("action", log.getAction());
+                logMap.put("detail", log.getDetail());
+                logMap.put("createdAt", log.getCreatedAt());
+                
+                // Add user information if available
+                if (log.getUser() != null) {
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put("name", log.getUser().getName());
+                    userMap.put("email", log.getUser().getEmail());
+                    logMap.put("user", userMap);
+                } else {
+                    logMap.put("user", null);
+                }
+                
+                return logMap;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
         Map<String, Object> response = new HashMap<>();
-        response.put("logs", logs.getContent());
+        response.put("logs", transformedLogs);
         response.put("currentPage", logs.getNumber());
         response.put("totalItems", logs.getTotalElements());
         response.put("totalPages", logs.getTotalPages());
