@@ -105,3 +105,198 @@ INSERT IGNORE INTO room_amenities (room_id, amenity_id)
 SELECT r.room_id, a.amenity_id
 FROM rooms r, amenities a
 WHERE r.room_number = '201' AND a.name IN ('WiFi', 'Air Conditioning', 'Mini Bar', 'TV');
+
+-- -------------------------
+-- Dữ liệu booking test để hiển thị doanh thu
+-- -------------------------
+
+-- Booking 1: Tháng 9/2025 - Đã xác nhận
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-09-15',
+    '2025-09-17',
+    1000000,
+    'confirmed',
+    'Nguyễn Văn A',
+    'nguyenvana@email.com',
+    '0123456789',
+    '2025-09-10 10:00:00',
+    '2025-09-10 10:00:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '101';
+
+-- Booking 2: Tháng 9/2025 - Đã thanh toán
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-09-20',
+    '2025-09-22',
+    1600000,
+    'paid',
+    'Trần Thị B',
+    'tranthib@email.com',
+    '0987654321',
+    '2025-09-15 14:30:00',
+    '2025-09-15 14:30:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '102';
+
+-- Booking 3: Tháng 10/2025 - Đã xác nhận
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-05',
+    '2025-10-07',
+    3000000,
+    'confirmed',
+    'Lê Văn C',
+    'levanc@email.com',
+    '0369852147',
+    '2025-10-01 09:15:00',
+    '2025-10-01 09:15:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';
+
+-- Booking 4: Tháng 10/2025 - Đã thanh toán
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-12',
+    '2025-10-15',
+    4500000,
+    'paid',
+    'Phạm Thị D',
+    'phamthid@email.com',
+    '0741258963',
+    '2025-10-08 16:45:00',
+    '2025-10-08 16:45:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';
+
+-- Booking 5: Tháng 10/2025 - Đã xác nhận (thêm doanh thu)
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-20',
+    '2025-10-22',
+    1000000,
+    'confirmed',
+    'Hoàng Văn E',
+    'hoangvane@email.com',
+    '0521478963',
+    '2025-10-18 11:20:00',
+    '2025-10-18 11:20:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '101';
+
+-- Booking 6: Tháng 10/2025 - Đã thanh toán (thêm doanh thu)
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-25',
+    '2025-10-28',
+    2400000,
+    'paid',
+    'Vũ Thị F',
+    'vuthif@email.com',
+    '0852369741',
+    '2025-10-22 13:30:00',
+    '2025-10-22 13:30:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '102';
+
+-- Booking 7: Tháng 11/2025 - Đã xác nhận (dữ liệu tương lai)
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-11-10',
+    '2025-11-12',
+    3000000,
+    'confirmed',
+    'Đặng Văn G',
+    'dangvang@email.com',
+    '0963258741',
+    '2025-11-05 08:45:00',
+    '2025-11-05 08:45:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';
+
+-- Booking 8: Tháng 12/2025 - Đã thanh toán (dữ liệu tương lai)
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-12-15',
+    '2025-12-18',
+    4500000,
+    'paid',
+    'Bùi Thị H',
+    'buithih@email.com',
+    '0147852963',
+    '2025-12-10 15:20:00',
+    '2025-12-10 15:20:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';
+
+-- -------------------------
+-- Thêm booking đã hoàn thành để test doanh thu
+-- -------------------------
+
+-- Booking 9: Tháng 9/2025 - Đã hoàn thành
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-09-10',
+    '2025-09-12',
+    2000000,
+    'completed',
+    'Nguyễn Văn I',
+    'nguyenvani@email.com',
+    '0123456789',
+    '2025-09-05 10:00:00',
+    '2025-09-05 10:00:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '101';
+
+-- Booking 10: Tháng 10/2025 - Đã hoàn thành
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-01',
+    '2025-10-03',
+    3500000,
+    'completed',
+    'Trần Thị J',
+    'tranthij@email.com',
+    '0987654321',
+    '2025-09-25 14:30:00',
+    '2025-09-25 14:30:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '102';
+
+-- Booking 11: Tháng 10/2025 - Đã hoàn thành
+INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status, guest_name, guest_email, guest_phone, created_at, updated_at)
+SELECT 
+    u.user_id,
+    r.room_id,
+    '2025-10-08',
+    '2025-10-10',
+    5000000,
+    'completed',
+    'Lê Văn K',
+    'levank@email.com',
+    '0369852147',
+    '2025-10-01 09:15:00',
+    '2025-10-01 09:15:00'
+FROM users u, rooms r
+WHERE u.email = 'test@hotelhub.com' AND r.room_number = '201';

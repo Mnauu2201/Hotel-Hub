@@ -108,10 +108,7 @@ public class AdminBookingService {
         
         // Doanh thu hôm nay
         LocalDate today = LocalDate.now();
-        BigDecimal todayRevenue = bookingRepository.getRevenueByDateRange(
-            today.atStartOfDay(), 
-            today.atTime(23, 59, 59)
-        );
+        BigDecimal todayRevenue = bookingRepository.getRevenueByDateRange(today, today);
         stats.put("todayRevenue", todayRevenue != null ? todayRevenue : BigDecimal.ZERO);
         
         // Booking hôm nay
@@ -139,10 +136,7 @@ public class AdminBookingService {
         }
         
         // Tổng doanh thu trong khoảng thời gian
-        BigDecimal totalRevenue = bookingRepository.getRevenueByDateRange(
-            startDate.atStartOfDay(), 
-            endDate.atTime(23, 59, 59)
-        );
+        BigDecimal totalRevenue = bookingRepository.getRevenueByDateRange(startDate, endDate);
         revenue.put("totalRevenue", totalRevenue != null ? totalRevenue : BigDecimal.ZERO);
         
         return revenue;
