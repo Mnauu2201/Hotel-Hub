@@ -4,6 +4,21 @@ import { useAuth } from '../contexts/AuthContext';
 import userApi from '../services/userApi';
 import bookingService from '../services/bookingService';
 import fallbackRoomImg from '../assets/img/gallery/room-img01.png';
+import roomImg02 from '../assets/img/gallery/room-img02.png';
+import roomImg03 from '../assets/img/gallery/room-img03.png';
+import roomImg04 from '../assets/img/gallery/room-img04.png';
+import roomImg05 from '../assets/img/gallery/room-img05.png';
+import roomImg06 from '../assets/img/gallery/room-img06.png';
+import portfolioImg01 from '../assets/img/gallery/protfolio-img01.png';
+import portfolioImg02 from '../assets/img/gallery/protfolio-img02.png';
+import portfolioImg03 from '../assets/img/gallery/protfolio-img03.png';
+import portfolioImg04 from '../assets/img/gallery/protfolio-img04.png';
+import portfolioImg05 from '../assets/img/gallery/protfolio-img05.png';
+import portfolioImg06 from '../assets/img/gallery/protfolio-img06.png';
+import portfolioImg07 from '../assets/img/gallery/protfolio-img07.png';
+import portfolioImg08 from '../assets/img/gallery/protfolio-img08.png';
+import portfolioImg09 from '../assets/img/gallery/protfolio-img09.png';
+import portfolioImg10 from '../assets/img/gallery/protfolio-img10.png';
 
 const BookingPage = () => {
   const navigate = useNavigate();
@@ -15,6 +30,7 @@ const BookingPage = () => {
   const themeAccent = '#8a643f';
 
   const [selectedRooms, setSelectedRooms] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     checkIn: '',
     checkOut: '',
@@ -55,8 +71,10 @@ const BookingPage = () => {
   useEffect(() => {
     if (location.state?.selectedRooms && Array.isArray(location.state.selectedRooms)) {
       setSelectedRooms(location.state.selectedRooms);
+      setSelectedImageIndex(0);
     } else if (location.state?.room) {
       setSelectedRooms([location.state.room]);
+      setSelectedImageIndex(0);
     }
 
     // Prefill form data if user is authenticated
@@ -342,6 +360,17 @@ const BookingPage = () => {
                                 {availableRooms.slice(0, 4).map((room, idx) => (
                                   <div className="col-md-6" key={idx}>
                                     <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                                      {/* Room image */}
+                                      <div style={{ width: '100%', height: 120, borderRadius: 8, overflow: 'hidden', marginBottom: 8 }}>
+                                        <img 
+                                          src={room.images?.[0]?.imageUrl || fallbackRoomImg} 
+                                          alt="Room" 
+                                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                          onError={(e) => {
+                                            e.target.src = fallbackRoomImg;
+                                          }}
+                                        />
+                                      </div>
                                       <div style={{ fontWeight: 700, color: themeColor }}>{room.roomTypeName || room.roomType?.name || 'Phòng'}</div>
                                       <div className="text-gray-600" style={{ fontSize: 14 }}>Phòng {room.roomNumber || room.room_number}</div>
                                       <div style={{ fontSize: 14, marginTop: 4 }}>{(room.capacity || room.roomType?.capacity || 0)} khách</div>
@@ -349,7 +378,10 @@ const BookingPage = () => {
                                       <button
                                         className="btn ss-btn w-100 mt-2"
                                         style={{ background: themeColor, borderColor: themeColor }}
-                                        onClick={() => setSelectedRooms([room])}
+                                        onClick={() => {
+                                          setSelectedRooms([room]);
+                                          setSelectedImageIndex(0);
+                                        }}
                                       >
                                         Chọn phòng này
                                       </button>
@@ -368,23 +400,138 @@ const BookingPage = () => {
                   ) : (
                     <div className="space-y-4">
                       {selectedRooms.map((room, index) => (
-                        <div key={index} className="d-flex" style={{ gap: 16, border: '1px solid #f1f1f1', background: '#fcfcfc', padding: 14, borderRadius: 12 }}>
-                          <div style={{ width: 96, height: 96, borderRadius: 8, overflow: 'hidden' }}>
-                            <img src={room.images?.[0]?.imageUrl || fallbackRoomImg} alt="Room" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div key={index} style={{ border: '1px solid #f1f1f1', background: '#fcfcfc', padding: 16, borderRadius: 12 }}>
+                          {/* Room Image Gallery */}
+                          <div style={{ marginBottom: 16 }}>
+                            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                              {/* Main Image */}
+                              <div style={{ flex: 1, maxWidth: '60%' }}>
+                                <div style={{ 
+                                  width: '100%', 
+                                  height: 200, 
+                                  borderRadius: 12, 
+                                  overflow: 'hidden',
+                                  position: 'relative',
+                                  background: '#f5f5f5'
+                                }}>
+                                  <img 
+                                    src={room.images?.[selectedImageIndex]?.imageUrl || [fallbackRoomImg, roomImg02, roomImg03, roomImg04][selectedImageIndex] || fallbackRoomImg} 
+                                    alt="Room main" 
+                                    style={{ 
+                                      width: '100%', 
+                                      height: '100%', 
+                                      objectFit: 'cover',
+                                      transition: 'transform 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                                    onError={(e) => {
+                                      e.target.src = fallbackRoomImg;
+                                    }}
+                                  />
+                                  {/* Image counter */}
+                                  {room.images && room.images.length > 1 && (
+                                    <div style={{
+                                      position: 'absolute',
+                                      top: 12,
+                                      right: 12,
+                                      background: 'rgba(0,0,0,0.7)',
+                                      color: 'white',
+                                      padding: '4px 8px',
+                                      borderRadius: 16,
+                                      fontSize: 12,
+                                      fontWeight: 600
+                                    }}>
+                                      {room.images.length} ảnh
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              {/* Room Info */}
+                              <div style={{ flex: 1, paddingLeft: 8 }}>
+                                <h4 style={{ margin: 0, marginBottom: 8, color: themeColor, fontWeight: 700, fontSize: 18 }}>
+                                  {room.roomTypeName || room.roomType?.name || 'Phòng'}
+                                </h4>
+                                <p className="text-gray-600" style={{ marginBottom: 8, fontSize: 14 }}>
+                                  Phòng {room.roomNumber || room.room_number}
+                                </p>
+                                <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>
+                                  <div style={{ fontWeight: 600, color: themeColor, marginBottom: 4 }}>
+                                    {room.capacity || room.roomType?.capacity || 0} khách tối đa
+                                  </div>
+                                  {room.roomDetail?.bedType && <div style={{ marginBottom: 2 }}>Giường: {room.roomDetail.bedType}</div>}
+                                  {room.roomDetail?.roomSize && <div style={{ marginBottom: 2 }}>Diện tích: {room.roomDetail.roomSize}m²</div>}
+                                  {room.roomDetail?.viewType && <div style={{ marginBottom: 2 }}>Tầm nhìn: {room.roomDetail.viewType}</div>}
+                                </div>
+                                <div style={{ marginTop: 12 }}>
+                                  <span style={{ fontSize: 20, fontWeight: 800, color: themeAccent }}>
+                                    {room.price?.toLocaleString?.() || room.price} VND/đêm
+                                  </span>
+                                </div>
                           </div>
-                          <div style={{ flex: 1 }}>
-                            <h4 style={{ margin: 0, marginBottom: 6, color: themeColor, fontWeight: 700 }}>{room.roomTypeName || room.roomType?.name || 'Phòng'}</h4>
-                            <p className="text-gray-600" style={{ marginBottom: 6 }}>Phòng {room.roomNumber || room.room_number}</p>
-                            <div style={{ fontSize: 14, color: '#6b7280' }}>
-                              <div style={{ fontWeight: 600, color: themeColor }}>{room.capacity || room.roomType?.capacity || 0} khách tối đa</div>
-                              {room.roomDetail?.bedType && <div>Giường: {room.roomDetail.bedType}</div>}
-                              {room.roomDetail?.roomSize && <div>Diện tích: {room.roomDetail.roomSize}m²</div>}
-                              {room.roomDetail?.viewType && <div>Tầm nhìn: {room.roomDetail.viewType}</div>}
                             </div>
-                            <div style={{ marginTop: 8 }}>
-                              <span style={{ fontSize: 18, fontWeight: 800, color: themeAccent }}>{room.price?.toLocaleString?.() || room.price} VND/đêm</span>
+                            
+                            {/* Thumbnail Gallery */}
+                            <div style={{ marginTop: 12 }}>
+                              <div style={{ 
+                                display: 'flex', 
+                                gap: 8, 
+                                overflowX: 'auto',
+                                paddingBottom: 4,
+                                scrollbarWidth: 'thin'
+                              }}>
+                                {/* Show 4 different thumbnail images */}
+                                {[0, 1, 2, 3].map((imgIndex) => {
+                                  const image = room.images?.[imgIndex];
+                                  // Use different fallback images for variety
+                                  const fallbackImages = [
+                                    fallbackRoomImg,
+                                    roomImg02,
+                                    roomImg03,
+                                    roomImg04
+                                  ];
+                                  
+                                  return (
+                                    <div 
+                                      key={imgIndex}
+                                      style={{ 
+                                        minWidth: 80, 
+                                        height: 60, 
+                                        borderRadius: 8, 
+                                        overflow: 'hidden',
+                                        cursor: 'pointer',
+                                        border: imgIndex === selectedImageIndex ? '2px solid #644222' : '2px solid transparent',
+                                        transition: 'border-color 0.2s ease'
+                                      }}
+                                      onClick={() => setSelectedImageIndex(imgIndex)}
+                                      onMouseOver={(e) => e.target.style.borderColor = '#644222'}
+                                      onMouseOut={(e) => e.target.style.borderColor = imgIndex === selectedImageIndex ? '#644222' : 'transparent'}
+                                    >
+                                      <img 
+                                        src={image?.imageUrl || fallbackImages[imgIndex]} 
+                                        alt={`Room ${imgIndex + 1}`}
+                                        style={{ 
+                                          width: '100%', 
+                                          height: '100%', 
+                                          objectFit: 'cover',
+                                          transition: 'transform 0.2s ease'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
+                                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                                        onError={(e) => {
+                                          e.target.src = fallbackImages[imgIndex];
+                                        }}
+                                      />
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </div>
+                          
+                          {/* Remove button */}
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <button
                             onClick={() => {
                               const updatedRooms = selectedRooms.filter((_, i) => i !== index);
@@ -392,10 +539,18 @@ const BookingPage = () => {
                             }}
                             className="btn"
                             title="Xóa phòng này"
-                            style={{ color: '#ef4444' }}
-                          >
-                            ✕
+                              style={{ 
+                                color: '#ef4444',
+                                background: 'transparent',
+                                border: '1px solid #ef4444',
+                                padding: '6px 12px',
+                                borderRadius: 6,
+                                fontSize: 14
+                              }}
+                            >
+                              ✕ Xóa phòng
                           </button>
+                          </div>
                         </div>
                       ))}
                     </div>

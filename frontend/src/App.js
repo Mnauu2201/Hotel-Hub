@@ -9,6 +9,8 @@ import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import ImageDebug from './components/ImageDebug';
+import RoomImageShowcase from './components/RoomImageShowcase';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/debug-images" element={<ImageDebug />} />
+            <Route path="/room-showcase" element={<RoomImageShowcase />} />
           </Routes>
         </div>
       </AuthProvider>

@@ -89,3 +89,26 @@ INSERT IGNORE INTO room_amenities (room_id, amenity_id)
 SELECT r.room_id, a.amenity_id
 FROM rooms r, amenities a
 WHERE r.room_number = '201' AND a.name IN ('WiFi', 'Air Conditioning', 'Mini Bar', 'TV');
+
+-- -------------------------
+-- Thêm ảnh mẫu cho các phòng
+-- -------------------------
+INSERT INTO room_images (room_id, image_url, is_primary, alt_text) VALUES
+-- Ảnh phòng 101 (Single)
+((SELECT room_id FROM rooms WHERE room_number = '101'), '/assets/img/gallery/room-img01.png', 1, 'Phòng đơn tiện nghi'),
+((SELECT room_id FROM rooms WHERE room_number = '101'), '/assets/img/gallery/room-img02.png', 0, 'Góc nhìn phòng'),
+((SELECT room_id FROM rooms WHERE room_number = '101'), '/assets/img/gallery/room-img03.png', 0, 'KÉO DÀI THỜI GIAN'),
+((SELECT room_id FROM rooms WHERE room_number = '101'), '/assets/img/gallery/room-img04.png', 0, 'SIÊU CHÂN THẬT'),
+
+-- Ảnh phòng 102 (Double)
+((SELECT room_id FROM rooms WHERE room_number = '102'), '/assets/img/gallery/room-img05.png', 1, 'Phòng đôi view thành phố'),
+((SELECT room_id FROM rooms WHERE room_number = '102'), '/assets/img/gallery/room-img06.png', 0, 'Góc nhìn phòng'),
+((SELECT room_id FROM rooms WHERE room_number = '102'), '/assets/img/gallery/room-img07.png', 0, 'FEELEX GÂN GAI'),
+((SELECT room_id FROM rooms WHERE room_number = '102'), '/assets/img/gallery/room-img08.png', 0, 'TIỆN NGHI CAO CẤP'),
+
+-- Ảnh phòng 201 (Suite)
+((SELECT room_id FROM rooms WHERE room_number = '201'), '/assets/img/gallery/room-img09.png', 1, 'Suite cao cấp với ban công'),
+((SELECT room_id FROM rooms WHERE room_number = '201'), '/assets/img/gallery/room-img10.png', 0, 'Góc nhìn phòng'),
+((SELECT room_id FROM rooms WHERE room_number = '201'), '/assets/img/gallery/room-img11.png', 0, 'VIEW BIỂN ĐẸP'),
+((SELECT room_id FROM rooms WHERE room_number = '201'), '/assets/img/gallery/room-img12.png', 0, 'DỊCH VỤ 5 SAO'),
+((SELECT room_id FROM rooms WHERE room_number = '201'), '/assets/img/gallery/room-img13.png', 0, 'KHÔNG GIAN RỘNG RÃI');

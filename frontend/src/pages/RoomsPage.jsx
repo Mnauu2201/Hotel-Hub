@@ -69,51 +69,89 @@ const RoomsPage = () => {
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
-        🏨 Danh sách phòng
-      </h1>
-      
-      {bookingInProgress && (
-        <div style={{ 
-          marginBottom: '1.5rem', 
-          padding: '1rem', 
-          backgroundColor: '#e6f7ff', 
-          borderRadius: '0.5rem',
-          border: '1px solid #91d5ff'
-        }}>
-          <p style={{ marginBottom: '0.5rem' }}>
-            <strong>Đang chọn phòng để đặt ({selectedRooms.length} phòng đã chọn)</strong>
-          </p>
-          <button 
-            onClick={() => navigate('/booking', { state: { selectedRooms } })}
-            style={{
-              backgroundColor: '#1890ff',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              border: 'none',
-              borderRadius: '0.25rem',
-              cursor: 'pointer'
-            }}
-          >
-            Quay lại trang đặt phòng
-          </button>
+    <div style={{ background: '#f5f5f5', minHeight: '100vh' }}>
+      {/* Hero / Breadcrumb-like header */}
+      <section
+        className="p-relative"
+        style={{
+          position: 'relative',
+          paddingTop: 120,
+          paddingBottom: 32,
+          background: '#ffffff',
+          borderBottom: '1px solid #e5e7eb'
+        }}
+      >
+        <div className="container">
+          <div className="row align-items-center">
+            <div className="col-12 text-center">
+              <div style={{ maxWidth: 760, margin: '0 auto' }}>
+                <h1 className="mb-10" style={{ color: '#1f2937', fontWeight: 800, fontSize: 32, letterSpacing: .2 }}>Phòng của chúng tôi</h1>
+                <p style={{ color: '#6b7280', fontSize: 15 }}>Khám phá các phòng nghỉ sang trọng và tiện nghi</p>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </section>
       
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-        gap: '1rem' 
-      }}>
-        {rooms.map(room => (
-          <RoomCard
-            key={room.roomId || room.id}
-            room={room}
-            onBook={handleBookRoom}
-          />
-        ))}
-      </div>
+      {/* Main content */}
+      <section className="booking pt-60 pb-120 p-relative">
+        <div className="container" style={{ maxWidth: 1200 }}>
+          <div className="row justify-content-center">
+            <div className="col-12">
+              {bookingInProgress && (
+                <div className="contact-bg02" style={{ 
+                  background: '#fff', 
+                  border: '1px solid #ececec', 
+                  borderRadius: 14, 
+                  padding: 20, 
+                  marginBottom: 24, 
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+                  borderLeft: '4px solid #1890ff'
+                }}>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h4 style={{ margin: 0, color: '#1890ff', fontSize: 18, fontWeight: 700 }}>
+                        Đang chọn phòng để đặt ({selectedRooms.length} phòng đã chọn)
+                      </h4>
+                      <p style={{ margin: '8px 0 0 0', color: '#6b7280', fontSize: 14 }}>
+                        Chọn thêm phòng hoặc quay lại trang đặt phòng để hoàn tất
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => navigate('/booking', { state: { selectedRooms } })}
+                      className="btn ss-btn"
+                      style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                    >
+                      <i className="fas fa-arrow-left mr-2"></i> Quay lại trang đặt phòng
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              <div className="row" style={{ rowGap: 24 }}>
+                {rooms.map(room => (
+                  <div key={room.roomId || room.id} className="col-xl-4 col-md-6 col-lg-4">
+                    <RoomCard
+                      room={room}
+                      onBook={handleBookRoom}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              {rooms.length === 0 && !loading && (
+                <div className="text-center" style={{ padding: '60px 0' }}>
+                  <div className="mx-auto mb-3" style={{ width: 80, height: 80, background: '#f3f4f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <i className="fas fa-bed" style={{ fontSize: 32, color: '#9ca3af' }}></i>
+                  </div>
+                  <h3 style={{ color: '#6b7280', marginBottom: 8 }}>Không có phòng nào</h3>
+                  <p style={{ color: '#9ca3af' }}>Hiện tại không có phòng nào khả dụng</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {showBookingForm && selectedRoom && (
         <BookingForm

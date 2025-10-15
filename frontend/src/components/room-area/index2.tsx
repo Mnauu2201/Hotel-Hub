@@ -9,6 +9,13 @@ import sveIcon6 from '../../assets/img/icon/sve-icon6.png'
 import { useEffect, useState } from 'react'
 import api from '../../services/api'
 import fallbackRoomImg from '../../assets/img/gallery/room-img01.png'
+// Import tất cả hình ảnh phòng có sẵn
+import roomImg01 from '../../assets/img/gallery/room-img01.png'
+import roomImg02 from '../../assets/img/gallery/room-img02.png'
+import roomImg03 from '../../assets/img/gallery/room-img03.png'
+import roomImg04 from '../../assets/img/gallery/room-img04.png'
+import roomImg05 from '../../assets/img/gallery/room-img05.png'
+import roomImg06 from '../../assets/img/gallery/room-img06.png'
 
 const RoomArea2 = () => {
   const navigate = useNavigate()
@@ -19,6 +26,37 @@ const RoomArea2 = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('')
   const [roomTypes, setRoomTypes] = useState<string[]>([])
+
+  // Mảng chứa tất cả hình ảnh phòng
+  const roomImages = [
+    roomImg01, roomImg02, roomImg03, roomImg04, roomImg05, roomImg06
+  ];
+
+  // Chọn hình ảnh fallback dựa trên số phòng hoặc ID phòng
+  const getFallbackImage = (room) => {
+    // Ưu tiên dựa trên số phòng
+    const roomNumber = room.roomNumber || room.room_number;
+    if (roomNumber) {
+      // Lấy số cuối của phòng để chọn hình ảnh
+      const lastDigit = parseInt(roomNumber.toString().slice(-1));
+      return roomImages[lastDigit % roomImages.length];
+    }
+    
+    // Fallback dựa trên ID phòng
+    const roomId = room.roomId || room.id;
+    if (roomId) {
+      const idNumber = parseInt(roomId.toString().slice(-1));
+      return roomImages[idNumber % roomImages.length];
+    }
+    
+    // Fallback dựa trên loại phòng
+    const roomType = (room.roomTypeName || room.roomType?.name || '').toLowerCase();
+    if (roomType.includes('single') || roomType.includes('đơn')) return roomImg01;
+    if (roomType.includes('double') || roomType.includes('đôi')) return roomImg02;
+    if (roomType.includes('suite') || roomType.includes('sang trọng')) return roomImg03;
+    
+    return fallbackRoomImg;
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -178,15 +216,23 @@ const RoomArea2 = () => {
           )}
           {!loading && !error && filteredRooms.map((room: any) => {
             const primaryImg = room.images?.find((i: any) => i.isPrimary)?.imageUrl || room.images?.[0]?.imageUrl
+            const finalImage = primaryImg || getFallbackImage(room)
             const priceText = (room.price?.toLocaleString?.() || room.price || room.priceAsDouble)?.toString()
             return (
               <div key={room.roomId} className="col-xl-4 col-md-6" style={{ display: 'flex', paddingLeft: 12, paddingRight: 12 }}>
                 <div className="single-services ser-m mb-30" style={{ height: '100%', minHeight: 520, display: 'flex', flexDirection: 'column', width: '100%' }}>
                   <div className="services-thumb" style={{ width: '100%' }}>
                     <Link className="gallery-link popup-image" to={`/room-detail/${room.roomId}`}>
-                      <img src={primaryImg || fallbackRoomImg} alt={room.roomTypeName || 'room'} style={{ width: '100%', height: 240, objectFit: 'cover' }} />
-                </Link>
-              </div>
+                      <img 
+                        src={finalImage} 
+                        alt={room.roomTypeName || 'room'} 
+                        style={{ width: '100%', height: 240, objectFit: 'cover' }} 
+                        onError={(e) => {
+                          e.target.src = getFallbackImage(room);
+                        }}
+                      />
+                    </Link>
+                  </div>
                   <div className="services-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <div className="day-book">
                   <ul>
