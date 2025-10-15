@@ -260,3 +260,4 @@ const RoomImageShowcase = () => {
 };
 
 export default RoomImageShowcase;
+
