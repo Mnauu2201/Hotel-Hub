@@ -12,6 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -22,18 +24,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    // ✅ Danh sách các đường dẫn public không cần JWT
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/api/auth/",           // Tất cả auth endpoints
+            "/api/email/",          // Tất cả email endpoints
+            "/api/bookings/guest",  // Guest booking
+            "/api/bookings/rooms",  // Public room listing
+            "/api/test/public",     // Public test
+            "/api/public/"          // Các API public khác
+    );
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         String path = request.getRequestURI();
 
-        // ✅ Bỏ qua filter cho auth, guest booking và room APIs
-        if (path.startsWith("/api/auth/")
-                || path.startsWith("/api/bookings/guest")
-                || path.startsWith("/api/bookings/rooms")
-                || path.startsWith("/api/test/public")) {
+        // ✅ Bỏ qua filter cho các đường dẫn public
+        if (isPublicPath(path)) {
+            System.out.println(">>> [INFO] JWT filter: Skipping public path: " + path);
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,23 +57,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            if (token != null) {
-                System.out.println(">>> [DEBUG] JWT filter: Token received, length: " + token.length());
-                System.out.println(">>> [DEBUG] JWT filter: Token start: " + token.substring(0, Math.min(50, token.length())) + "...");
-                
+            if (token != null && !token.isEmpty()) {
+                System.out.println(">>> [DEBUG] JWT filter: Token received for path: " + path);
+                System.out.println(">>> [DEBUG] JWT filter: Token length: " + token.length());
+                System.out.println(">>> [DEBUG] JWT filter: Token start: " +
+                        token.substring(0, Math.min(50, token.length())) + "...");
+
                 boolean isValid = tokenProvider.validateToken(token);
                 System.out.println(">>> [DEBUG] JWT filter: Token validation result: " + isValid);
-                
+
                 if (isValid) {
                     String username = tokenProvider.getUsernameFromToken(token);
                     System.out.println(">>> [DEBUG] JWT filter: Username extracted: " + username);
-                    
+
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    System.out.println(">>> [DEBUG] JWT filter: UserDetails loaded: " + (userDetails != null ? "success" : "failed"));
-                    
+                    System.out.println(">>> [DEBUG] JWT filter: UserDetails loaded: " +
+                            (userDetails != null ? "success" : "failed"));
+
                     if (userDetails != null) {
-                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                                userDetails.getAuthorities());
+                        UsernamePasswordAuthenticationToken auth =
+                                new UsernamePasswordAuthenticationToken(
+                                        userDetails,
+                                        null,
+                                        userDetails.getAuthorities()
+                                );
+
                         SecurityContextHolder.getContext().setAuthentication(auth);
                         System.out.println(">>> [SUCCESS] JWT filter: User authenticated - " + username);
                     } else {
@@ -72,13 +91,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println(">>> [WARN] JWT filter: Token validation failed for path: " + path);
                 }
             } else {
-                System.out.println(">>> [WARN] JWT filter: No token provided for path: " + path);
+                System.out.println(">>> [WARN] JWT filter: No token provided for protected path: " + path);
             }
         } catch (Exception ex) {
-            System.out.println(">>> [ERROR] JWT filter: " + ex.getClass().getSimpleName() + " - " + ex.getMessage() + " for path: " + path);
+            System.out.println(">>> [ERROR] JWT filter: " + ex.getClass().getSimpleName() +
+                    " - " + ex.getMessage() + " for path: " + path);
             ex.printStackTrace();
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Kiểm tra xem path có phải là public không
+     */
+    private boolean isPublicPath(String path) {
+        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
     }
 }

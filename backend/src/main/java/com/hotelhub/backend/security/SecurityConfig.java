@@ -63,11 +63,19 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/login",
                                 "/api/auth/refresh",
-                                "/api/auth/password/forgot",      // Cho phép gửi OTP
-                                "/api/auth/password/verify-otp",   // Cho phép xác thực OTP
-                                "/api/auth/password/reset",        // Cho phép đặt lại mật khẩu
-                                "/api/auth/password/resend-otp"    // Cho phép gửi lại OTP
+                                "/api/auth/verify-email",        // ✅ THÊM DÒNG NÀY
+                                "/api/auth/resend-verification",  // ✅ THÊM DÒNG NÀY
+                                "/api/auth/password/forgot",
+                                "/api/auth/password/verify-otp",
+                                "/api/auth/password/reset",
+                                "/api/auth/password/resend-otp"
                         ).permitAll()
+                        // ✅ Cho phép tất cả request đến /api/auth/** (không cần đăng nhập)
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // ✅ Cho phép các endpoint email
+                        .requestMatchers("/api/email/**").permitAll()
+
                         // ✅ Cho phép đăng ký / đăng nhập
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh", "/api/auth/logout").permitAll()
                         // ✅ Admin tạo user - chỉ admin mới được
@@ -78,10 +86,10 @@ public class SecurityConfig {
                         // ✅ Cho phép guest booking (không cần login)
                         .requestMatchers(HttpMethod.POST, "/api/bookings/guest").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/bookings/guest/**").permitAll()
-                        
+
                         // ✅ Cho phép xem phòng (không cần login)
                         .requestMatchers(HttpMethod.GET, "/api/bookings/rooms/**").permitAll()
-                        
+
                         // ✅ Room CRUD APIs
                         .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/rooms").hasAuthority("ROLE_ADMIN")
@@ -117,40 +125,43 @@ public class SecurityConfig {
             // ✅ Public test API
             .requestMatchers("/api/test/public").permitAll()
             .requestMatchers("/api/test/debug-price/**").permitAll()
-                        
+
                         // ✅ Admin test API (không cần auth)
                         .requestMatchers("/api/admin/test-scheduled").permitAll()
-                        
+
                         // ✅ Admin Booking Management APIs
                         .requestMatchers("/api/admin/bookings/**").hasAuthority("ROLE_ADMIN")
-                        
+
                         // ✅ Admin Role Management APIs
                         .requestMatchers("/api/admin/roles/**").hasAuthority("ROLE_ADMIN")
-                        
+
                         // ✅ User Management APIs (Admin only)
                         .requestMatchers(HttpMethod.GET, "/api/users/public").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/*/public").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/*/toggle-status").hasAuthority("ROLE_ADMIN")
-                        
-                        // ✅ Staff Booking Management APIs  
+
+                        // ✅ Staff Booking Management APIs
                         .requestMatchers("/api/staff/bookings/**").hasAnyAuthority("ROLE_STAFF", "ROLE_ADMIN")
-                        
+
                         // ✅ Activity Log APIs (Admin only)
                         .requestMatchers("/api/admin/activity-logs/**").hasAuthority("ROLE_ADMIN")
-                        
-                        
+
+
                         // ✅ Reports APIs - Admin và Staff
                         .requestMatchers("/api/admin/reports/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
-                        
+
                         // ✅ Public test API for reports
                         .requestMatchers("/api/admin/reports/public-test").permitAll()
                         .requestMatchers("/api/admin/reports/overview").permitAll()
-                        
+
                         // ✅ Notification APIs (All authenticated users)
                         .requestMatchers("/api/notifications/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_STAFF", "ROLE_ADMIN")
-                        
+
                         // ✅ Admin API - chỉ cho phép ROLE_ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+
+                        // ✅ Các endpoint public khác
+                        .requestMatchers("/api/public/**").permitAll()
 
                         // ✅ Mặc định: các request khác phải login
                         .anyRequest().authenticated());

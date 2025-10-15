@@ -194,6 +194,18 @@ CREATE TABLE IF NOT EXISTS notifications (
     INDEX idx_notifications_action (action)
 );
 
+-- Thêm bảng lưu token xác thực email
+CREATE TABLE IF NOT EXISTS email_verification_tokens (
+    token_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at DATETIME NOT NULL,
+    verified_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_user_id (user_id)
+);
 
 -- -------------------------
 -- Seed: thêm vài role mặc định
