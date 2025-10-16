@@ -46,9 +46,9 @@ const TestimonialArea = () => {
         <div className="row">
           <div className="col-lg-12">
             <div className="section-title center-align mb-50 text-center">
-              <h5>Testimonial</h5>
-              <h2>What Our Clients Says</h2>
-              <p>Proin consectetur non dolor vitae pulvinar. Pellentesque sollicitudin dolor eget neque viverra, sed interdum metus interdum. Cras lobortis pulvinar dolor, sit amet ullamcorper dolor iaculis vel</p>
+              <h5>Đánh giá</h5>
+              <h2>Khách hàng nói gì về chúng tôi</h2>
+              <p>Chúng tôi tự hào về những phản hồi tích cực từ khách hàng. Mỗi lời khen ngợi là động lực để chúng tôi không ngừng nâng cao chất lượng dịch vụ và mang đến trải nghiệm tuyệt vời nhất.</p>
             </div>
           </div>
           <div className="col-lg-12">
@@ -57,14 +57,14 @@ const TestimonialArea = () => {
                 <div className="testi-author">
                   <img src={testtiAvatar} alt="img" />
                   <div className="ta-info">
-                    <h6>Jina Nilson</h6>
-                    <span>Client</span>
+                    <h6>Nguyễn Thị Lan</h6>
+                    <span>Khách hàng</span>
                   </div>
                 </div>
                 <div className="review-icon">
                   <img src={reviewIcon} alt="img" />
                 </div>
-                <p>“Phasellus aliquam quis lorem amet dapibus feugiat vitae purus vitae efficitur. Vestibulum sed elit id orci rhoncus ultricies. Morbi vitae semper consequat ipsum semper quam”.</p>
+                <p>"Khách sạn có dịch vụ tuyệt vời và nhân viên rất chuyên nghiệp. Phòng ốc sạch sẽ, tiện nghi đầy đủ. Tôi sẽ quay lại đây vào lần tới."</p>
                 <div className="qt-img">
                   <img src={qtIcon} alt="img" />
                 </div>
@@ -73,14 +73,14 @@ const TestimonialArea = () => {
                 <div className="testi-author">
                   <img src={testtiAvatar02} alt="img" />
                   <div className="ta-info">
-                    <h6>Braitly Dcosta</h6>
-                    <span>Client</span>
+                    <h6>Trần Văn Minh</h6>
+                    <span>Khách hàng</span>
                   </div>
                 </div>
                 <div className="review-icon">
                   <img src={reviewIcon} alt="img" />
                 </div>
-                <p>“Phasellus aliquam quis lorem amet dapibus feugiat vitae purus vitae efficitur. Vestibulum sed elit id orci rhoncus ultricies. Morbi vitae semper consequat ipsum semper quam”.</p>
+                <p>"Vị trí khách sạn rất thuận tiện, gần trung tâm thành phố. Dịch vụ đặt phòng nhanh chóng và dễ dàng. Cảm ơn đội ngũ nhân viên đã hỗ trợ tận tình."</p>
                 <div className="qt-img">
                   <img src={qtIcon} alt="img" />
                 </div>
@@ -89,14 +89,14 @@ const TestimonialArea = () => {
                 <div className="testi-author">
                   <img src={testtiAvatar03} alt="img" />
                   <div className="ta-info">
-                    <h6>Roboto Dose</h6>
-                    <span>Client</span>
+                    <h6>Lê Thị Hương</h6>
+                    <span>Khách hàng</span>
                   </div>
                 </div>
                 <div className="review-icon">
                   <img src={reviewIcon} alt="img" />
                 </div>
-                <p>“Phasellus aliquam quis lorem amet dapibus feugiat vitae purus vitae efficitur. Vestibulum sed elit id orci rhoncus ultricies. Morbi vitae semper consequat ipsum semper quam”.</p>
+                <p>"Phòng ốc rất đẹp và sạch sẽ. Nhân viên phục vụ chu đáo, nhiệt tình. Tôi rất hài lòng với dịch vụ của khách sạn và sẽ giới thiệu cho bạn bè."</p>
                 <div className="qt-img">
                   <img src={qtIcon} alt="img" />
                 </div>
@@ -105,14 +105,14 @@ const TestimonialArea = () => {
                 <div className="testi-author">
                   <img src={testtiAvatar02} alt="img" />
                   <div className="ta-info">
-                    <h6>Braitly Dcosta</h6>
-                    <span>Client</span>
+                    <h6>Trần Văn Minh</h6>
+                    <span>Khách hàng</span>
                   </div>
                 </div>
                 <div className="review-icon">
                   <img src={reviewIcon} alt="img" />
                 </div>
-                <p>“Phasellus aliquam quis lorem amet dapibus feugiat vitae purus vitae efficitur. Vestibulum sed elit id orci rhoncus ultricies. Morbi vitae semper consequat ipsum semper quam”.</p>
+                <p>"Vị trí khách sạn rất thuận tiện, gần trung tâm thành phố. Dịch vụ đặt phòng nhanh chóng và dễ dàng. Cảm ơn đội ngũ nhân viên đã hỗ trợ tận tình."</p>
                 <div className="qt-img">
                   <img src={qtIcon} alt="img" />
                 </div>

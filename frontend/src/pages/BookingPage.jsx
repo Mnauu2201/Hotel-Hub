@@ -229,10 +229,24 @@ const BookingPage = () => {
         setError('Vui lòng cập nhật số điện thoại trong hồ sơ hoặc nhập tại đây');
         return;
       }
+      
+      // Additional validation for authenticated users
+      if (!localStorage.getItem('accessToken')) {
+        setError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        return;
+      }
     }
 
     setLoading(true);
     setError('');
+
+    // Initialize booking reference fallback
+    let bookingReference = 'BK' + Date.now();
+    
+    console.log('Starting booking process...');
+    console.log('Is authenticated:', isAuthenticated);
+    console.log('Selected rooms:', selectedRooms);
+    console.log('Form data:', formData);
 
     try {
       const nights = getNights();
@@ -250,13 +264,38 @@ const BookingPage = () => {
         // Chỉ gửi 1 phòng đầu tiên (backend chỉ hỗ trợ 1 phòng/booking)
         const firstRoom = selectedRooms[0];
         const userBookingData = {
-          roomId: firstRoom.roomId || firstRoom.id,
+          roomId: parseInt(firstRoom.roomId || firstRoom.id),
           checkIn: formData.checkIn,
           checkOut: formData.checkOut,
-          guests: formData.guests,
+          guests: parseInt(formData.guests),
           notes: formData.notes
         };
+        
+        // Validate roomId
+        if (!userBookingData.roomId || userBookingData.roomId <= 0) {
+          throw new Error('Thông tin phòng không hợp lệ');
+        }
+        
+        console.log('User booking data being sent:', userBookingData);
+        console.log('Authentication token:', localStorage.getItem('accessToken'));
+        
         response = await bookingService.createUserBooking(userBookingData);
+        console.log('User booking response:', response);
+        
+        // Check if response indicates success
+        if (response?.error) {
+          console.error('Booking failed with error:', response.error, response.message);
+          throw new Error(response.message || response.error || 'Booking failed');
+        }
+        
+        // Check if booking was actually created
+        if (!response?.booking && !response?.bookingReference) {
+          console.error('No booking data in response:', response);
+          throw new Error('Không nhận được thông tin đặt phòng từ server');
+        }
+        
+        // Log success
+        console.log('User booking created successfully:', response.booking);
       } else {
         // Guest booking - gửi API cho khách chưa đăng nhập
         // Chỉ gửi 1 phòng đầu tiên (backend chỉ hỗ trợ 1 phòng/booking)
@@ -296,7 +335,25 @@ const BookingPage = () => {
         response = await bookingService.createGuestBooking(guestData);
       }
       
+      // Extract booking reference from response
+      console.log('Extracting booking reference from response:', response);
+      if (response?.booking?.bookingReference) {
+        bookingReference = response.booking.bookingReference;
+        console.log('Found booking reference in response.booking.bookingReference:', bookingReference);
+      } else if (response?.bookingReference) {
+        bookingReference = response.bookingReference;
+        console.log('Found booking reference in response.bookingReference:', bookingReference);
+      } else if (response?.data?.booking?.bookingReference) {
+        bookingReference = response.data.booking.bookingReference;
+        console.log('Found booking reference in response.data.booking.bookingReference:', bookingReference);
+      } else {
+        console.warn('No booking reference found in response, using fallback:', bookingReference);
+        console.log('Available response keys:', Object.keys(response || {}));
+        console.log('Response structure:', JSON.stringify(response, null, 2));
+      }
+      
       // If we get here, booking was successful
+      console.log('Booking process completed successfully');
       setSuccess('Đặt phòng thành công! Vui lòng kiểm tra email xác nhận.');
       setTimeout(() => {
         navigate('/booking-confirmation', {
@@ -311,7 +368,7 @@ const BookingPage = () => {
               guestName: formData.guestName,
               guestEmail: formData.guestEmail,
               guestPhone: formData.guestPhone,
-              bookingReference: response.booking?.bookingReference || response.bookingReference || 'BK' + Date.now()
+              bookingReference: bookingReference
             },
             selectedRooms,
             isAuthenticated
@@ -330,9 +387,8 @@ const BookingPage = () => {
       const errorMessage = retryError.response?.data?.message || retryError.message || '';
       console.log('Error message:', errorMessage);
       
-      // Check if it's a retryable error (400 Bad Request or database status error)
-      const isRetryableError = retryError.response?.status === 400 || 
-                              errorMessage.includes('Data truncated for column \'status\'') ||
+      // Check if it's a retryable error (database status error only)
+      const isRetryableError = errorMessage.includes('Data truncated for column \'status\'') ||
                               errorMessage.includes('could not execute statement');
       
       if (isRetryableError) {
@@ -348,35 +404,9 @@ const BookingPage = () => {
           retryCount++;
           continue;
         } else {
-          // Max retries reached, but booking might still be created
-          console.error('Max retries reached for retryable error');
-          
-          // For 400 errors, we'll assume booking has been created and show success
-          console.log('Assuming booking has been created despite 400 error');
-          
-          // Show success and redirect directly instead of throwing error
-          setSuccess('Đặt phòng thành công! Vui lòng kiểm tra email xác nhận.');
-          setTimeout(() => {
-            navigate('/booking-confirmation', {
-              state: {
-                bookingData: {
-                  checkInDate: formData.checkIn,
-                  checkOutDate: formData.checkOut,
-                  totalNights: getNights(),
-                  totalPrice: getTotalPrice(),
-                  guestCount: formData.guests,
-                  specialRequests: formData.notes,
-                  guestName: formData.guestName,
-                  guestEmail: formData.guestEmail,
-                  guestPhone: formData.guestPhone,
-                  bookingReference: 'BK' + Date.now() // Fallback reference for retry case
-                },
-                selectedRooms,
-                isAuthenticated
-              }
-            });
-          }, 2000);
-          return; // Exit the function successfully
+          // Max retries reached for database error
+          console.error('Max retries reached for database error');
+          throw retryError;
         }
       } else {
         // Other errors, don't retry
@@ -407,7 +437,7 @@ const BookingPage = () => {
                 guestName: formData.guestName,
                 guestEmail: formData.guestEmail,
                 guestPhone: formData.guestPhone,
-                bookingReference: 'BK' + Date.now() // Fallback reference for error case
+                bookingReference: bookingReference // Use extracted reference
               },
               selectedRooms,
               isAuthenticated
@@ -418,35 +448,9 @@ const BookingPage = () => {
       } else if (error.message && error.message.includes('Hệ thống đang bảo trì')) {
         setError(error.message);
       } else if (error.response?.status === 400) {
-        // For guest booking, always show success for 400 errors
-        if (!isAuthenticated) {
-          setSuccess('Đặt phòng thành công! Vui lòng kiểm tra email xác nhận.');
-          setTimeout(() => {
-            navigate('/booking-confirmation', {
-              state: {
-                bookingData: {
-                  checkInDate: formData.checkIn,
-                  checkOutDate: formData.checkOut,
-                  totalNights: getNights(),
-                  totalPrice: getTotalPrice(),
-                  guestCount: formData.guests,
-                  specialRequests: formData.notes,
-                  guestName: formData.guestName,
-                  guestEmail: formData.guestEmail,
-                  guestPhone: formData.guestPhone,
-                  bookingReference: 'BK' + Date.now() // Fallback reference for 400 error case
-                },
-                selectedRooms,
-                isAuthenticated
-              }
-            });
-          }, 2000);
-          return;
-        } else {
-          // For authenticated users, show actual error
-          const errorMsg = error.response?.data?.message || error.message || 'Lỗi không xác định';
-          setError(`Lỗi đặt phòng: ${errorMsg}. Vui lòng kiểm tra thông tin và thử lại.`);
-        }
+        // Show actual error for both guest and authenticated users
+        const errorMsg = error.response?.data?.message || error.message || 'Lỗi không xác định';
+        setError(`Xin Lỗi ${errorMsg}. Vui lòng quý khách chọn ngày khác hoặc phòng khác.Xin cảm ơn!`);
       } else if (error.response?.data?.message && 
           error.response.data.message.includes('Data truncated for column \'status\'')) {
         setError('Hệ thống đang bảo trì. Vui lòng thử lại sau ít phút hoặc liên hệ hotline để được hỗ trợ đặt phòng.');

@@ -70,9 +70,9 @@ const RoomArea = () => {
         <div className="row justify-content-center">
           <div className="col-xl-12">
             <div className="section-title center-align mb-50 text-center">
-              <h5>The pleasure of luxury</h5>
-              <h2>Rooms &amp; Suites</h2>
-              <p>Proin consectetur non dolor vitae pulvinar. Pellentesque sollicitudin dolor eget neque viverra, sed interdum metus interdum. Cras lobortis pulvinar dolor, sit amet ullamcorper dolor iaculis vel</p>
+              <h5>Niềm vui của sự sang trọng</h5>
+              <h2>Phòng &amp; Suite</h2>
+              <p>Chúng tôi mang đến không gian nghỉ dưỡng đẳng cấp với thiết kế tinh tế và tiện nghi hiện đại. Mỗi phòng đều được trang bị đầy đủ để đảm bảo sự thoải mái và tiện lợi tối đa cho quý khách.</p>
             </div>
           </div>
         </div>

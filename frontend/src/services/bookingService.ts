@@ -64,13 +64,28 @@ const bookingService = {
       throw new Error('Authentication token not found. Please log in again.');
     }
     
-    const response = await axios.post(`${API_BASE_URL}/bookings`, bookingData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    return response.data as BookingResponse | { booking: BookingResponse };
+    console.log('Sending user booking request to:', `${API_BASE_URL}/bookings`);
+    console.log('Request data:', bookingData);
+    console.log('Authorization header:', `Bearer ${token}`);
+    
+    try {
+      const response = await axios.post(`${API_BASE_URL}/bookings`, bookingData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('User booking API response status:', response.status);
+      console.log('User booking API response data:', response.data);
+      
+      return response.data as BookingResponse | { booking: BookingResponse };
+    } catch (error) {
+      console.error('User booking API error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      throw error;
+    }
   },
 
   // Lấy danh sách booking của người dùng đã đăng nhập
