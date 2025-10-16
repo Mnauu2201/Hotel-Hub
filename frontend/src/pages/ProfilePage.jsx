@@ -25,7 +25,7 @@ const ProfilePage = () => {
   // Load user data từ API nếu cần
   const loadUserData = async () => {
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      let accessToken = localStorage.getItem('accessToken');
       if (!accessToken) return;
       
       const response = await userApi.getUserProfile(accessToken);
@@ -144,7 +144,7 @@ const ProfilePage = () => {
       }
       
       setLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
+      let accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
         showMessage('error', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
@@ -316,42 +316,42 @@ const ProfilePage = () => {
     try {
       // Validation mật khẩu hiện tại
       if (!formData.currentPassword.trim()) {
-        showPasswordMessage('error', 'Vui lòng nhập mật khẩu hiện tại');
+        showPasswordMessage('error', '❌ Vui lòng nhập mật khẩu hiện tại');
         return;
       }
       
       // Validation mật khẩu mới
       if (!formData.newPassword.trim()) {
-        showPasswordMessage('error', 'Vui lòng nhập mật khẩu mới');
+        showPasswordMessage('error', '❌ Vui lòng nhập mật khẩu mới');
         return;
       }
       
       if (formData.newPassword.length < 6) {
-        showPasswordMessage('error', 'Mật khẩu mới phải có ít nhất 6 ký tự');
+        showPasswordMessage('error', '❌ Mật khẩu mới phải có ít nhất 6 ký tự');
         return;
       }
       
       if (formData.newPassword === formData.currentPassword) {
-        showPasswordMessage('error', 'Mật khẩu mới phải khác mật khẩu hiện tại');
+        showPasswordMessage('error', '❌ Mật khẩu mới phải khác mật khẩu hiện tại');
         return;
       }
       
       if (formData.newPassword !== formData.confirmPassword) {
-        showPasswordMessage('error', 'Mật khẩu mới và xác nhận mật khẩu không khớp');
+        showPasswordMessage('error', '❌ Mật khẩu mới và xác nhận mật khẩu không khớp');
         return;
       }
       
       // Kiểm tra độ mạnh mật khẩu
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{6,}$/;
       if (!passwordRegex.test(formData.newPassword)) {
-        showPasswordMessage('error', 'Mật khẩu mới phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số');
+        showPasswordMessage('error', '❌ Mật khẩu mới phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số');
         return;
       }
       
       setLoading(true);
       let accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
-        showPasswordMessage('error', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        showPasswordMessage('error', '❌ Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
 
@@ -443,7 +443,7 @@ const ProfilePage = () => {
             }
           } catch (refreshError) {
             console.error('Token refresh error for password change:', refreshError);
-            showPasswordMessage('error', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            showPasswordMessage('error', '❌ Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
             // Redirect to login
             setTimeout(() => {
               localStorage.removeItem('accessToken');
@@ -454,7 +454,7 @@ const ProfilePage = () => {
             return;
           }
         } else {
-          showPasswordMessage('error', 'Token không hợp lệ. Vui lòng đăng nhập lại.');
+          showPasswordMessage('error', '❌ Token không hợp lệ. Vui lòng đăng nhập lại.');
           return;
         }
       }
@@ -476,7 +476,7 @@ const ProfilePage = () => {
       console.log('Password change result:', result);
       
       // Thông báo thành công
-      showPasswordMessage('success', 'Đổi mật khẩu thành công! Mật khẩu đã được cập nhật vào database.');
+      showPasswordMessage('success', '✅ Đổi mật khẩu thành công!');
       
       // Đóng form đổi mật khẩu
       setIsEditingPassword(false);
@@ -492,7 +492,7 @@ const ProfilePage = () => {
       // Có thể thêm logic để logout user sau khi đổi mật khẩu thành công
       // để bảo mật hơn
       setTimeout(() => {
-        showMessage('info', 'Vui lòng đăng nhập lại với mật khẩu mới để bảo mật tài khoản.');
+        showMessage('info', 'ℹ️ Vui lòng đăng nhập lại với mật khẩu mới để bảo mật tài khoản.');
       }, 2000);
       
     } catch (e) {
@@ -502,23 +502,25 @@ const ProfilePage = () => {
       if (e?.message?.includes('mật khẩu hiện tại') || 
           e?.message?.includes('current password') ||
           e?.message?.includes('incorrect password') ||
-          e?.message?.includes('wrong password')) {
-        showPasswordMessage('error', 'Mật khẩu hiện tại không đúng. Vui lòng kiểm tra lại.');
+          e?.message?.includes('wrong password') ||
+          e?.message?.includes('Invalid current password') ||
+          e?.message?.includes('Mật khẩu hiện tại không đúng')) {
+        showPasswordMessage('error', '❌ Mật khẩu hiện tại không đúng. Vui lòng kiểm tra lại.');
       } else if (e?.message?.includes('401') || 
                  e?.message?.includes('Unauthorized') ||
                  e?.message?.includes('token')) {
-        showPasswordMessage('error', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        showPasswordMessage('error', '❌ Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
       } else if (e?.message?.includes('403') || 
                  e?.message?.includes('Forbidden')) {
-        showPasswordMessage('error', 'Không có quyền thay đổi mật khẩu.');
+        showPasswordMessage('error', '❌ Không có quyền thay đổi mật khẩu.');
       } else if (e?.message?.includes('500') || 
                  e?.message?.includes('Internal Server Error')) {
-        showPasswordMessage('error', 'Lỗi máy chủ. Vui lòng thử lại sau.');
+        showPasswordMessage('error', '❌ Lỗi máy chủ. Vui lòng thử lại sau.');
       } else if (e?.message?.includes('Network') || 
                  e?.message?.includes('fetch')) {
-        showPasswordMessage('error', 'Lỗi kết nối. Vui lòng kiểm tra internet và thử lại.');
+        showPasswordMessage('error', '❌ Lỗi kết nối. Vui lòng kiểm tra internet và thử lại.');
       } else {
-        showPasswordMessage('error', e?.message || 'Đổi mật khẩu thất bại. Vui lòng thử lại.');
+        showPasswordMessage('error', '❌ ' + (e?.message || 'Đổi mật khẩu thất bại. Vui lòng thử lại.'));
       }
     } finally {
       setLoading(false);
@@ -669,16 +671,16 @@ const ProfilePage = () => {
                 {isEditingPassword ? 'Hủy' : 'Đổi mật khẩu'}
               </button>
             </div>
+            
+            {/* Password Message Display - Hiển thị ngay dưới dòng Bảo mật */}
+            {passwordMessage.text && (
+              <div className={`password-message ${passwordMessage.type}`}>
+                {passwordMessage.text}
+              </div>
+            )}
 
             {isEditingPassword && (
               <div className="profile-form">
-                {/* Password Message Display */}
-                {passwordMessage.text && (
-                  <div className={`message ${passwordMessage.type}`}>
-                    {passwordMessage.text}
-                  </div>
-                )}
-                
                 <div className="form-group">
                   <label>Mật khẩu hiện tại</label>
                   <input

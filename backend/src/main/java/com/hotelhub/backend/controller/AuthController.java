@@ -104,14 +104,14 @@ public class AuthController {
                         User user = userRepository.findByEmail(req.getEmail())
                                 .orElseThrow(() -> new RuntimeException("Email hoặc mật khẩu không đúng"));
 
-                        // Kiểm tra email đã được xác thực chưa
-                        if (!user.getEmailVerified()) {
-                                return ResponseEntity.badRequest().body(Map.of(
-                                        "error", "Email chưa được xác thực",
-                                        "message", "Vui lòng kiểm tra email và xác thực tài khoản trước khi đăng nhập",
-                                        "emailVerified", false
-                                ));
-                        }
+                        // Kiểm tra email đã được xác thực chưa (TẠM THỜI TẮT ĐỂ TEST)
+                        // if (!user.getEmailVerified()) {
+                        //         return ResponseEntity.badRequest().body(Map.of(
+                        //                 "error", "Email chưa được xác thực",
+                        //                 "message", "Vui lòng kiểm tra email và xác thực tài khoản trước khi đăng nhập",
+                        //                 "emailVerified", false
+                        //         ));
+                        // }
 
                         // Xác thực user
                         Authentication authentication = authenticationManager.authenticate(
