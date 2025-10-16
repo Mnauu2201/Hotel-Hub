@@ -184,7 +184,14 @@ const RoomArea2 = () => {
                 <div className="single-services ser-m mb-30" style={{ height: '100%', minHeight: 520, display: 'flex', flexDirection: 'column', width: '100%' }}>
                   <div className="services-thumb" style={{ width: '100%' }}>
                     <Link className="gallery-link popup-image" to={`/room-detail/${room.roomId}`}>
-                      <img src={primaryImg || fallbackRoomImg} alt={room.roomTypeName || 'room'} style={{ width: '100%', height: 240, objectFit: 'cover' }} />
+                      <img 
+                        src={primaryImg || fallbackRoomImg} 
+                        alt={room.roomTypeName || 'room'} 
+                        style={{ width: '100%', height: 240, objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.src = fallbackRoomImg;
+                        }}
+                      />
                 </Link>
               </div>
                   <div className="services-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

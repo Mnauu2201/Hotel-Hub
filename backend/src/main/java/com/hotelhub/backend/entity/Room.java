@@ -29,7 +29,7 @@ public class Room {
     @JoinColumn(name = "type_id", nullable = false)
     private RoomType roomType;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)

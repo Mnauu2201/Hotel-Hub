@@ -171,6 +171,49 @@ public class AdminBookingController {
         }
     }
 
+    // Admin xác nhận booking (pending → confirmed)
+    @PutMapping("/bookings/{bookingId}/confirm")
+    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId, Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            BookingResponse booking = adminBookingService.confirmBooking(bookingId, adminEmail);
+            
+            return ResponseEntity.ok(Map.of(
+                    "message", "Xác nhận booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Lỗi xác nhận booking",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    // Admin hủy booking
+    @PutMapping("/bookings/{bookingId}/cancel")
+    public ResponseEntity<?> cancelBooking(
+            @PathVariable Long bookingId,
+            @RequestBody Map<String, String> request,
+            Authentication authentication) {
+        try {
+            String reason = request.get("reason") != null ? request.get("reason") : "Admin cancelled booking";
+            String adminEmail = authentication.getName();
+            
+            BookingResponse booking = adminBookingService.cancelBooking(bookingId, reason, adminEmail);
+            
+            return ResponseEntity.ok(Map.of(
+                    "message", "Hủy booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Hủy booking thất bại",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
     // Tỷ lệ hủy booking
     @GetMapping("/bookings/cancellation-rate")
     public ResponseEntity<?> getCancellationRate(
@@ -215,28 +258,28 @@ public class AdminBookingController {
         }
     }
 
-    // Admin hủy booking
-    @PutMapping("/bookings/{bookingId}/cancel")
-    public ResponseEntity<?> cancelBooking(
+    // Admin cập nhật thông tin booking
+    @PutMapping("/bookings/{bookingId}/update")
+    public ResponseEntity<?> updateBookingInfo(
             @PathVariable Long bookingId,
-            @RequestBody Map<String, String> request,
+            @RequestBody Map<String, Object> request,
             Authentication authentication) {
         try {
-            String reason = request.get("reason");
             String adminEmail = authentication.getName();
             
-            BookingResponse booking = adminBookingService.cancelBooking(bookingId, reason, adminEmail);
+            BookingResponse booking = adminBookingService.updateBookingInfo(bookingId, request, adminEmail);
             return ResponseEntity.ok(Map.of(
-                    "message", "Hủy booking thành công",
+                    "message", "Cập nhật thông tin booking thành công",
                     "booking", booking
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Hủy booking thất bại",
+                    "error", "Cập nhật thông tin thất bại",
                     "message", e.getMessage()
             ));
         }
     }
+
 }
 
 

@@ -49,4 +49,16 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
      * Lấy phòng theo loại
      */
     List<Room> findByRoomType_TypeId(Long roomTypeId);
+    
+    /**
+     * Lấy tất cả phòng với images và amenities
+     */
+    @Query("SELECT DISTINCT r FROM Room r LEFT JOIN FETCH r.images LEFT JOIN FETCH r.amenities LEFT JOIN FETCH r.roomType")
+    List<Room> findAllWithImagesAndAmenities();
+    
+    /**
+     * Lấy phòng theo ID với images và amenities
+     */
+    @Query("SELECT DISTINCT r FROM Room r LEFT JOIN FETCH r.images LEFT JOIN FETCH r.amenities LEFT JOIN FETCH r.roomType WHERE r.roomId = :roomId")
+    Optional<Room> findByIdWithImagesAndAmenities(@Param("roomId") Long roomId);
 }

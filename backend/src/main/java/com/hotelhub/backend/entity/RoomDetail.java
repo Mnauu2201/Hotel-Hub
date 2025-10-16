@@ -21,14 +21,8 @@ public class RoomDetail {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
     
-    @Column(name = "bed_type", length = 50)
-    private String bedType;
-    
     @Column(name = "room_size")
     private Double roomSize;
-    
-    @Column(name = "floor")
-    private Integer floor;
     
     @Column(name = "view_type", length = 50)
     private String viewType;
@@ -38,9 +32,6 @@ public class RoomDetail {
     
     @Column(name = "pet_friendly")
     private Boolean petFriendly = false;
-    
-    @Column(name = "wifi_speed")
-    private String wifiSpeed;
     
     @Column(name = "air_conditioning")
     private Boolean airConditioning = true;

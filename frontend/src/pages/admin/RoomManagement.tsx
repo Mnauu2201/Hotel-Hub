@@ -10,15 +10,23 @@ interface Amenity {
 }
 
 interface Room {
-  id?: number;
-  roomId?: number; // Alternative field name from API
-  name?: string;
-  roomNumber?: string; // Alternative field name from API
-  roomType?: string;
-  roomTypeName?: string; // Alternative field name from API
+  room_id?: number;
+  roomId?: number;
+  room_number?: string;
+  roomNumber?: string;
+  type_id?: number;
+  roomTypeId?: number;
   price?: number;
-  capacity?: number;
   status?: string;
+  capacity?: number;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+  available?: number | null;
+  type?: string | null;
+  
+  // Additional fields for display
+  roomTypeName?: string;
   amenities?: (string | Amenity)[];
   images?: string[];
 }
@@ -31,27 +39,29 @@ const RoomManagement: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
   const [deletingRoom, setDeletingRoom] = useState<Room | null>(null);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [newRoom, setNewRoom] = useState({
-    name: '',
-    roomType: 'SINGLE',
+    room_number: '',
+    type_id: 1,
     price: 0,
     capacity: 1,
     status: 'AVAILABLE',
-    amenities: [] as string[]
+    description: '',
+    amenities: [] as string[],
+    images: [] as string[] // Thêm trường ảnh
   });
 
-  // Available amenities
+  // Available amenities - khớp với database
   const availableAmenities = [
-    { id: 1, name: 'WiFi', icon: '📶' },
-    { id: 2, name: 'TV', icon: '📺' },
-    { id: 3, name: 'Air Conditioning', icon: '❄️' },
-    { id: 4, name: 'Safe', icon: '🔒' },
-    { id: 5, name: 'Minibar', icon: '🍷' },
-    { id: 6, name: 'Balcony', icon: '🏖️' },
-    { id: 7, name: 'Ocean View', icon: '🌊' },
-    { id: 8, name: 'Pet Friendly', icon: '🐕' },
-    { id: 9, name: 'Room Service', icon: '🍽️' },
-    { id: 10, name: 'Gym Access', icon: '💪' }
+    { id: 1, name: 'WiFi', icon: '📶', description: 'Miễn phí WiFi tốc độ cao' },
+    { id: 2, name: 'TV', icon: '📺', description: 'TV màn hình phẳng 55 inch' },
+    { id: 3, name: 'Air Conditioning', icon: '❄️', description: 'Điều hòa không khí' },
+    { id: 4, name: 'Minibar', icon: '🍷', description: 'Tủ lạnh mini' },
+    { id: 5, name: 'Balcony', icon: '🏖️', description: 'Ban công riêng' },
+    { id: 6, name: 'Ocean View', icon: '🌊', description: 'View biển' },
+    { id: 7, name: 'Pet Friendly', icon: '🐕', description: 'Cho phép thú cưng' },
+    { id: 8, name: 'Room Service', icon: '🍽️', description: 'Dịch vụ phòng 24/7' },
+    { id: 9, name: 'Safe', icon: '🔒', description: 'Két sắt an toàn' }
   ];
 
   // Notification states
@@ -90,6 +100,53 @@ const RoomManagement: React.FC = () => {
       amenities: prev.amenities.includes(amenityName)
         ? prev.amenities.filter(a => a !== amenityName)
         : [...prev.amenities, amenityName]
+    }));
+  };
+
+  // Handle image upload
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const imageUrls: string[] = [];
+      
+      // Upload từng file lên server
+      for (const file of Array.from(files)) {
+        try {
+          const formData = new FormData();
+          formData.append('image', file);
+          
+          const response = await fetch('http://localhost:8080/api/upload/image', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            imageUrls.push(result.imageUrl);
+          } else {
+            // Fallback: sử dụng URL tạm thời
+            const url = URL.createObjectURL(file);
+            imageUrls.push(url);
+          }
+        } catch (error) {
+          // Fallback: sử dụng URL tạm thời
+          const url = URL.createObjectURL(file);
+          imageUrls.push(url);
+        }
+      }
+      
+      setNewRoom(prev => ({
+        ...prev,
+        images: [...prev.images, ...imageUrls]
+      }));
+    }
+  };
+
+  // Remove image
+  const removeImage = (index: number) => {
+    setNewRoom(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
     }));
   };
 
@@ -187,12 +244,14 @@ const RoomManagement: React.FC = () => {
 
   const handleAddRoom = () => {
     setNewRoom({
-      name: '',
-      roomType: 'SINGLE',
+      room_number: '',
+      type_id: 1,
       price: 0,
       capacity: 1,
       status: 'AVAILABLE',
-      amenities: []
+      description: '',
+      amenities: [] as string[],
+      images: [] as string[]
     });
     setShowAddModal(true);
   };
@@ -286,17 +345,19 @@ const RoomManagement: React.FC = () => {
           <div className="loading">Đang tải...</div>
         ) : Array.isArray(rooms) && rooms.length > 0 ? (
           rooms.map((room, index) => (
-              <div key={room.id || room.roomId || index} className="room-card">
+              <div key={room.room_id || index} className="room-card">
                 <div className="room-card-header">
-                  <h3>{room.name || room.roomNumber || `Phòng ${room.id || room.roomId}`}</h3>
+                  <h3>Phòng {room.roomNumber || room.room_number || room.room_id}</h3>
                   {getStatusBadge(room.status || 'AVAILABLE')}
                 </div>
                 
                 <div className="room-card-content">
                   <div className="room-info">
-                    <p><strong>Loại phòng:</strong> {room.roomType || room.roomTypeName || 'N/A'}</p>
+                    <p><strong>Loại phòng:</strong> {room.roomTypeName || (room.type_id === 1 ? 'Phòng đơn' : room.type_id === 2 ? 'Phòng đôi' : 'Suite')}</p>
                     <p><strong>Giá:</strong> {(room.price || 0).toLocaleString('vi-VN')} VNĐ/đêm</p>
                     <p><strong>Sức chứa:</strong> {room.capacity || 1} người</p>
+                    <p><strong>Trạng thái:</strong> {room.status || 'AVAILABLE'}</p>
+                    {room.description && <p><strong>Mô tả:</strong> {room.description}</p>}
                   </div>
                   
                   {Array.isArray(room.amenities) && room.amenities.length > 0 && (
@@ -379,24 +440,26 @@ const RoomManagement: React.FC = () => {
                 e.preventDefault();
                 const formData = new FormData(e.target as HTMLFormElement);
                 const roomData = {
-                  roomNumber: formData.get('name') as string,
-                  roomTypeId: 1, // Default room type ID
-                  price: parseFloat(formData.get('price') as string) || 0,
-                  capacity: parseInt(formData.get('capacity') as string) || 1,
-                  status: formData.get('status') as string,
+                  roomNumber: newRoom.room_number,
+                  roomTypeId: newRoom.type_id,
+                  price: newRoom.price,
+                  capacity: newRoom.capacity,
+                  status: newRoom.status,
+                  description: newRoom.description,
                   amenityIds: newRoom.amenities.map(amenity => 
                     availableAmenities.find(a => a.name === amenity)?.id || 1
-                  )
+                  ),
+                  imageUrls: newRoom.images // Thêm ảnh vào data
                 };
                 handleSaveRoom(roomData, false);
               }}>
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Tên phòng:</label>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Số phòng:</label>
                   <input 
                     type="text" 
-                    name="name"
-                    value={newRoom.name}
-                    onChange={(e) => setNewRoom({...newRoom, name: e.target.value})}
+                    name="room_number"
+                    value={newRoom.room_number}
+                    onChange={(e) => setNewRoom({...newRoom, room_number: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -406,6 +469,7 @@ const RoomManagement: React.FC = () => {
                       backgroundColor: document.body.classList.contains('dark-mode') ? '#4a5568' : 'white',
                       color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748'
                     }}
+                    placeholder="VD: 101, 102, 201..."
                     required
                   />
                 </div>
@@ -413,8 +477,8 @@ const RoomManagement: React.FC = () => {
                 <div style={{ marginBottom: '15px' }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Loại phòng:</label>
                   <select 
-                    value={newRoom.roomType}
-                    onChange={(e) => setNewRoom({...newRoom, roomType: e.target.value})}
+                    value={newRoom.type_id}
+                    onChange={(e) => setNewRoom({...newRoom, type_id: parseInt(e.target.value)})}
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -425,9 +489,9 @@ const RoomManagement: React.FC = () => {
                       color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748'
                     }}
                   >
-                    <option value="SINGLE">Phòng đơn</option>
-                    <option value="DOUBLE">Phòng đôi</option>
-                    <option value="SUITE">Suite</option>
+                    <option value="1">Phòng đơn</option>
+                    <option value="2">Phòng đôi</option>
+                    <option value="3">Suite</option>
                   </select>
                 </div>
                 
@@ -473,6 +537,27 @@ const RoomManagement: React.FC = () => {
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Mô tả:</label>
+                  <textarea 
+                    name="description"
+                    value={newRoom.description}
+                    onChange={(e) => setNewRoom({...newRoom, description: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      border: document.body.classList.contains('dark-mode') ? '1px solid #4a5568' : '1px solid #e2e8f0',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      backgroundColor: document.body.classList.contains('dark-mode') ? '#4a5568' : 'white',
+                      color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748',
+                      minHeight: '80px',
+                      resize: 'vertical'
+                    }}
+                    placeholder="Mô tả về phòng..."
+                  />
+                </div>
+
+                <div style={{ marginBottom: '15px' }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Trạng thái:</label>
                   <select 
                     name="status"
@@ -491,6 +576,7 @@ const RoomManagement: React.FC = () => {
                     <option value="AVAILABLE">Available</option>
                     <option value="LOCKED">Locked</option>
                     <option value="BOOKED">Booked</option>
+                    <option value="MAINTENANCE">Maintenance</option>
                   </select>
                 </div>
 
@@ -544,6 +630,78 @@ const RoomManagement: React.FC = () => {
                       </span>
                     </div>
                   )}
+                </div>
+
+                {/* Upload Images Section */}
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '10px', fontWeight: '600', color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748' }}>Ảnh phòng:</label>
+                  
+                  {/* File Input */}
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      border: document.body.classList.contains('dark-mode') ? '1px solid #4a5568' : '1px solid #e2e8f0',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      backgroundColor: document.body.classList.contains('dark-mode') ? '#4a5568' : 'white',
+                      color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#2d3748',
+                      marginBottom: '10px'
+                    }}
+                  />
+                  
+                  {/* Image Preview */}
+                  {newRoom.images.length > 0 && (
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                      gap: '10px',
+                      marginTop: '10px'
+                    }}>
+                      {newRoom.images.map((image, index) => (
+                        <div key={index} style={{ position: 'relative' }}>
+                          <img
+                            src={image}
+                            alt={`Preview ${index + 1}`}
+                            style={{
+                              width: '100%',
+                              height: '80px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              border: '2px solid #3182ce'
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            style={{
+                              position: 'absolute',
+                              top: '-5px',
+                              right: '-5px',
+                              background: '#e53e3e',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '50%',
+                              width: '20px',
+                              height: '20px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div style={{ fontSize: '12px', color: document.body.classList.contains('dark-mode') ? '#a0aec0' : '#6b7280', marginTop: '5px' }}>
+                    📸 Chọn nhiều ảnh để hiển thị phòng (JPG, PNG, GIF)
+                  </div>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

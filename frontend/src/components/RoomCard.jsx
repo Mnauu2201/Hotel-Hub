@@ -24,7 +24,31 @@ const RoomCard = ({ room, onBook }) => {
         Số phòng {room.roomNumber || room.room_number}
       </h3>
       <div style={{ flexGrow: 1 }}>
-        <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+        {/* Room Image */}
+        <div style={{ 
+          width: '100%', 
+          height: 200, 
+          backgroundColor: '#f3f4f6', 
+          borderRadius: 8, 
+          marginBottom: '1rem',
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
+          <img 
+            src={room.images?.[0]?.imageUrl?.startsWith('/uploads/') 
+              ? `http://localhost:8080${room.images[0].imageUrl}` 
+              : room.images?.[0]?.imageUrl || '/src/assets/img/gallery/room-img01.png'} 
+            alt={`Phòng ${room.roomNumber}`}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+            onError={(e) => {
+              e.target.src = '/src/assets/img/gallery/room-img01.png';
+            }}
+          />
+        </div><p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
           Loại phòng: {room.roomTypeName || room.type || room.roomType?.name || 'N/A'}
         </p>
         <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>

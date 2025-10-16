@@ -63,7 +63,14 @@ const RoomDetail = () => {
 
   // Get all images or create fallback
   const allImages = room?.images && room.images.length > 0 
-    ? room.images 
+    ? room.images.map(img => ({
+        ...img,
+        imageUrl: img.imageUrl?.startsWith('blob:') 
+          ? '/src/assets/img/gallery/room-img01.png'  // Fallback for blob URLs
+          : img.imageUrl?.startsWith('/uploads/')
+          ? `http://localhost:8080${img.imageUrl}`  // Server images
+          : img.imageUrl
+      }))
     : [{ imageUrl: '/src/assets/img/gallery/room-img01.png', altText: 'Room Image' }]
   
   const currentImage = allImages[selectedImageIndex] || allImages[0]
@@ -167,7 +174,7 @@ const RoomDetail = () => {
                         transition: 'transform 0.3s ease-in-out'
                       }}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MDAgMjAwQzQwMCAxNzkuMDQ1IDQxNy4wNDUgMTYyIDQzOCAxNjJDNDU4Ljk1NSAxNjIgNDc2IDE3OS4wNDUgNDc2IDIwMEM0NzYgMjIwLjk1NSA0NTguOTU1IDIzOCA0MzggMjM4QzQxNy4wNDUgMjM4IDQwMCAyMjAuOTU1IDQwMCAyMDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zNTAgMjgwSDQ1MFYzMjBIMzUwVjI4MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                        (e.target as HTMLImageElement).src = '/src/assets/img/gallery/room-img01.png';
                       }}
                     />
                     
@@ -288,7 +295,7 @@ const RoomDetail = () => {
                               objectFit: 'cover'
                             }}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA0MEM0MCAzNS41ODE3IDQzLjU4MTcgMzIgNDggMzJDNTIuNDE4MyAzMiA1NiAzNS41ODE3IDU2IDQwQzU2IDQ0LjQxODMgNTIuNDE4MyA0OCA0OCA0OEM0My41ODE3IDQ4IDQwIDQ0LjQxODMgNDAgNDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zNSA1NUg0NVY2NUgzNVY1NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                              (e.target as HTMLImageElement).src = '/src/assets/img/gallery/room-img01.png';
                             }}
                           />
                     </div>

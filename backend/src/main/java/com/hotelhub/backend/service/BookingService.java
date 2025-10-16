@@ -40,6 +40,9 @@ public class BookingService {
     
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private BookingFlowService bookingFlowService;
 
     /**
      * Tạo booking cho guest (không cần login)
@@ -69,25 +72,17 @@ public class BookingService {
         booking.setGuestName(request.getGuestName());
         booking.setGuestEmail(request.getGuestEmail());
         booking.setGuestPhone(request.getGuestPhone());
-        booking.setHoldUntil(LocalDateTime.now().plusMinutes(5)); // Hold room 5 phút
+        booking.setHoldUntil(LocalDateTime.now().plusMinutes(10)); // Hold room 10 phút
         booking.setBookingReference(generateBookingReference());
 
-        booking = bookingRepository.save(booking);
-
-        // Không cập nhật room status cho guest booking để tránh lỗi database
-        // Room status sẽ được cập nhật khi booking được confirm
-
+        // Sử dụng BookingFlowService để tạo booking và khóa phòng
+        booking = bookingFlowService.createBookingAndLockRoom(booking);
 
         // Ghi log hoạt động
         activityLogService.logSystemActivity("CREATE_GUEST_BOOKING", 
             "Guest booking created: " + booking.getBookingReference() + 
             " for room " + booking.getRoomId() + 
             " from " + booking.getCheckIn() + " to " + booking.getCheckOut());
-
-        // Tạo thông báo cho admin
-        notificationService.createAdminNotification("GUEST_BOOKING_CREATED", 
-            "New guest booking: " + booking.getBookingReference() + " for room " + room.getRoomNumber(), 
-            "/admin/bookings/" + booking.getBookingId());
 
 
 
@@ -287,16 +282,6 @@ public class BookingService {
         BigDecimal roomPrice = room.getPrice(); // Room.getPrice() đã trả về BigDecimal
         BigDecimal totalPrice = roomPrice.multiply(BigDecimal.valueOf(nights));
         
-        // Debug log
-        System.out.println("=== DEBUG PRICE CALCULATION ===");
-        System.out.println("Room ID: " + room.getRoomId());
-        System.out.println("Room Price: " + room.getPrice());
-        System.out.println("Check In: " + checkIn);
-        System.out.println("Check Out: " + checkOut);
-        System.out.println("Nights: " + nights);
-        System.out.println("Total Price: " + totalPrice);
-        System.out.println("===============================");
-        
         return totalPrice;
     }
 
@@ -318,7 +303,7 @@ public class BookingService {
                 .bookingReference(booking.getBookingReference())
                 .roomId(booking.getRoomId())
                 .roomNumber(room != null ? room.getRoomNumber() : null)
-                .roomType(room != null ? room.getType() : null)
+                .roomType(room != null && room.getRoomType() != null ? room.getRoomType().getName() : null)
                 .checkIn(booking.getCheckIn())
                 .checkOut(booking.getCheckOut())
                 .guests(booking.getGuests())

@@ -74,6 +74,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/admin/create-user").hasAuthority("ROLE_ADMIN")
                         // ✅ Email API - cho phép gửi email
                         .requestMatchers("/api/email/**").permitAll()
+                        
+                        // ✅ Upload API - cho phép upload ảnh
+                        .requestMatchers("/api/upload/**").permitAll()
+                        
+                        // ✅ Static files - cho phép truy cập ảnh
+                        .requestMatchers("/uploads/**").permitAll()
 
                         // ✅ Cho phép guest booking (không cần login)
                         .requestMatchers(HttpMethod.POST, "/api/bookings/guest").permitAll()

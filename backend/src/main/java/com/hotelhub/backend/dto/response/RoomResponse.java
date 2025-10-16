@@ -53,13 +53,10 @@ public class RoomResponse {
     @AllArgsConstructor
     @Builder
     public static class RoomDetailResponse {
-        private String bedType;
         private Double roomSize;
-        private Integer floor;
         private String viewType;
         private Boolean smokingAllowed;
         private Boolean petFriendly;
-        private String wifiSpeed;
         private Boolean airConditioning;
         private Boolean minibar;
         private Boolean balcony;

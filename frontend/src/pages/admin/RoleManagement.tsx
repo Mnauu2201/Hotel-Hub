@@ -6,9 +6,6 @@ interface Role {
   id: number;
   name: string;
   description: string;
-  permissions: string[];
-  userCount: number;
-  createdAt: string;
 }
 
 const RoleManagement: React.FC = () => {
@@ -47,35 +44,49 @@ const RoleManagement: React.FC = () => {
   const fetchRoles = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockRoles: Role[] = [
-        {
-          id: 1,
-          name: 'ROLE_ADMIN',
-          description: 'Quản trị viên hệ thống',
-          permissions: ['READ', 'WRITE', 'DELETE', 'MANAGE_USERS', 'MANAGE_ROLES'],
-          userCount: 2,
-          createdAt: '2024-01-01'
-        },
-        {
-          id: 2,
-          name: 'ROLE_STAFF',
-          description: 'Nhân viên khách sạn',
-          permissions: ['READ', 'WRITE', 'MANAGE_BOOKINGS'],
-          userCount: 5,
-          createdAt: '2024-01-01'
-        },
-        {
-          id: 3,
-          name: 'ROLE_CUSTOMER',
-          description: 'Khách hàng',
-          permissions: ['READ', 'BOOK_ROOM'],
-          userCount: 82,
-          createdAt: '2024-01-01'
+      const token = localStorage.getItem('accessToken');
+      
+      if (!token) {
+        showNotification('error', 'Vui lòng đăng nhập để tiếp tục');
+        return;
+      }
+      
+      const response = await fetch('/api/admin/roles', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-      setRoles(mockRoles);
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('🔍 Roles API Response:', data);
+        
+        // Transform backend data to frontend format
+        const rolesData = data.roles || data || [];
+        const transformedRoles: Role[] = rolesData.map((role: any) => ({
+          id: role.roleId || role.id,
+          name: role.name,
+          description: role.description
+        }));
+        
+        setRoles(transformedRoles);
+      } else {
+        console.error('❌ Roles API Error:', response.status, response.statusText);
+        let errorMessage = 'Lỗi khi tải danh sách vai trò';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
+        }
+        showNotification('error', errorMessage);
+        setRoles([]);
+      }
     } catch (error) {
+      console.error('❌ Roles fetch error:', error);
+      showNotification('error', `Lỗi kết nối: ${error}`);
+      setRoles([]);
     } finally {
       setLoading(false);
     }
@@ -94,44 +105,95 @@ const RoleManagement: React.FC = () => {
   const handleUpdateRole = async (updatedRole: Role) => {
     setActionLoading({ action: 'update', roleId: updatedRole.id });
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const token = localStorage.getItem('accessToken');
       
-      setRoles(roles.map(role => 
-        role.id === updatedRole.id ? updatedRole : role
-      ));
-      setShowEditModal(false);
-      setEditingRole(null);
-      showNotification('success', 'Cập nhật vai trò thành công!');
+      if (!token) {
+        showNotification('error', 'Vui lòng đăng nhập để tiếp tục');
+        return;
+      }
+      
+      const response = await fetch(`/api/admin/roles/${updatedRole.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: updatedRole.name,
+          description: updatedRole.description
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('🔍 Update Role API Response:', data);
+        
+        // Refresh the roles list
+        await fetchRoles();
+        setShowEditModal(false);
+        setEditingRole(null);
+        showNotification('success', 'Cập nhật vai trò thành công!');
+      } else {
+        let errorMessage = 'Lỗi khi cập nhật vai trò';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
+        }
+        showNotification('error', errorMessage);
+      }
     } catch (error) {
-      showNotification('error', `Lỗi: ${error}`);
+      console.error('❌ Update role error:', error);
+      showNotification('error', `Lỗi kết nối: ${error}`);
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleAddRole = async (newRole: Omit<Role, 'id' | 'userCount' | 'createdAt'>) => {
+  const handleAddRole = async (newRole: Omit<Role, 'id'>) => {
     setActionLoading({ action: 'add' });
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const token = localStorage.getItem('accessToken');
       
-      // Create new role with mock data
-      const newId = Math.max(...roles.map(r => r.id), 0) + 1;
-      const createdRole: Role = {
-        id: newId,
-        name: newRole.name,
-        description: newRole.description,
-        permissions: newRole.permissions,
-        userCount: 0,
-        createdAt: new Date().toISOString()
-      };
+      if (!token) {
+        showNotification('error', 'Vui lòng đăng nhập để tiếp tục');
+        return;
+      }
       
-      setRoles([...roles, createdRole]);
-      setShowAddModal(false);
-      showNotification('success', 'Thêm vai trò thành công!');
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: newRole.name,
+          description: newRole.description
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('🔍 Add Role API Response:', data);
+        
+        // Refresh the roles list
+        await fetchRoles();
+        setShowAddModal(false);
+        showNotification('success', 'Thêm vai trò thành công!');
+      } else {
+        let errorMessage = 'Lỗi khi thêm vai trò';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
+        }
+        showNotification('error', errorMessage);
+      }
     } catch (error) {
-      showNotification('error', `Lỗi: ${error}`);
+      console.error('❌ Add role error:', error);
+      showNotification('error', `Lỗi kết nối: ${error}`);
     } finally {
       setActionLoading(null);
     }
@@ -141,33 +203,47 @@ const RoleManagement: React.FC = () => {
     if (window.confirm('Bạn có chắc chắn muốn xóa vai trò này?')) {
       setActionLoading({ action: 'delete', roleId });
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const token = localStorage.getItem('accessToken');
         
-          setRoles(roles.filter(role => role.id !== roleId));
-        showNotification('success', 'Xóa vai trò thành công!');
+        if (!token) {
+          showNotification('error', 'Vui lòng đăng nhập để tiếp tục');
+          return;
+        }
+        
+        const response = await fetch(`/api/admin/roles/${roleId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('🔍 Delete Role API Response:', data);
+          
+          // Refresh the roles list
+          await fetchRoles();
+          showNotification('success', 'Xóa vai trò thành công!');
+        } else {
+          let errorMessage = 'Lỗi khi xóa vai trò';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorData.error || errorMessage;
+          } catch (e) {
+            errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
+          }
+          showNotification('error', errorMessage);
+        }
       } catch (error) {
-        showNotification('error', `Lỗi: ${error}`);
+        console.error('❌ Delete role error:', error);
+        showNotification('error', `Lỗi kết nối: ${error}`);
       } finally {
         setActionLoading(null);
       }
     }
   };
 
-  const getPermissionBadge = (permission: string) => {
-    const permissionMap: { [key: string]: { class: string; text: string } } = {
-      'READ': { class: 'permission-read', text: 'Đọc' },
-      'WRITE': { class: 'permission-write', text: 'Ghi' },
-      'DELETE': { class: 'permission-delete', text: 'Xóa' },
-      'MANAGE_USERS': { class: 'permission-manage', text: 'Quản lý người dùng' },
-      'MANAGE_ROLES': { class: 'permission-manage', text: 'Quản lý vai trò' },
-      'MANAGE_BOOKINGS': { class: 'permission-manage', text: 'Quản lý đặt phòng' },
-      'BOOK_ROOM': { class: 'permission-book', text: 'Đặt phòng' }
-    };
-    
-    const permissionInfo = permissionMap[permission] || { class: 'permission-default', text: permission };
-    return <span className={`permission-badge ${permissionInfo.class}`}>{permissionInfo.text}</span>;
-  };
 
   return (
     <AdminLayout title="Quản lý vai trò" breadcrumb="Quản lý vai trò">
@@ -193,9 +269,6 @@ const RoleManagement: React.FC = () => {
                   <th>ID</th>
                   <th>Tên vai trò</th>
                   <th>Mô tả</th>
-                  <th>Quyền hạn</th>
-                  <th>Số người dùng</th>
-                  <th>Ngày tạo</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -214,19 +287,6 @@ const RoleManagement: React.FC = () => {
                       </span>
                     </td>
                     <td>{role.description}</td>
-                    <td>
-                      <div className="permissions-list">
-                        {role.permissions.map((permission, index) => (
-                          <span key={index}>
-                            {getPermissionBadge(permission)}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="user-count">{role.userCount} người</span>
-                    </td>
-                    <td>{new Date(role.createdAt).toLocaleDateString('vi-VN')}</td>
                     <td>
                       <button 
                         className="btn-action btn-edit"
@@ -334,8 +394,7 @@ const RoleManagement: React.FC = () => {
                   const updatedRole = {
                     ...editingRole,
                     name: formData.get('name') as string,
-                    description: formData.get('description') as string,
-                    permissions: Array.from(document.querySelectorAll('input[name="permissions"]:checked')).map(input => input.value)
+                    description: formData.get('description') as string
                   };
                   handleUpdateRole(updatedRole);
                 }}>
@@ -397,112 +456,6 @@ const RoleManagement: React.FC = () => {
                         color: isDarkMode ? '#e2e8f0' : '#2d3748'
                       }}
                     />
-                  </div>
-                  <div 
-                    className="form-group"
-                    style={{ marginBottom: '1.5rem' }}
-                  >
-                    <label style={{ 
-                      display: 'block', 
-                      marginBottom: '0.5rem', 
-                      fontWeight: '600', 
-                      color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important'
-                    }}>
-                      Quyền hạn:
-                    </label>
-                    <div 
-                      className="permissions-checkboxes"
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                        gap: '0.75rem'
-                      }}
-                    >
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="READ"
-                          defaultChecked={editingRole.permissions.includes('READ')}
-                        /> 
-                        Đọc
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="WRITE"
-                          defaultChecked={editingRole.permissions.includes('WRITE')}
-                        /> 
-                        Ghi
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="DELETE"
-                          defaultChecked={editingRole.permissions.includes('DELETE')}
-                        /> 
-                        Xóa
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="MANAGE_USERS"
-                          defaultChecked={editingRole.permissions.includes('MANAGE_USERS')}
-                        /> 
-                        Quản lý người dùng
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="MANAGE_ROLES"
-                          defaultChecked={editingRole.permissions.includes('MANAGE_ROLES')}
-                        /> 
-                        Quản lý vai trò
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="MANAGE_BOOKINGS"
-                          defaultChecked={editingRole.permissions.includes('MANAGE_BOOKINGS')}
-                        /> 
-                        Quản lý đặt phòng
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input 
-                          type="checkbox" 
-                          name="permissions" 
-                          value="BOOK_ROOM"
-                          defaultChecked={editingRole.permissions.includes('BOOK_ROOM')}
-                        /> 
-                        Đặt phòng
-                      </label>
-                    </div>
                   </div>
                   <div 
                     className="form-actions"
@@ -636,8 +589,7 @@ const RoleManagement: React.FC = () => {
                   const formData = new FormData(e.currentTarget);
                   const newRole = {
                     name: formData.get('name') as string,
-                    description: formData.get('description') as string,
-                    permissions: Array.from(document.querySelectorAll('input[name="permissions"]:checked')).map(input => input.value)
+                    description: formData.get('description') as string
                   };
                   handleAddRole(newRole);
                 }}>
@@ -699,77 +651,6 @@ const RoleManagement: React.FC = () => {
                         color: isDarkMode ? '#e2e8f0' : '#2d3748'
                       }}
                     />
-                  </div>
-                  <div 
-                    className="form-group"
-                    style={{ marginBottom: '1.5rem' }}
-                  >
-                    <label style={{ 
-                      display: 'block', 
-                      marginBottom: '0.5rem', 
-                      fontWeight: '600', 
-                      color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important'
-                    }}>
-                      Quyền hạn:
-                    </label>
-                    <div 
-                      className="permissions-checkboxes"
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                        gap: '0.75rem'
-                      }}
-                    >
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="READ" /> 
-                        Đọc
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="WRITE" /> 
-                        Ghi
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="DELETE" /> 
-                        Xóa
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="MANAGE_USERS" /> 
-                        Quản lý người dùng
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="MANAGE_ROLES" /> 
-                        Quản lý vai trò
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="MANAGE_BOOKINGS" /> 
-                        Quản lý đặt phòng
-                      </label>
-                      <label style={{ 
-                        color: isDarkMode ? '#e2e8f0 !important' : '#2d3748 !important',
-                        fontWeight: '500'
-                      }}>
-                        <input type="checkbox" name="permissions" value="BOOK_ROOM" /> 
-                        Đặt phòng
-                      </label>
-                    </div>
                   </div>
                   <div 
                     className="form-actions"

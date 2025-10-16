@@ -2,7 +2,10 @@ package com.hotelhub.backend.service;
 
 import com.hotelhub.backend.dto.response.BookingResponse;
 import com.hotelhub.backend.entity.Booking;
+import com.hotelhub.backend.entity.Room;
+import com.hotelhub.backend.entity.RoomStatus;
 import com.hotelhub.backend.repository.BookingRepository;
+import com.hotelhub.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +27,13 @@ public class AdminBookingService {
     private BookingRepository bookingRepository;
 
     @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private ActivityLogService activityLogService;
+    
+    @Autowired
+    private BookingFlowService bookingFlowService;
 
     // Xem tất cả booking với phân trang
     public Page<BookingResponse> getAllBookings(int page, int size, String sortBy, String sortDir) {
@@ -198,8 +207,8 @@ public class AdminBookingService {
         return convertToResponse(booking);
     }
 
-    // Admin hủy booking
-    public BookingResponse cancelBooking(Long bookingId, String reason, String adminEmail) {
+    // Admin hủy booking (legacy method - không sử dụng)
+    public BookingResponse cancelBookingLegacy(Long bookingId, String reason, String adminEmail) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
 
@@ -218,16 +227,133 @@ public class AdminBookingService {
         return convertToResponse(booking);
     }
 
+    // Cập nhật trạng thái phòng
+    public void updateRoomStatus(Long bookingId, String roomStatus) {
+        try {
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+            
+            Room room = roomRepository.findById(booking.getRoomId())
+                    .orElseThrow(() -> new RuntimeException("Phòng không tồn tại"));
+            
+            // Cập nhật trạng thái phòng
+            if ("BOOKED".equals(roomStatus)) {
+                room.setStatus(RoomStatus.BOOKED);
+            } else if ("AVAILABLE".equals(roomStatus)) {
+                room.setStatus(RoomStatus.AVAILABLE);
+            } else if ("LOCKED".equals(roomStatus)) {
+                room.setStatus(RoomStatus.LOCKED);
+            }
+            
+            roomRepository.save(room);
+            
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("UPDATE_ROOM_STATUS", 
+                "Room " + room.getRoomNumber() + " status updated to " + roomStatus + " for booking " + booking.getBookingReference());
+                
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi cập nhật trạng thái phòng: " + e.getMessage());
+        }
+    }
+
+    // Xác nhận booking và chuyển phòng sang BOOKED
+    public BookingResponse confirmBooking(Long bookingId, String adminEmail) {
+        try {
+            // Sử dụng BookingFlowService để xác nhận
+            bookingFlowService.confirmBooking(bookingId);
+            
+            // Lấy booking đã cập nhật
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+            
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("CONFIRM_BOOKING", 
+                "Admin " + adminEmail + " confirmed booking " + booking.getBookingReference());
+            
+            return convertToResponse(booking);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi xác nhận booking: " + e.getMessage());
+        }
+    }
+
+    // Hủy booking và chuyển phòng về AVAILABLE
+    public BookingResponse cancelBooking(Long bookingId, String reason, String adminEmail) {
+        try {
+            // Sử dụng BookingFlowService để hủy
+            bookingFlowService.cancelBooking(bookingId);
+            
+            // Lấy booking đã cập nhật
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+            
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("CANCEL_BOOKING", 
+                "Admin " + adminEmail + " cancelled booking " + booking.getBookingReference() + " - Reason: " + reason);
+            
+            return convertToResponse(booking);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi hủy booking: " + e.getMessage());
+        }
+    }
+
+    // Cập nhật thông tin booking
+    public BookingResponse updateBookingInfo(Long bookingId, Map<String, Object> request, String adminEmail) {
+        try {
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+            // Cập nhật thông tin khách hàng
+            if (request.containsKey("guestName")) {
+                booking.setGuestName((String) request.get("guestName"));
+            }
+            if (request.containsKey("guestEmail")) {
+                booking.setGuestEmail((String) request.get("guestEmail"));
+            }
+            if (request.containsKey("guestPhone")) {
+                booking.setGuestPhone((String) request.get("guestPhone"));
+            }
+            if (request.containsKey("guests")) {
+                booking.setGuests((Integer) request.get("guests"));
+            }
+            if (request.containsKey("notes")) {
+                booking.setNotes((String) request.get("notes"));
+            }
+            if (request.containsKey("checkIn")) {
+                booking.setCheckIn(java.time.LocalDate.parse((String) request.get("checkIn")));
+            }
+            if (request.containsKey("checkOut")) {
+                booking.setCheckOut(java.time.LocalDate.parse((String) request.get("checkOut")));
+            }
+
+            // Lưu booking đã cập nhật
+            booking = bookingRepository.save(booking);
+
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("UPDATE_BOOKING_INFO", 
+                "Admin " + adminEmail + " updated booking info " + booking.getBookingReference());
+
+            return convertToResponse(booking);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi cập nhật thông tin booking: " + e.getMessage());
+        }
+    }
+
     // Convert Booking entity to BookingResponse
     private BookingResponse convertToResponse(Booking booking) {
+        // Fetch room information
+        Room room = null;
+        try {
+            room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        } catch (Exception e) {
+            // Room not found, continue with null
+        }
+        
         BookingResponse response = new BookingResponse();
         response.setBookingId(booking.getBookingId());
         response.setBookingReference(booking.getBookingReference());
         response.setRoomId(booking.getRoomId());
-        // Note: These fields need to be fetched from Room entity if needed
-        // For now, set to null as they're not directly available in Booking entity
-        response.setRoomNumber(null);
-        response.setRoomType(null);
+        response.setRoomNumber(room != null ? room.getRoomNumber() : null);
+        response.setRoomType(room != null && room.getRoomType() != null ? room.getRoomType().getName() : null);
         response.setCheckIn(booking.getCheckIn());
         response.setCheckOut(booking.getCheckOut());
         response.setGuests(booking.getGuests());
@@ -245,11 +371,10 @@ public class AdminBookingService {
             response.setUserEmail(booking.getUser().getEmail());
         }
         
-        // Note: These fields need to be fetched from Room entity if needed
-        // For now, set to null as they're not directly available in Booking entity
-        response.setRoomDescription(null);
-        response.setRoomCapacity(null);
-        response.setAmenities(null);
+        // Set room details
+        response.setRoomDescription(room != null ? room.getDescription() : null);
+        response.setRoomCapacity(room != null ? room.getCapacity() : null);
+        response.setAmenities(new java.util.ArrayList<>()); // TODO: Implement amenities
         
         return response;
     }

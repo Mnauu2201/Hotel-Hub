@@ -3,7 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import './AdminPages.css';
 
 interface Booking {
-  id: number;
+  bookingId: number; // Changed from 'id' to 'bookingId' to match backend
   bookingReference?: string;
   userEmail: string;
   roomName: string;
@@ -244,7 +244,7 @@ const BookingManagement: React.FC = () => {
   };
 
   const handleEditBooking = (booking: Booking) => {
-    const bookingExists = bookings.find(b => b.id === booking.id);
+    const bookingExists = bookings.find(b => b.bookingId === booking.bookingId);
     
     if (!bookingExists) {
       showNotification('error', 'Booking không tồn tại trong danh sách hiện tại!');
@@ -278,7 +278,7 @@ const BookingManagement: React.FC = () => {
       if (response.ok) {
         // Cập nhật trạng thái booking thành CANCELLED
         setBookings(bookings.map(booking => 
-          booking.id === bookingId 
+          booking.bookingId === bookingId 
             ? { ...booking, status: 'CANCELLED' }
             : booking
         ));
@@ -292,10 +292,39 @@ const BookingManagement: React.FC = () => {
     }
   };
 
+  const handleConfirmBooking = async (bookingId: number) => {
+    try {
+      const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+      if (!token) {
+        showNotification('error', 'Vui lòng đăng nhập để tiếp tục');
+        return;
+      }
+
+      const response = await fetch(`/api/admin/bookings/${bookingId}/confirm`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        showNotification('success', 'Xác nhận booking thành công! Phòng đã chuyển sang trạng thái BOOKED');
+        fetchBookings(); // Refresh the list
+        fetchAllRooms(); // Refresh room data
+      } else {
+        const errorData = await response.json();
+        showNotification('error', `Lỗi xác nhận booking: ${errorData.message || 'Unknown error'}`);
+      }
+    } catch (error: any) {
+      showNotification('error', `Lỗi kết nối: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const handleUpdateBooking = async (updatedBooking: Booking) => {
     try {
-      // Kiểm tra bookingId có tồn tại không (có thể là bookingId hoặc id)
-      const bookingId = updatedBooking.id || (updatedBooking as any).bookingId;
+      // Kiểm tra bookingId có tồn tại không
+      const bookingId = updatedBooking.bookingId;
       if (!bookingId) {
         showNotification('error', 'Không tìm thấy ID booking!');
         return;
@@ -310,7 +339,7 @@ const BookingManagement: React.FC = () => {
         return;
       }
       
-      const url = `/api/admin/bookings/${bookingId}/status`;
+      const url = `/api/admin/bookings/${bookingId}/update`;
       
       const response = await fetch(url, {
         method: 'PUT',
@@ -319,17 +348,22 @@ const BookingManagement: React.FC = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          status: updatedBooking.status.toLowerCase()
+          guestName: updatedBooking.guestName,
+          guestEmail: updatedBooking.guestEmail || updatedBooking.userEmail,
+          guestPhone: updatedBooking.guestPhone,
+          guests: updatedBooking.guests,
+          notes: updatedBooking.notes,
+          checkIn: updatedBooking.checkIn,
+          checkOut: updatedBooking.checkOut
         })
       });
 
       
       if (response.ok) {
-        setBookings(bookings.map(booking => 
-          (booking.id === bookingId || (booking as any).bookingId === bookingId) ? updatedBooking : booking
-        ));
+        showNotification('success', 'Cập nhật thông tin booking thành công!');
         setShowEditModal(false);
-        // Không hiển thị thông báo success
+        setSelectedBooking(null);
+        fetchBookings(); // Refresh the list
       } else {
         let errorMessage = 'Unknown error';
         try {
@@ -409,9 +443,9 @@ const BookingManagement: React.FC = () => {
               </thead>
               <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking.id}>
-                    <td>{booking.id}</td>
-                    <td>{booking.userEmail}</td>
+                  <tr key={booking.bookingId}>
+                    <td>{booking.bookingId}</td>
+                    <td>{booking.guestEmail || booking.userEmail || 'N/A'}</td>
                     <td>
                       {(() => {
                         const roomId = (booking as any)?.roomId;
@@ -443,9 +477,26 @@ const BookingManagement: React.FC = () => {
                       >
                         Sửa
                       </button>
+                      {booking.status === 'pending' && (
+                        <button 
+                          className="btn-action btn-confirm"
+                          onClick={() => handleConfirmBooking(booking.bookingId)}
+                          style={{
+                            backgroundColor: '#48bb78',
+                            color: 'white',
+                            border: 'none',
+                            padding: '5px 10px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginLeft: '5px'
+                          }}
+                        >
+                          Xác nhận
+                        </button>
+                      )}
                       <button 
                         className="btn-action btn-delete"
-                        onClick={() => handleDeleteBooking(booking.id)}
+                        onClick={() => handleDeleteBooking(booking.bookingId)}
                       >
                         Hủy
                       </button>

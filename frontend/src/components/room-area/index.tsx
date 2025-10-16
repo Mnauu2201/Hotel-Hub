@@ -85,13 +85,23 @@ const RoomArea = () => {
           )}
           {!loading && !error && rooms.map((room) => {
             const primaryImg = room.images?.find((i: any) => i.isPrimary)?.imageUrl || room.images?.[0]?.imageUrl
+            const imageUrl = primaryImg?.startsWith('/uploads/') 
+              ? `http://localhost:8080${primaryImg}` 
+              : primaryImg
             const priceText = (room.price?.toLocaleString?.() || room.price || room.priceAsDouble)?.toString()
             return (
               <div key={room.roomId} className="col-xl-4 col-md-6" style={{ display: 'flex', paddingLeft: 12, paddingRight: 12 }}>
                 <div className="single-services mb-30" style={{ height: '100%', minHeight: 560, display: 'flex', flexDirection: 'column', width: '100%' }}>
                   <div className="services-thumb" style={{ width: '100%' }}>
                     <Link className="gallery-link popup-image" to={`/room-detail/${room.roomId}`}>
-                      <img src={primaryImg || fallbackRoomImg} alt={room.roomTypeName || 'room'} style={{ width: '100%', height: 260, objectFit: 'cover' }} />
+                      <img 
+                        src={imageUrl || fallbackRoomImg} 
+                        alt={room.roomTypeName || 'room'} 
+                        style={{ width: '100%', height: 260, objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.src = fallbackRoomImg;
+                        }}
+                      />
                     </Link>
                   </div>
                   <div className="services-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

@@ -116,7 +116,6 @@ const BookingArea = () => {
       setShowResults(true);
       setCurrentPage(1); // Reset to first page when new search
     } catch (error) {
-      console.error('Error checking availability:', error);
       alert('Có lỗi xảy ra khi kiểm tra phòng trống. Vui lòng thử lại.');
       setSearchResults([]);
       setShowResults(false);
@@ -326,7 +325,7 @@ const BookingArea = () => {
                             transition: 'transform 0.3s ease-in-out'
                           }}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTAwQzE2MCA4OS41IDE2OC41IDgxIDE3OSA4MUMxODkuNSA4MSAxOTggODkuNSAxOTggMTAwQzE5OCAxMTAuNSAxODkuNSAxMTkgMTc5IDExOUMxNjguNSAxMTkgMTYwIDExMC41IDE2MCAxMDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0xNDAgMTIwSDE4MFYxNDBIMTQwVjEyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                            (e.target as HTMLImageElement).src = '/src/assets/img/gallery/room-img01.png';
                           }}
                         />
                         <div style={{

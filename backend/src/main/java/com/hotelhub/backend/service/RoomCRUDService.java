@@ -147,7 +147,8 @@ public class RoomCRUDService {
      * Lấy tất cả phòng
      */
     public List<RoomResponse> getAllRooms() {
-        return roomRepository.findAll().stream()
+        List<Room> rooms = roomRepository.findAll();
+        return rooms.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -172,10 +173,10 @@ public class RoomCRUDService {
 
     // Helper methods
     private boolean hasRoomDetailInfo(RoomRequest request) {
-        return request.getBedType() != null || request.getRoomSize() != null ||
-               request.getFloor() != null || request.getViewType() != null ||
+        return request.getRoomSize() != null ||
+               request.getViewType() != null ||
                request.getSmokingAllowed() != null || request.getPetFriendly() != null ||
-               request.getWifiSpeed() != null || request.getAirConditioning() != null ||
+               request.getAirConditioning() != null ||
                request.getMinibar() != null || request.getBalcony() != null ||
                request.getOceanView() != null;
     }
@@ -183,13 +184,10 @@ public class RoomCRUDService {
     private void createRoomDetail(Room room, RoomRequest request) {
         RoomDetail roomDetail = RoomDetail.builder()
                 .room(room)
-                .bedType(request.getBedType())
                 .roomSize(request.getRoomSize())
-                .floor(request.getFloor())
                 .viewType(request.getViewType())
                 .smokingAllowed(request.getSmokingAllowed())
                 .petFriendly(request.getPetFriendly())
-                .wifiSpeed(request.getWifiSpeed())
                 .airConditioning(request.getAirConditioning())
                 .minibar(request.getMinibar())
                 .balcony(request.getBalcony())
@@ -205,13 +203,10 @@ public class RoomCRUDService {
         if (hasRoomDetailInfo(request)) {
             RoomDetail roomDetail = existingDetail.orElseGet(() -> RoomDetail.builder().room(room).build());
             
-            roomDetail.setBedType(request.getBedType());
             roomDetail.setRoomSize(request.getRoomSize());
-            roomDetail.setFloor(request.getFloor());
             roomDetail.setViewType(request.getViewType());
             roomDetail.setSmokingAllowed(request.getSmokingAllowed());
             roomDetail.setPetFriendly(request.getPetFriendly());
-            roomDetail.setWifiSpeed(request.getWifiSpeed());
             roomDetail.setAirConditioning(request.getAirConditioning());
             roomDetail.setMinibar(request.getMinibar());
             roomDetail.setBalcony(request.getBalcony());
@@ -291,13 +286,10 @@ public class RoomCRUDService {
         if (roomDetail == null) return null;
         
         return RoomResponse.RoomDetailResponse.builder()
-                .bedType(roomDetail.getBedType())
                 .roomSize(roomDetail.getRoomSize())
-                .floor(roomDetail.getFloor())
                 .viewType(roomDetail.getViewType())
                 .smokingAllowed(roomDetail.getSmokingAllowed())
                 .petFriendly(roomDetail.getPetFriendly())
-                .wifiSpeed(roomDetail.getWifiSpeed())
                 .airConditioning(roomDetail.getAirConditioning())
                 .minibar(roomDetail.getMinibar())
                 .balcony(roomDetail.getBalcony())
@@ -306,7 +298,9 @@ public class RoomCRUDService {
     }
 
     private List<RoomResponse.RoomImageResponse> convertImagesToResponse(List<RoomImage> images) {
-        if (images == null) return List.of();
+        if (images == null) {
+            return List.of();
+        }
         
         return images.stream()
                 .map(image -> RoomResponse.RoomImageResponse.builder()
