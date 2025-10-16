@@ -54,6 +54,13 @@ export const userLogin = async (email: string, password: string) => {
         roles: response.data.roles
       };
       
+      // Debug: Log phone specifically
+      console.log('🔍 Phone from response:', {
+        'response.data.phone': response.data.phone,
+        'user.phone': user.phone,
+        'response.data': response.data
+      });
+      
       console.log('✅ Saving to localStorage:', {
         accessToken: accessToken ? accessToken.substring(0, 20) + '...' : null,
         refreshToken: refreshToken ? refreshToken.substring(0, 20) + '...' : null,

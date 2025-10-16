@@ -137,6 +137,7 @@ public class AuthController {
                                 .refreshToken(rt.getToken())
                                 .email(user.getEmail())
                                 .name(user.getName())
+                                .phone(user.getPhone())
                                 .roles(roles)
                                 .expiresIn(expiresIn) // -1 cho admin/staff, 3600 cho customer
                                 .build();

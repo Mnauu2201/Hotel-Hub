@@ -120,8 +120,7 @@ const FaqArea = () => {
                   </div>
                   <div id="collapseEighte" className="collapse" aria-labelledby="headingEighte" data-bs-parent="#accordionExample">
                     <div className="card-body">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                      Có, chúng tôi cho phép mang thú cưng vào khách sạn với một số điều kiện. Vui lòng thông báo trước khi đặt phòng và tuân thủ các quy định về thú cưng của khách sạn.
                     </div>
                   </div>
                 </div>

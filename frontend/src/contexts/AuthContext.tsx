@@ -126,6 +126,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         accessToken: localStorage.getItem('accessToken'),
         refreshToken: localStorage.getItem('refreshToken')
       });
+      
+      // Debug: Kiểm tra user object
+      console.log('🔍 User object after login:', {
+        email: storedUser.email,
+        name: storedUser.name,
+        phone: storedUser.phone,
+        roles: storedUser.roles
+      });
 
       return response;
     } catch (error) {

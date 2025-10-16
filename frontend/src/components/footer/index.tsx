@@ -16,18 +16,18 @@ const Footer = () => {
                   <ul>
                     <li>
                       <i className="icon fal fa-phone" />
-                      <span>1800-121-3637<br />+91-7052-101-786</span>
+                      <span>1900-xxxx<br />+84 777 666 555</span>
                     </li>
                     <li><i className="icon fal fa-envelope" />
                       <span>
-                        <Link to="mailto:info@example.com">info@example.com</Link>
+                        <Link to="mailto:info@hotelhub.com">info@hotelhub.com</Link>
                         <br />
-                        <Link to="mailto:help@example.com">help@example.com</Link>
+                        <Link to="mailto:booking@hotelhub.com">booking@hotelhub.com</Link>
                       </span>
                     </li>
                     <li>
                       <i className="icon fal fa-map-marker-check" />
-                      <span>1247/Plot No. 39, 15th Phase,<br /> LHB Colony, Kanpur</span>
+                      <span>123 Đường ABC, Quận 1,<br /> TP. Hồ Chí Minh, Việt Nam</span>
                     </li>
                   </ul>
                 </div>
@@ -86,7 +86,7 @@ const Footer = () => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-6">
-              Bản quyền © Riorelax 2022. Tất cả các quyền được bảo lưu.
+              Bản quyền © HotelHub 2024. Tất cả các quyền được bảo lưu.
             </div>
             <div className="col-lg-6 col-md-6 text-right text-xl-right">
               <div className="footer-social">

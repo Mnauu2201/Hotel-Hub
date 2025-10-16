@@ -39,11 +39,11 @@ const TeamArea = () => {
   }, []);
 
   const teamMembers = [
-    { img: team1, name: 'Howard Holmes', role: 'Designer' },
-    { img: team2, name: 'Ella Thompson', role: 'Designer' },
-    { img: team3, name: 'Vincent Cooper', role: 'Designer' },
-    { img: team4, name: 'Danielle Bryant', role: 'Designer' },
-    { img: team5, name: 'Vincent Cooper', role: 'Designer' },
+    { img: team1, name: 'Nguyễn Văn Minh', role: 'Giám đốc khách sạn' },
+    { img: team2, name: 'Trần Thị Lan', role: 'Quản lý lễ tân' },
+    { img: team3, name: 'Lê Văn Hùng', role: 'Quản lý dịch vụ' },
+    { img: team4, name: 'Phạm Thị Mai', role: 'Quản lý nhà hàng' },
+    { img: team5, name: 'Hoàng Văn Đức', role: 'Quản lý kỹ thuật' },
   ];
 
   return (
@@ -52,9 +52,9 @@ const TeamArea = () => {
         <div className="row">
           <div className="col-lg-12 text-center mb-40">
             <div className="section-title">
-              <h5>Our Team</h5>
-              <h2>Best Expert Hotel</h2>
-              <p>Proin consectetur non dolor vitae pulvinar. Pellentesque sollicitudin dolor eget neque viverra...</p>
+              <h5>Đội ngũ của chúng tôi</h5>
+              <h2>Chuyên gia khách sạn hàng đầu</h2>
+              <p>Đội ngũ nhân viên chuyên nghiệp, nhiệt tình và giàu kinh nghiệm, luôn sẵn sàng phục vụ quý khách với tiêu chuẩn cao nhất.</p>
             </div>
           </div>
         </div>

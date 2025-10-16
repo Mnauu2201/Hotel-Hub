@@ -146,7 +146,23 @@ const bookingService = {
       }
     });
     return response.data as { message: string };
-  }
+  },
+
+  // Lấy chi tiết booking theo ID (generic method)
+  getBookingById: async (bookingId: number | string) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    
+    const response = await axios.get(`${API_BASE_URL}/bookings/user/${bookingId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return { booking: response.data };
+  },
+
 };
 
 export default bookingService;

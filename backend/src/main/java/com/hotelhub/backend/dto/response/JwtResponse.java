@@ -19,5 +19,6 @@ public class JwtResponse {
     // Thông tin user
     private String email;
     private String name;
+    private String phone;
     private List<String> roles;
 }

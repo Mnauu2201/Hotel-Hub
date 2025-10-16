@@ -32,6 +32,7 @@ import BookingPage from "./pages/BookingPage.jsx";
 import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 // @ts-expect-error JS component
 import MyBookings from "./pages/MyBookings.jsx";
+import MyBookingsDetail from "./pages/MyBookingsDetail.jsx";
 // @ts-expect-error JS component
 import ProfilePage from "./pages/ProfilePage.jsx";
 import AdminPage from "./pages/AdminPage";
@@ -113,6 +114,10 @@ function App() {
         {
           path: "/my-bookings",
           element: <MyBookings />,
+        },
+        {
+          path: "/my-bookings/:bookingId",
+          element: <MyBookingsDetail />,
         },
         {
           path: "/contact",
