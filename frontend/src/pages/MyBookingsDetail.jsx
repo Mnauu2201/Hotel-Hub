@@ -13,9 +13,6 @@ const MyBookingsDetail = () => {
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [saving, setSaving] = useState(false);
 
   const themeColor = '#644222';
   const themeBgLight = '#faf7f2';
@@ -54,13 +51,6 @@ const MyBookingsDetail = () => {
             }
           }
           
-          // Set edit data with user info from context (not from booking)
-          setEditData({
-            guestName: user?.name || '',
-            guestEmail: user?.email || '',
-            guestPhone: user?.phone || '',
-            notes: response.booking.notes || ''
-          });
         } else {
           setError('Không tìm thấy thông tin đặt phòng');
         }
@@ -77,42 +67,6 @@ const MyBookingsDetail = () => {
     }
   }, [bookingId, user]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditData({
-      guestName: user?.name || '',
-      guestEmail: user?.email || '',
-      guestPhone: user?.phone || '',
-      notes: booking?.notes || ''
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSaveEdit = async () => {
-    try {
-      setSaving(true);
-      
-      // Tạm thời vô hiệu hóa chức năng cập nhật vì backend chưa có endpoint
-      alert('Chức năng cập nhật thông tin đặt phòng đang được phát triển. Vui lòng liên hệ admin để được hỗ trợ.');
-      setIsEditing(false);
-    } catch (err) {
-      console.error('Error updating booking:', err);
-      alert('Cập nhật thất bại. Vui lòng thử lại.');
-    } finally {
-      setSaving(false);
-    }
-  };
 
 
   const getStatusColor = (status) => {
@@ -614,157 +568,8 @@ const MyBookingsDetail = () => {
                   <h3 style={{ margin: 0, color: '#1f2937', fontSize: 18, fontWeight: 700 }}>
                     Chi tiết đặt phòng
                   </h3>
-                  {!isEditing && (booking.status?.toLowerCase() === 'pending' || booking.status?.toLowerCase() === 'confirmed') && (
-                    <button
-                      onClick={handleEdit}
-                      style={{
-                        background: themeColor,
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 16px',
-                        borderRadius: 6,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ✏️ Sửa thông tin
-                    </button>
-                  )}
                 </div>
 
-                {isEditing ? (
-                  <div>
-                    <div className="row" style={{ rowGap: 16 }}>
-                      <div className="col-md-6">
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>
-                          Họ và tên *
-                        </label>
-                        <input
-                          type="text"
-                          name="guestName"
-                          value={editData.guestName}
-                          onChange={handleInputChange}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>
-                          Email *
-                        </label>
-                        <input
-                          type="email"
-                          name="guestEmail"
-                          value={editData.guestEmail}
-                          onChange={handleInputChange}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>
-                          Số điện thoại *
-                        </label>
-                        <input
-                          type="tel"
-                          name="guestPhone"
-                          value={editData.guestPhone}
-                          onChange={handleInputChange}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>
-                          Số khách
-                        </label>
-                        <input
-                          type="number"
-                          value={booking.guests || 1}
-                          disabled
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14,
-                            background: '#f9fafb'
-                          }}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, color: '#374151' }}>
-                          Ghi chú đặc biệt
-                        </label>
-                        <textarea
-                          name="notes"
-                          value={editData.notes}
-                          onChange={handleInputChange}
-                          rows={3}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: 6,
-                            fontSize: 14,
-                            resize: 'vertical'
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
-                      <button
-                        onClick={handleSaveEdit}
-                        disabled={saving}
-                        style={{
-                          background: themeColor,
-                          color: 'white',
-                          border: 'none',
-                          padding: '10px 20px',
-                          borderRadius: 6,
-                          fontSize: 14,
-                          fontWeight: 500,
-                          cursor: saving ? 'not-allowed' : 'pointer',
-                          opacity: saving ? 0.6 : 1
-                        }}
-                      >
-                        {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        disabled={saving}
-                        style={{
-                          background: '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          padding: '10px 20px',
-                          borderRadius: 6,
-                          fontSize: 14,
-                          fontWeight: 500,
-                          cursor: saving ? 'not-allowed' : 'pointer'
-                        }}
-                      >
-                        Hủy
-                      </button>
-                    </div>
-                  </div>
-                ) : (
                   <div className="row" style={{ rowGap: 16 }}>
                     <div className="col-md-6">
                       <div>
@@ -849,7 +654,6 @@ const MyBookingsDetail = () => {
                       </div>
                     )}
                   </div>
-                )}
               </div>
 
               {/* Actions */}
