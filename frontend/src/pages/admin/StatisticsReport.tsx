@@ -57,6 +57,7 @@ const StatisticsReport: React.FC = () => {
       };
       setStatistics(mockStats);
     } catch (error) {
+      console.error('Error fetching statistics:', error);
     } finally {
       setLoading(false);
     }

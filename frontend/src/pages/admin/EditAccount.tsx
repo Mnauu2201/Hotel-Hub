@@ -46,6 +46,7 @@ const EditAccount: React.FC = () => {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
+      console.error('Error saving account:', error);
     } finally {
       setLoading(false);
     }
