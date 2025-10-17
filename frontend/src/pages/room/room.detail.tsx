@@ -45,11 +45,14 @@ const RoomDetail = () => {
       try {
         // Prefer CRUD room detail if available
         const res = await api.get(`/rooms/${id}`)
+        console.log('Room detail response:', res.data)
+        console.log('Room images from API:', res.data?.images || res.data?.room?.images)
         setRoom(res.data?.room || res.data)
       } catch (e: any) {
         try {
           // Fallback to booking controller detail
           const res2 = await api.get(`/bookings/rooms/${id}`)
+          console.log('Room detail fallback response:', res2.data)
           setRoom(res2.data?.room || res2.data)
         } catch (err: any) {
           setError('Không thể tải chi tiết phòng')
@@ -62,9 +65,42 @@ const RoomDetail = () => {
   }, [id])
 
   // Get all images or create fallback
+  console.log('Room object:', room);
+  console.log('Room images:', room?.images);
+  
   const allImages = room?.images && room.images.length > 0 
-    ? room.images 
+    ? room.images.map(img => {
+        console.log('Processing image:', img);
+        // Handle different image data structures
+        if (typeof img === 'string') {
+          return { imageUrl: img, altText: 'Room Image' };
+        }
+        let imageUrl = img.imageUrl || img.url || img;
+        console.log('Original Image URL:', imageUrl);
+        
+        // Convert relative URLs to absolute backend URLs
+        if (imageUrl && !imageUrl.startsWith('http')) {
+          if (imageUrl.startsWith('/uploads/')) {
+            // If it's already a relative path starting with /uploads/, prepend backend URL
+            imageUrl = 'http://localhost:8080' + imageUrl;
+          } else if (!imageUrl.startsWith('/')) {
+            // If it doesn't start with /, add /uploads/ prefix and backend URL
+            imageUrl = 'http://localhost:8080/uploads/' + imageUrl;
+          } else {
+            // If it starts with / but not /uploads/, add backend URL
+            imageUrl = 'http://localhost:8080' + imageUrl;
+          }
+        }
+        
+        console.log('Processed Image URL:', imageUrl);
+        return {
+          imageUrl: imageUrl,
+          altText: img.altText || 'Room Image'
+        };
+      })
     : [{ imageUrl: '/src/assets/img/gallery/room-img01.png', altText: 'Room Image' }]
+  
+  console.log('Processed allImages:', allImages);
   
   const currentImage = allImages[selectedImageIndex] || allImages[0]
   
@@ -166,7 +202,12 @@ const RoomDetail = () => {
                         objectFit: 'cover',
                         transition: 'transform 0.3s ease-in-out'
                       }}
+                      onLoad={() => {
+                        console.log('Image loaded successfully:', currentImage.imageUrl);
+                      }}
                       onError={(e) => {
+                        console.error('Image failed to load:', currentImage.imageUrl);
+                        console.error('Error event:', e);
                         (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MDAgMjAwQzQwMCAxNzkuMDQ1IDQxNy4wNDUgMTYyIDQzOCAxNjJDNDU4Ljk1NSAxNjIgNDc2IDE3OS4wNDUgNDc2IDIwMEM0NzYgMjIwLjk1NSA0NTguOTU1IDIzOCA0MzggMjM4QzQxNy4wNDUgMjM4IDQwMCAyMjAuOTU1IDQwMCAyMDBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zNTAgMjgwSDQ1MFYzMjBIMzUwVjI4MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
                       }}
                     />

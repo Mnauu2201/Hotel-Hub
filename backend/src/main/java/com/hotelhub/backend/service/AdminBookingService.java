@@ -2,7 +2,9 @@ package com.hotelhub.backend.service;
 
 import com.hotelhub.backend.dto.response.BookingResponse;
 import com.hotelhub.backend.entity.Booking;
+import com.hotelhub.backend.entity.Room;
 import com.hotelhub.backend.repository.BookingRepository;
+import com.hotelhub.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,9 @@ public class AdminBookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
 
     @Autowired
     private ActivityLogService activityLogService;
@@ -220,14 +225,14 @@ public class AdminBookingService {
 
     // Convert Booking entity to BookingResponse
     private BookingResponse convertToResponse(Booking booking) {
+        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        
         BookingResponse response = new BookingResponse();
         response.setBookingId(booking.getBookingId());
         response.setBookingReference(booking.getBookingReference());
         response.setRoomId(booking.getRoomId());
-        // Note: These fields need to be fetched from Room entity if needed
-        // For now, set to null as they're not directly available in Booking entity
-        response.setRoomNumber(null);
-        response.setRoomType(null);
+        response.setRoomNumber(room != null ? room.getRoomNumber() : null);
+        response.setRoomType(room != null ? room.getRoomType().getName() : null);
         response.setCheckIn(booking.getCheckIn());
         response.setCheckOut(booking.getCheckOut());
         response.setGuests(booking.getGuests());
@@ -245,11 +250,9 @@ public class AdminBookingService {
             response.setUserEmail(booking.getUser().getEmail());
         }
         
-        // Note: These fields need to be fetched from Room entity if needed
-        // For now, set to null as they're not directly available in Booking entity
-        response.setRoomDescription(null);
-        response.setRoomCapacity(null);
-        response.setAmenities(null);
+        response.setRoomDescription(room != null ? room.getDescription() : null);
+        response.setRoomCapacity(room != null ? room.getCapacity() : null);
+        response.setAmenities(null); // TODO: Implement amenities
         
         return response;
     }
