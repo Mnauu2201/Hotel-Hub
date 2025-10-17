@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import BreadcrumbArea from "../../components/breadcrumb-area"
+import SuggestedRooms from "../../components/room-area/SuggestedRooms"
 import api from "../../services/api"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
@@ -466,6 +467,9 @@ const RoomDetail = () => {
           </div>
         </div>
       </div>
+      
+      {/* Suggested Rooms Section */}
+      <SuggestedRooms currentRoomId={room.roomId || room.id} limit={3} />
     </>
   )
 }
