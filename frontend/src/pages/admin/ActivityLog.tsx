@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import api from '../../services/api';
 import './AdminPages.css';
 
 interface ActivityLog {
-  id: number;
-  user: string;
+  logId: number;
+  userId?: number;
   action: string;
-  description: string;
-  ipAddress: string;
-  userAgent: string;
-  timestamp: string;
-  status: string;
+  detail: string;
+  createdAt: string;
+  user?: {
+    name: string;
+    email: string;
+  };
+}
+
+interface ActivityLogResponse {
+  logs: ActivityLog[];
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
 const ActivityLog: React.FC = () => {
@@ -18,6 +29,7 @@ const ActivityLog: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const [userFilter, setUserFilter] = useState('ALL');
   const [actionFilter, setActionFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,77 +41,51 @@ const ActivityLog: React.FC = () => {
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockLogs: ActivityLog[] = [
-        {
-          id: 1,
-          user: 'admin@hotelhub.com',
-          action: 'LOGIN',
-          description: 'Đăng nhập vào hệ thống',
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          timestamp: '2024-01-15T10:30:00Z',
-          status: 'SUCCESS'
-        },
-        {
-          id: 2,
-          user: 'admin@hotelhub.com',
-          action: 'CREATE_BOOKING',
-          description: 'Tạo đặt phòng mới #12345',
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          timestamp: '2024-01-15T10:35:00Z',
-          status: 'SUCCESS'
-        },
-        {
-          id: 3,
-          user: 'user1@example.com',
-          action: 'LOGIN',
-          description: 'Đăng nhập vào hệ thống',
-          ipAddress: '192.168.1.101',
-          userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
-          timestamp: '2024-01-15T11:00:00Z',
-          status: 'SUCCESS'
-        },
-        {
-          id: 4,
-          user: 'user2@example.com',
-          action: 'BOOKING_FAILED',
-          description: 'Đặt phòng thất bại - phòng đã được đặt',
-          ipAddress: '192.168.1.102',
-          userAgent: 'Mozilla/5.0 (Android 10; Mobile; rv:68.0) Gecko/68.0',
-          timestamp: '2024-01-15T11:15:00Z',
-          status: 'FAILED'
-        },
-        {
-          id: 5,
-          user: 'admin@hotelhub.com',
-          action: 'UPDATE_ROOM',
-          description: 'Cập nhật thông tin phòng Deluxe Suite',
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          timestamp: '2024-01-15T11:30:00Z',
-          status: 'SUCCESS'
-        }
-      ];
-      setLogs(mockLogs);
-      setTotalPages(1);
+      
+      // Build query parameters
+      const params = {
+        page: currentPage,
+        size: 20,
+        sortBy: 'createdAt',
+        sortDir: 'desc'
+      };
+
+      // Add action filter if not ALL
+      if (actionFilter !== 'ALL') {
+        params.action = actionFilter;
+      }
+
+      const response = await api.get('/admin/activity-logs', { params });
+      const data: ActivityLogResponse = response.data;
+      
+      setLogs(data.logs);
+      setTotalPages(data.totalPages);
+      setTotalItems(data.totalItems);
     } catch (error) {
       console.error('Error fetching logs:', error);
+      // Fallback to empty array on error
+      setLogs([]);
+      setTotalPages(0);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusMap: { [key: string]: { class: string; text: string } } = {
-      'SUCCESS': { class: 'status-success', text: 'Thành công' },
-      'FAILED': { class: 'status-failed', text: 'Thất bại' },
-      'WARNING': { class: 'status-warning', text: 'Cảnh báo' }
-    };
+  const getStatusBadge = (action: string) => {
+    // Determine status based on action type
+    let statusClass = 'status-success';
+    let statusText = 'Thành công';
     
-    const statusInfo = statusMap[status] || { class: 'status-default', text: status };
-    return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.text}</span>;
+    if (action.includes('FAILED') || action.includes('ERROR')) {
+      statusClass = 'status-failed';
+      statusText = 'Thất bại';
+    } else if (action.includes('WARNING') || action.includes('CANCEL')) {
+      statusClass = 'status-warning';
+      statusText = 'Cảnh báo';
+    }
+    
+    return <span className={`status-badge ${statusClass}`}>{statusText}</span>;
   };
 
   const getActionBadge = (action: string) => {
@@ -111,8 +97,15 @@ const ActivityLog: React.FC = () => {
       'CANCEL_BOOKING': { class: 'action-cancel', text: 'Hủy đặt phòng' },
       'BOOKING_FAILED': { class: 'action-failed', text: 'Đặt phòng thất bại' },
       'UPDATE_ROOM': { class: 'action-update', text: 'Cập nhật phòng' },
+      'CREATE_ROOM': { class: 'action-create', text: 'Tạo phòng' },
+      'DELETE_ROOM': { class: 'action-cancel', text: 'Xóa phòng' },
       'CREATE_USER': { class: 'action-create', text: 'Tạo người dùng' },
-      'UPDATE_USER': { class: 'action-update', text: 'Cập nhật người dùng' }
+      'UPDATE_USER': { class: 'action-update', text: 'Cập nhật người dùng' },
+      'DELETE_USER': { class: 'action-cancel', text: 'Xóa người dùng' },
+      'PAYMENT_SUCCESS': { class: 'action-login', text: 'Thanh toán thành công' },
+      'PAYMENT_FAILED': { class: 'action-failed', text: 'Thanh toán thất bại' },
+      'SYSTEM_START': { class: 'action-login', text: 'Khởi động hệ thống' },
+      'SYSTEM_ERROR': { class: 'action-failed', text: 'Lỗi hệ thống' }
     };
     
     const actionInfo = actionMap[action] || { class: 'action-default', text: action };
@@ -120,9 +113,12 @@ const ActivityLog: React.FC = () => {
   };
 
   const filteredLogs = logs.filter(log => {
-    const matchesSearch = log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         log.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesUser = userFilter === 'ALL' || log.user.includes(userFilter);
+    const userEmail = log.user?.email || 'System';
+    const userName = log.user?.name || 'System';
+    const matchesSearch = userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         log.detail.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesUser = userFilter === 'ALL' || userEmail.includes(userFilter);
     const matchesAction = actionFilter === 'ALL' || log.action === actionFilter;
     return matchesSearch && matchesUser && matchesAction;
   });
@@ -141,8 +137,9 @@ const ActivityLog: React.FC = () => {
             >
               <option value="ALL">Tất cả</option>
               <option value="admin@hotelhub.com">Admin</option>
-              <option value="user1@example.com">User 1</option>
-              <option value="user2@example.com">User 2</option>
+              <option value="test@hotelhub.com">Test User</option>
+              <option value="staff@hotelhub.com">Staff User</option>
+              <option value="System">System</option>
             </select>
           </div>
           
@@ -160,7 +157,16 @@ const ActivityLog: React.FC = () => {
               <option value="UPDATE_BOOKING">Cập nhật đặt phòng</option>
               <option value="CANCEL_BOOKING">Hủy đặt phòng</option>
               <option value="BOOKING_FAILED">Đặt phòng thất bại</option>
+              <option value="CREATE_ROOM">Tạo phòng</option>
               <option value="UPDATE_ROOM">Cập nhật phòng</option>
+              <option value="DELETE_ROOM">Xóa phòng</option>
+              <option value="CREATE_USER">Tạo người dùng</option>
+              <option value="UPDATE_USER">Cập nhật người dùng</option>
+              <option value="DELETE_USER">Xóa người dùng</option>
+              <option value="PAYMENT_SUCCESS">Thanh toán thành công</option>
+              <option value="PAYMENT_FAILED">Thanh toán thất bại</option>
+              <option value="SYSTEM_START">Khởi động hệ thống</option>
+              <option value="SYSTEM_ERROR">Lỗi hệ thống</option>
             </select>
           </div>
           
@@ -168,7 +174,7 @@ const ActivityLog: React.FC = () => {
             <label>Tìm kiếm:</label>
             <input
               type="text"
-              placeholder="Người dùng hoặc mô tả..."
+              placeholder="Tìm kiếm theo người dùng hoặc chi tiết..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="filter-input"
@@ -180,6 +186,10 @@ const ActivityLog: React.FC = () => {
         <div className="admin-table-container">
           {loading ? (
             <div className="loading">Đang tải...</div>
+          ) : filteredLogs.length === 0 ? (
+            <div className="no-data">
+              <p>Không có dữ liệu nhật ký hoạt động</p>
+            </div>
           ) : (
             <table className="admin-table">
               <thead>
@@ -187,24 +197,29 @@ const ActivityLog: React.FC = () => {
                   <th>ID</th>
                   <th>Người dùng</th>
                   <th>Hành động</th>
-                  <th>Mô tả</th>
-                  <th>IP Address</th>
+                  <th>Chi tiết</th>
                   <th>Trạng thái</th>
                   <th>Thời gian</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredLogs.map((log) => (
-                  <tr key={log.id}>
-                    <td>{log.id}</td>
-                    <td>{log.user}</td>
-                    <td>{getActionBadge(log.action)}</td>
-                    <td>{log.description}</td>
+                  <tr key={log.logId}>
+                    <td>{log.logId}</td>
                     <td>
-                      <span className="ip-address">{log.ipAddress}</span>
+                      {log.user ? (
+                        <div>
+                          <div style={{ fontWeight: '600' }}>{log.user.name}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>{log.user.email}</div>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#6c757d', fontStyle: 'italic' }}>System</span>
+                      )}
                     </td>
-                    <td>{getStatusBadge(log.status)}</td>
-                    <td>{new Date(log.timestamp).toLocaleString('vi-VN')}</td>
+                    <td>{getActionBadge(log.action)}</td>
+                    <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{log.detail}</td>
+                    <td>{getStatusBadge(log.action)}</td>
+                    <td>{new Date(log.createdAt).toLocaleString('vi-VN')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -223,7 +238,7 @@ const ActivityLog: React.FC = () => {
               Trước
             </button>
             <span className="pagination-info">
-              Trang {currentPage + 1} / {totalPages}
+              Trang {currentPage + 1} / {totalPages} ({totalItems} mục)
             </span>
             <button 
               onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}

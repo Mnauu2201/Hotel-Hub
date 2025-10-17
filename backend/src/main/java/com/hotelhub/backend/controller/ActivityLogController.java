@@ -33,13 +33,19 @@ public class ActivityLogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String action) {
         
         Sort sort = sortDir.equalsIgnoreCase("desc") ? 
             Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         
-        Page<ActivityLog> logs = activityLogService.getAllLogs(pageable);
+        Page<ActivityLog> logs;
+        if (action != null && !action.isEmpty()) {
+            logs = activityLogService.getLogsByAction(action, pageable);
+        } else {
+            logs = activityLogService.getAllLogs(pageable);
+        }
         
         // Transform logs to include user information properly
         List<Map<String, Object>> transformedLogs = logs.getContent().stream()
