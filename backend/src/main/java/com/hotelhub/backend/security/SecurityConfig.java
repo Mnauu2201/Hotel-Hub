@@ -143,6 +143,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/*/public").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/*/toggle-status").hasAuthority("ROLE_ADMIN")
 
+                        // ✅ Admin User Management APIs
+                        .requestMatchers("/api/admin/users/**").hasAuthority("ROLE_ADMIN")
+
                         // ✅ Staff Booking Management APIs
                         .requestMatchers("/api/staff/bookings/**").hasAnyAuthority("ROLE_STAFF", "ROLE_ADMIN")
 

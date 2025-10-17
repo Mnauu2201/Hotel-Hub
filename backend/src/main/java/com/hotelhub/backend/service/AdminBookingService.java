@@ -223,6 +223,61 @@ public class AdminBookingService {
         return convertToResponse(booking);
     }
 
+    // Admin cập nhật thông tin booking
+    public BookingResponse updateBooking(Long bookingId, Map<String, Object> request, String adminEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+        // Cập nhật các trường có thể sửa
+        if (request.containsKey("status")) {
+            String newStatus = (String) request.get("status");
+            List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "completed");
+            if (!validStatuses.contains(newStatus)) {
+                throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
+            }
+            booking.setStatus(newStatus);
+            
+            // Nếu chuyển sang confirmed, bỏ hold time
+            if ("confirmed".equals(newStatus)) {
+                booking.setHoldUntil(null);
+            }
+        }
+
+        if (request.containsKey("guests")) {
+            Integer guests = (Integer) request.get("guests");
+            if (guests != null && guests > 0) {
+                booking.setGuests(guests);
+            }
+        }
+
+        if (request.containsKey("checkIn")) {
+            String checkInStr = (String) request.get("checkIn");
+            if (checkInStr != null && !checkInStr.isEmpty()) {
+                booking.setCheckIn(LocalDate.parse(checkInStr));
+            }
+        }
+
+        if (request.containsKey("checkOut")) {
+            String checkOutStr = (String) request.get("checkOut");
+            if (checkOutStr != null && !checkOutStr.isEmpty()) {
+                booking.setCheckOut(LocalDate.parse(checkOutStr));
+            }
+        }
+
+        if (request.containsKey("notes")) {
+            String notes = (String) request.get("notes");
+            booking.setNotes(notes);
+        }
+
+        booking = bookingRepository.save(booking);
+
+        // Ghi log thao tác
+        activityLogService.logSystemActivity("ADMIN_UPDATE_BOOKING", 
+            "Admin updated booking " + booking.getBookingReference() + " by admin: " + adminEmail);
+
+        return convertToResponse(booking);
+    }
+
     // Convert Booking entity to BookingResponse
     private BookingResponse convertToResponse(Booking booking) {
         Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
