@@ -943,6 +943,24 @@ textarea.form-input {
   color: #616161;
 }
 
+/* Dark mode cho status-default */
+.dark-mode .status-badge.status-default,
+@media (prefers-color-scheme: dark) {
+  .status-badge.status-default {
+    background: #718096 !important;
+    color: #fff !important;
+  }
+}
+
+/* Dark mode cho status-warning */
+.dark-mode .status-badge.status-warning,
+@media (prefers-color-scheme: dark) {
+  .status-badge.status-warning {
+    background: #ed8936 !important;
+    color: #fff !important;
+  }
+}
+
 /* Notifications */
 .notification-title {
   max-width: 300px;
@@ -1488,6 +1506,715 @@ textarea.form-input {
 @media (prefers-color-scheme: dark) {
   .status-badge {
     color: #ffffff !important;
+  }
+}
+
+/* Dark mode cho tất cả status badges - override mọi style khác */
+.dark-mode .status-badge *,
+.dark-mode .status-badge,
+@media (prefers-color-scheme: dark) {
+  .status-badge *,
+  .status-badge {
+    color: #ffffff !important;
+  }
+}
+
+/* Force white text for all status badges in dark mode */
+.dark-mode .status-badge span,
+.dark-mode .status-badge div,
+.dark-mode .status-badge p,
+.dark-mode .status-badge strong,
+.dark-mode .status-badge em,
+@media (prefers-color-scheme: dark) {
+  .status-badge span,
+  .status-badge div,
+  .status-badge p,
+  .status-badge strong,
+  .status-badge em {
+    color: #ffffff !important;
+  }
+}
+
+/* Ultra strong CSS for status badges in dark mode */
+.dark-mode .admin-table .status-badge,
+.dark-mode .admin-table .status-badge *,
+.dark-mode .admin-table .status-badge span,
+.dark-mode .admin-table .status-badge div,
+@media (prefers-color-scheme: dark) {
+  .admin-table .status-badge,
+  .admin-table .status-badge *,
+  .admin-table .status-badge span,
+  .admin-table .status-badge div {
+    color: #ffffff !important;
+    background-color: #4a5568 !important;
+  }
+}
+
+/* Specific dark mode for status badges in tables */
+.dark-mode table .status-badge,
+.dark-mode table .status-badge *,
+@media (prefers-color-scheme: dark) {
+  table .status-badge,
+  table .status-badge * {
+    color: #ffffff !important;
+    background-color: #4a5568 !important;
+  }
+}
+
+/* Override all status badge colors in dark mode */
+.dark-mode .status-badge.status-pending,
+.dark-mode .status-badge.status-confirmed,
+.dark-mode .status-badge.status-cancelled,
+.dark-mode .status-badge.status-completed,
+.dark-mode .status-badge.status-paid,
+.dark-mode .status-badge.status-active,
+.dark-mode .status-badge.status-inactive,
+.dark-mode .status-badge.status-verified,
+.dark-mode .status-badge.status-unverified,
+.dark-mode .status-badge.status-default,
+.dark-mode .status-badge.status-warning,
+@media (prefers-color-scheme: dark) {
+  .status-badge.status-pending,
+  .status-badge.status-confirmed,
+  .status-badge.status-cancelled,
+  .status-badge.status-completed,
+  .status-badge.status-paid,
+  .status-badge.status-active,
+  .status-badge.status-inactive,
+  .status-badge.status-verified,
+  .status-badge.status-unverified,
+  .status-badge.status-default,
+  .status-badge.status-warning {
+    color: #ffffff !important;
+  }
+}
+
+/* NUCLEAR OPTION - Force all status badges to have proper dark mode colors */
+.dark-mode .admin-page .admin-table .status-badge,
+.dark-mode .admin-page .admin-table .status-badge *,
+.dark-mode .admin-page .admin-table .status-badge span,
+.dark-mode .admin-page .admin-table .status-badge div,
+.dark-mode .admin-page .admin-table .status-badge strong,
+.dark-mode .admin-page .admin-table .status-badge em,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table .status-badge,
+  .admin-page .admin-table .status-badge *,
+  .admin-page .admin-table .status-badge span,
+  .admin-page .admin-table .status-badge div,
+  .admin-page .admin-table .status-badge strong,
+  .admin-page .admin-table .status-badge em {
+    color: #ffffff !important;
+    background-color: #4a5568 !important;
+  }
+}
+
+/* Force specific status badge colors in dark mode */
+.dark-mode .admin-page .admin-table .status-badge.status-pending,
+.dark-mode .admin-page .admin-table .status-badge.status-confirmed,
+.dark-mode .admin-page .admin-table .status-badge.status-cancelled,
+.dark-mode .admin-page .admin-table .status-badge.status-completed,
+.dark-mode .admin-page .admin-table .status-badge.status-paid,
+.dark-mode .admin-page .admin-table .status-badge.status-active,
+.dark-mode .admin-page .admin-table .status-badge.status-inactive,
+.dark-mode .admin-page .admin-table .status-badge.status-verified,
+.dark-mode .admin-page .admin-table .status-badge.status-unverified,
+.dark-mode .admin-page .admin-table .status-badge.status-default,
+.dark-mode .admin-page .admin-table .status-badge.status-warning,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table .status-badge.status-pending {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-confirmed {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-cancelled {
+    background: #e53e3e !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-completed {
+    background: #3182ce !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-paid {
+    background: #805ad5 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-active {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-inactive {
+    background: #e53e3e !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-verified {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-unverified {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-default {
+    background: #718096 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table .status-badge.status-warning {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+}
+
+/* FINAL NUCLEAR OPTION - Highest specificity possible */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge,
+  .admin-page .admin-table tbody tr td .status-badge *,
+  .admin-page .admin-table tbody tr td .status-badge span,
+  .admin-page .admin-table tbody tr td .status-badge div,
+  .admin-page .admin-table tbody tr td .status-badge strong,
+  .admin-page .admin-table tbody tr td .status-badge em {
+    color: #ffffff !important;
+    background-color: #4a5568 !important;
+  }
+}
+
+/* Force specific status badge colors with highest specificity */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge.status-pending {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-confirmed {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-cancelled {
+    background: #e53e3e !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-completed {
+    background: #3182ce !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-paid {
+    background: #805ad5 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-active {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+    background: #e53e3e !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-verified {
+    background: #38a169 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-default {
+    background: #718096 !important;
+    color: #ffffff !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-warning {
+    background: #ed8936 !important;
+    color: #ffffff !important;
+  }
+}
+
+/* ULTIMATE FIX - Force all status badges to have visible text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge,
+  .admin-page .admin-table tbody tr td .status-badge *,
+  .admin-page .admin-table tbody tr td .status-badge span,
+  .admin-page .admin-table tbody tr td .status-badge div,
+  .admin-page .admin-table tbody tr td .status-badge strong,
+  .admin-page .admin-table tbody tr td .status-badge em,
+  .admin-page .admin-table tbody tr td .status-badge p,
+  .admin-page .admin-table tbody tr td .status-badge a,
+  .admin-page .admin-table tbody tr td .status-badge button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* Force specific status badge colors with dark backgrounds and white text */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge.status-pending {
+    background: #d69e2e !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-confirmed {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-cancelled {
+    background: #d32f2f !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-completed {
+    background: #1976d2 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-paid {
+    background: #7b1fa2 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-active {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+    background: #d32f2f !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-verified {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+    background: #d69e2e !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-default {
+    background: #616161 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-warning {
+    background: #d69e2e !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+/* ACTIVITY LOG SPECIFIC - Fix for ActivityLog.tsx status badges */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge.status-success {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-failed {
+    background: #d32f2f !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-warning {
+    background: #d69e2e !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-default {
+    background: #616161 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+/* ULTIMATE FIX FOR ACTIVITY LOG - Force all status badges in activity log */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge,
+  .admin-page .admin-table tbody tr td .status-badge *,
+  .admin-page .admin-table tbody tr td .status-badge span,
+  .admin-page .admin-table tbody tr td .status-badge div,
+  .admin-page .admin-table tbody tr td .status-badge strong,
+  .admin-page .admin-table tbody tr td .status-badge em,
+  .admin-page .admin-table tbody tr td .status-badge p,
+  .admin-page .admin-table tbody tr td .status-badge a,
+  .admin-page .admin-table tbody tr td .status-badge button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* NUCLEAR OPTION FOR ACTIVITY LOG - Highest specificity possible */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default *,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge.status-success,
+  .admin-page .admin-table tbody tr td .status-badge.status-failed,
+  .admin-page .admin-table tbody tr td .status-badge.status-warning,
+  .admin-page .admin-table tbody tr td .status-badge.status-default,
+  .admin-page .admin-table tbody tr td .status-badge.status-success *,
+  .admin-page .admin-table tbody tr td .status-badge.status-failed *,
+  .admin-page .admin-table tbody tr td .status-badge.status-warning *,
+  .admin-page .admin-table tbody tr td .status-badge.status-default * {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* FINAL NUCLEAR OPTION - Override everything */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success {
+  background: #2d7d32 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed {
+  background: #d32f2f !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
+  background: #d69e2e !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+  background: #616161 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Force all status badges to have white text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override any existing CSS for status badges */
+.dark-mode .status-badge,
+.dark-mode .status-badge *,
+.dark-mode .status-badge span,
+.dark-mode .status-badge div,
+.dark-mode .status-badge strong,
+.dark-mode .status-badge em,
+.dark-mode .status-badge p,
+.dark-mode .status-badge a,
+.dark-mode .status-badge button,
+@media (prefers-color-scheme: dark) {
+  .status-badge,
+  .status-badge *,
+  .status-badge span,
+  .status-badge div,
+  .status-badge strong,
+  .status-badge em,
+  .status-badge p,
+  .status-badge a,
+  .status-badge button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* USER MANAGEMENT SPECIFIC - Fix for UserManagement.tsx email verification status badges */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive *,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge.status-verified {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+    background: #d69e2e !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-active {
+    background: #2d7d32 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+    background: #d32f2f !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+  .admin-page .admin-table tbody tr td .status-badge.status-verified *,
+  .admin-page .admin-table tbody tr td .status-badge.status-unverified *,
+  .admin-page .admin-table tbody tr td .status-badge.status-active *,
+  .admin-page .admin-table tbody tr td .status-badge.status-inactive * {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* ULTIMATE FIX FOR USER MANAGEMENT - Force all status badges in user management */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge,
+  .admin-page .admin-table tbody tr td .status-badge *,
+  .admin-page .admin-table tbody tr td .status-badge span,
+  .admin-page .admin-table tbody tr td .status-badge div,
+  .admin-page .admin-table tbody tr td .status-badge strong,
+  .admin-page .admin-table tbody tr td .status-badge em,
+  .admin-page .admin-table tbody tr td .status-badge p,
+  .admin-page .admin-table tbody tr td .status-badge a,
+  .admin-page .admin-table tbody tr td .status-badge button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* FINAL NUCLEAR OPTION FOR USER MANAGEMENT - Override everything */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
+  background: #2d7d32 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+  background: #d69e2e !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
+  background: #2d7d32 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+  background: #d32f2f !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Force all status badges to have white text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override any existing CSS for status badges in user management */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .status-badge,
+  .admin-page .admin-table tbody tr td .status-badge *,
+  .admin-page .admin-table tbody tr td .status-badge span,
+  .admin-page .admin-table tbody tr td .status-badge div,
+  .admin-page .admin-table tbody tr td .status-badge strong,
+  .admin-page .admin-table tbody tr td .status-badge em,
+  .admin-page .admin-table tbody tr td .status-badge p,
+  .admin-page .admin-table tbody tr td .status-badge a,
+  .admin-page .admin-table tbody tr td .status-badge button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* ROLE MANAGEMENT SPECIFIC - Fix for RoleManagement.tsx role names */
+.dark-mode .admin-page .admin-table tbody tr td .role-name,
+.dark-mode .admin-page .admin-table tbody tr td .role-name *,
+.dark-mode .admin-page .admin-table tbody tr td .role-name span,
+.dark-mode .admin-page .admin-table tbody tr td .role-name div,
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
+.dark-mode .admin-page .admin-table tbody tr td .role-name em,
+.dark-mode .admin-page .admin-table tbody tr td .role-name p,
+.dark-mode .admin-page .admin-table tbody tr td .role-name a,
+.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .role-name,
+  .admin-page .admin-table tbody tr td .role-name *,
+  .admin-page .admin-table tbody tr td .role-name span,
+  .admin-page .admin-table tbody tr td .role-name div,
+  .admin-page .admin-table tbody tr td .role-name strong,
+  .admin-page .admin-table tbody tr td .role-name em,
+  .admin-page .admin-table tbody tr td .role-name p,
+  .admin-page .admin-table tbody tr td .role-name a,
+  .admin-page .admin-table tbody tr td .role-name button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* Force all role names to have white text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override any existing CSS for role names in role management */
+.dark-mode .admin-page .admin-table tbody tr td .role-name,
+.dark-mode .admin-page .admin-table tbody tr td .role-name *,
+.dark-mode .admin-page .admin-table tbody tr td .role-name span,
+.dark-mode .admin-page .admin-table tbody tr td .role-name div,
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
+.dark-mode .admin-page .admin-table tbody tr td .role-name em,
+.dark-mode .admin-page .admin-table tbody tr td .role-name p,
+.dark-mode .admin-page .admin-table tbody tr td .role-name a,
+.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .role-name,
+  .admin-page .admin-table tbody tr td .role-name *,
+  .admin-page .admin-table tbody tr td .role-name span,
+  .admin-page .admin-table tbody tr td .role-name div,
+  .admin-page .admin-table tbody tr td .role-name strong,
+  .admin-page .admin-table tbody tr td .role-name em,
+  .admin-page .admin-table tbody tr td .role-name p,
+  .admin-page .admin-table tbody tr td .role-name a,
+  .admin-page .admin-table tbody tr td .role-name button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
+  }
+}
+
+/* FINAL NUCLEAR OPTION FOR ROLE NAMES - Override everything */
+.dark-mode .admin-page .admin-table tbody tr td .role-name {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Force all role names to have white text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override any existing CSS for role names in role management */
+.dark-mode .admin-page .admin-table tbody tr td .role-name,
+.dark-mode .admin-page .admin-table tbody tr td .role-name *,
+.dark-mode .admin-page .admin-table tbody tr td .role-name span,
+.dark-mode .admin-page .admin-table tbody tr td .role-name div,
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
+.dark-mode .admin-page .admin-table tbody tr td .role-name em,
+.dark-mode .admin-page .admin-table tbody tr td .role-name p,
+.dark-mode .admin-page .admin-table tbody tr td .role-name a,
+.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+@media (prefers-color-scheme: dark) {
+  .admin-page .admin-table tbody tr td .role-name,
+  .admin-page .admin-table tbody tr td .role-name *,
+  .admin-page .admin-table tbody tr td .role-name span,
+  .admin-page .admin-table tbody tr td .role-name div,
+  .admin-page .admin-table tbody tr td .role-name strong,
+  .admin-page .admin-table tbody tr td .role-name em,
+  .admin-page .admin-table tbody tr td .role-name p,
+  .admin-page .admin-table tbody tr td .role-name a,
+  .admin-page .admin-table tbody tr td .role-name button {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+    font-weight: bold !important;
   }
 }
 

@@ -1,6 +1,7 @@
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import Layout from "./layout";
 import HomePage from "./pages/home";
@@ -36,7 +37,6 @@ import MyBookings from "./pages/MyBookings.jsx";
 import MyBookingsDetail from "./pages/MyBookingsDetail.jsx";
 // @ts-expect-error JS component
 import ProfilePage from "./pages/ProfilePage.jsx";
-import AdminPage from "./pages/AdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BookingManagement from "./pages/admin/BookingManagement";
 import RoomManagement from "./pages/admin/RoomManagement";
@@ -148,11 +148,7 @@ function App() {
     },
     {
       path: "/admin",
-      element: (
-        <ProtectedRoute requiredRole="ROLE_ADMIN">
-          <AdminPage />
-        </ProtectedRoute>
-      ),
+      element: <Navigate to="/admin/bookings" replace />,
     },
     {
       path: "/admin/bookings",
