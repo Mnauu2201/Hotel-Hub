@@ -368,10 +368,7 @@ const RoomDetail = () => {
                             fontSize: '0.85rem',
                             color: '#666'
                           }}>
-                            <li style={{ marginBottom: '0.4rem', display: 'flex', alignItems: 'center' }}>
-                              <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
-                              Miễn phí hủy đặt phòng
-                            </li>
+                            
                             <li style={{ marginBottom: '0.4rem', display: 'flex', alignItems: 'center' }}>
                               <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
                               WiFi miễn phí tốc độ cao
