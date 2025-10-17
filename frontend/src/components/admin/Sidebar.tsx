@@ -38,13 +38,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
   const menuItems = [
     {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: '📊',
-      link: '/admin',
-      isActive: location.pathname === '/admin'
-    },
-    {
       id: 'management',
       label: 'QUẢN LÝ',
       children: [
