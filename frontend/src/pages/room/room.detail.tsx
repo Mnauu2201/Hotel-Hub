@@ -2,12 +2,47 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import BreadcrumbArea from "../../components/breadcrumb-area"
 import api from "../../services/api"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+  faUsers, 
+  faExpandArrowsAlt, 
+  faBed, 
+  faLayerGroup, 
+  faMountain, 
+  faWifi, 
+  faSnowflake, 
+  faWineBottle, 
+  faWater, 
+  faPaw, 
+  faSmokingBan, 
+  faCheckCircle,
+  faShieldAlt,
+  faUmbrellaBeach,
+  faConciergeBell,
+  faDumbbell,
+  faTv,
+  faSwimmingPool,
+  faSpa,
+  faUtensils,
+  faParking,
+  faTshirt,
+  faBriefcase,
+  faCoffee
+} from '@fortawesome/free-solid-svg-icons'
 
 interface RoomImage {
   imageId?: number;
   imageUrl: string;
+  url?: string;
   altText?: string;
   isPrimary?: boolean;
+}
+
+interface Amenity {
+  amenityId?: number;
+  name: string;
+  description?: string;
+  icon?: string;
 }
 
 interface Room {
@@ -20,16 +55,20 @@ interface Room {
   capacity?: number;
   description?: string;
   images?: RoomImage[];
+  amenities?: Amenity[];
   roomDetail?: {
-    roomSize?: string;
+    detailId?: number;
+    roomSize?: number;
     bedType?: string;
+    floor?: number;
+    viewType?: string;
+    smokingAllowed?: boolean;
+    petFriendly?: boolean;
     wifiSpeed?: string;
     airConditioning?: boolean;
     minibar?: boolean;
     balcony?: boolean;
     oceanView?: boolean;
-    petFriendly?: boolean;
-    smokingAllowed?: boolean;
   };
 }
 
@@ -75,11 +114,11 @@ const RoomDetail = () => {
         if (typeof img === 'string') {
           return { imageUrl: img, altText: 'Room Image' };
         }
-        let imageUrl = img.imageUrl || img.url || img;
+        let imageUrl: string = img.imageUrl || img.url || '';
         console.log('Original Image URL:', imageUrl);
         
         // Convert relative URLs to absolute backend URLs
-        if (imageUrl && !imageUrl.startsWith('http')) {
+        if (imageUrl && typeof imageUrl === 'string' && !imageUrl.startsWith('http')) {
           if (imageUrl.startsWith('/uploads/')) {
             // If it's already a relative path starting with /uploads/, prepend backend URL
             imageUrl = 'http://localhost:8080' + imageUrl;
@@ -295,7 +334,7 @@ const RoomDetail = () => {
                     }}>
                       {allImages.map((img, index) => (
                         <div
-                          key={img.imageId || index}
+                          key={index}
                           onClick={() => handleImageClick(index)}
                           style={{
                             minWidth: '80px',
@@ -365,18 +404,60 @@ const RoomDetail = () => {
                     </div>
                   </div>
                   <p>{room.description || 'Không gian tiện nghi và sang trọng.'}</p>
-                  <h3>Room Feature.</h3>
+                  <h3>Tiện Nghi Phòng</h3>
                   <ul className="room-features d-flex align-items-center" style={{ flexWrap: 'wrap' }}>
-                    <li><i className="fal fa-users" /> Adults: {room.capacity || 2}</li>
-                    {room.roomDetail?.roomSize && <li><i className="fal fa-square" /> Size: {room.roomDetail.roomSize}m²</li>}
-                    {room.roomDetail?.bedType && <li><i className="fal fa-bed" /> Bed Type: {room.roomDetail.bedType}</li>}
-                    {room.roomDetail?.wifiSpeed && <li><i className="fal fa-wifi" /> Wi‑Fi: {room.roomDetail.wifiSpeed}</li>}
-                    {room.roomDetail?.airConditioning && <li><i className="fal fa-air-conditioner" /> Air Condition</li>}
-                    {room.roomDetail?.minibar && <li><i className="fal fa-glass-cheers" /> Minibar</li>}
-                    {room.roomDetail?.balcony && <li><i className="fal fa-umbrella-beach" /> Balcony</li>}
-                    {room.roomDetail?.oceanView && <li><i className="fal fa-water" /> Ocean View</li>}
-                    {room.roomDetail?.petFriendly && <li><i className="fal fa-paw" /> Pet Friendly</li>}
-                    {room.roomDetail?.smokingAllowed && <li><i className="fal fa-smoking" /> Smoking</li>}
+                    <li><FontAwesomeIcon icon={faUsers} style={{ marginRight: '8px', color: '#644222' }} /> Adults: {room.capacity || 2}</li>
+                    {room.roomDetail?.roomSize && <li><FontAwesomeIcon icon={faExpandArrowsAlt} style={{ marginRight: '8px', color: '#644222' }} /> Size: {room.roomDetail.roomSize}m²</li>}
+                    {room.roomDetail?.bedType && <li><FontAwesomeIcon icon={faBed} style={{ marginRight: '8px', color: '#644222' }} /> Bed: {room.roomDetail.bedType}</li>}
+                    {room.roomDetail?.floor && <li><FontAwesomeIcon icon={faLayerGroup} style={{ marginRight: '8px', color: '#644222' }} /> Floor: {room.roomDetail.floor}</li>}
+                    {room.roomDetail?.viewType && <li><FontAwesomeIcon icon={faMountain} style={{ marginRight: '8px', color: '#644222' }} /> View: {room.roomDetail.viewType}</li>}
+                    
+                    {/* Room Details Amenities */}
+                    {room.roomDetail?.wifiSpeed && <li><FontAwesomeIcon icon={faWifi} style={{ marginRight: '8px', color: '#644222' }} /> WiFi: {room.roomDetail.wifiSpeed}</li>}
+                    {room.roomDetail?.airConditioning && <li><FontAwesomeIcon icon={faSnowflake} style={{ marginRight: '8px', color: '#644222' }} /> Air Conditioning</li>}
+                    {room.roomDetail?.minibar && <li><FontAwesomeIcon icon={faWineBottle} style={{ marginRight: '8px', color: '#644222' }} /> Minibar</li>}
+                    {room.roomDetail?.balcony && <li><FontAwesomeIcon icon={faUmbrellaBeach} style={{ marginRight: '8px', color: '#644222' }} /> Balcony</li>}
+                    {room.roomDetail?.oceanView && <li><FontAwesomeIcon icon={faWater} style={{ marginRight: '8px', color: '#644222' }} /> Ocean View</li>}
+                    {room.roomDetail?.petFriendly && <li><FontAwesomeIcon icon={faPaw} style={{ marginRight: '8px', color: '#644222' }} /> Pet Friendly</li>}
+                    {room.roomDetail?.smokingAllowed && <li><FontAwesomeIcon icon={faSmokingBan} style={{ marginRight: '8px', color: '#644222' }} /> Smoking Allowed</li>}
+                    
+                    {/* Additional Amenities from Database */}
+                    {room.amenities && room.amenities.map((amenity, index) => {
+                      // Function to get appropriate icon based on amenity name
+                      const getAmenityIcon = (name: string) => {
+                        const lowerName = name.toLowerCase();
+                        if (lowerName.includes('wifi') || lowerName.includes('internet')) return faWifi;
+                        if (lowerName.includes('tv') || lowerName.includes('television')) return faTv;
+                        if (lowerName.includes('air') || lowerName.includes('conditioning')) return faSnowflake;
+                        if (lowerName.includes('safe') || lowerName.includes('security')) return faShieldAlt;
+                        if (lowerName.includes('minibar') || lowerName.includes('mini bar')) return faWineBottle;
+                        if (lowerName.includes('balcony') || lowerName.includes('terrace')) return faUmbrellaBeach;
+                        if (lowerName.includes('ocean') || lowerName.includes('sea') || lowerName.includes('view')) return faWater;
+                        if (lowerName.includes('pet') || lowerName.includes('animal')) return faPaw;
+                        if (lowerName.includes('room service') || lowerName.includes('service')) return faConciergeBell;
+                        if (lowerName.includes('gym') || lowerName.includes('fitness') || lowerName.includes('exercise')) return faDumbbell;
+                        if (lowerName.includes('pool') || lowerName.includes('swimming')) return faSwimmingPool;
+                        if (lowerName.includes('spa') || lowerName.includes('wellness')) return faSpa;
+                        if (lowerName.includes('restaurant') || lowerName.includes('dining')) return faUtensils;
+                        if (lowerName.includes('parking') || lowerName.includes('car')) return faParking;
+                        if (lowerName.includes('laundry') || lowerName.includes('cleaning')) return faTshirt;
+                        if (lowerName.includes('business') || lowerName.includes('office')) return faBriefcase;
+                        if (lowerName.includes('concierge') || lowerName.includes('assistance')) return faConciergeBell;
+                        if (lowerName.includes('breakfast') || lowerName.includes('meal')) return faCoffee;
+                        if (lowerName.includes('housekeeping') || lowerName.includes('cleaning')) return faTshirt;
+                        return faCheckCircle; // Default icon
+                      };
+
+                      return (
+                        <li key={amenity.amenityId || index}>
+                          <FontAwesomeIcon 
+                            icon={getAmenityIcon(amenity.name)} 
+                            style={{ marginRight: '8px', color: '#644222' }} 
+                          /> 
+                          {amenity.name}
+                        </li>
+                      );
+                    })}
                   </ul>
                   
                 </div>
