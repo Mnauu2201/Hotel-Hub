@@ -32,6 +32,7 @@ import BookingPage from "./pages/BookingPage.jsx";
 import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 // @ts-expect-error JS component
 import MyBookings from "./pages/MyBookings.jsx";
+// @ts-expect-error JS component
 import MyBookingsDetail from "./pages/MyBookingsDetail.jsx";
 // @ts-expect-error JS component
 import ProfilePage from "./pages/ProfilePage.jsx";
@@ -40,7 +41,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BookingManagement from "./pages/admin/BookingManagement";
 import RoomManagement from "./pages/admin/RoomManagement";
 import UserManagement from "./pages/admin/UserManagement";
-import Reports from "./pages/admin/Reports";
+import StatisticsReport from "./pages/admin/StatisticsReport";
 import RoleManagement from "./pages/admin/RoleManagement";
 import SystemSettings from "./pages/admin/SystemSettings";
 import ActivityLog from "./pages/admin/ActivityLog";
@@ -181,7 +182,7 @@ function App() {
       path: "/admin/reports",
       element: (
         <ProtectedRoute requiredRole="ROLE_ADMIN">
-          <Reports />
+          <StatisticsReport />
         </ProtectedRoute>
       ),
     },
