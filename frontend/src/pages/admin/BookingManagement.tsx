@@ -4,8 +4,11 @@ import './AdminPages.css';
 
 interface Booking {
   id: number;
-  userEmail: string;
-  roomName: string;
+  bookingId?: number;
+  userEmail?: string;
+  guestEmail?: string;
+  roomNumber?: string;
+  roomType?: string;
   checkIn: string;
   checkOut: string;
   totalPrice: number;
@@ -64,10 +67,11 @@ const BookingManagement: React.FC = () => {
     return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.text}</span>;
   };
 
-  const filteredBookings = bookings.filter(booking =>
-    (booking.userEmail?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (booking.roomName?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  );
+  const filteredBookings = bookings.filter(booking => {
+    const customerEmail = booking.userEmail || booking.guestEmail || '';
+    return customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           (booking.roomNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+  });
 
   return (
     <AdminLayout title="Quản lý đặt phòng" breadcrumb="Quản lý đặt phòng">
@@ -93,7 +97,7 @@ const BookingManagement: React.FC = () => {
             <label>Tìm kiếm:</label>
             <input
               type="text"
-              placeholder="Email hoặc tên phòng..."
+              placeholder="Email hoặc số phòng..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="filter-input"
@@ -123,9 +127,14 @@ const BookingManagement: React.FC = () => {
               <tbody>
                 {filteredBookings.map((booking) => (
                   <tr key={booking.id}>
-                    <td>{booking.id}</td>
-                    <td>{booking.userEmail}</td>
-                    <td>{booking.roomName}</td>
+                    <td>{booking.bookingId || booking.id}</td>
+                    <td>{booking.userEmail || booking.guestEmail || '-'}</td>
+                    <td>
+                      {booking.roomNumber || '-'}
+                      {booking.roomType && (
+                        <span className="room-type-info"> ({booking.roomType})</span>
+                      )}
+                    </td>
                     <td>{new Date(booking.checkIn).toLocaleDateString('vi-VN')}</td>
                     <td>{new Date(booking.checkOut).toLocaleDateString('vi-VN')}</td>
                     <td>{booking.totalPrice.toLocaleString('vi-VN')} VNĐ</td>

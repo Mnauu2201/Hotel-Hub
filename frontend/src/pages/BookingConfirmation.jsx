@@ -19,7 +19,7 @@ const BookingConfirmation = () => {
     const elements = document.querySelectorAll('.fade-in');
     elements.forEach((element, index) => {
       setTimeout(() => {
-        element.classList.add('active');
+        element.classList.add('active');  
       }, 100 * index);
     });
   }, []);
