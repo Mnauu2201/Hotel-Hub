@@ -193,23 +193,199 @@ const RoomDetail = () => {
               <aside className="sidebar services-sidebar">
                 <div className="sidebar-widget categories">
                   <div className="widget-content">
-                    <h2 className="widget-title">  Book A Room</h2>
+                    {/* Header Section */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #644222 0%, #8b4513 100%)',
+                      borderRadius: '15px 15px 0 0',
+                      padding: '1.5rem',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '-50%',
+                        right: '-20%',
+                        width: '100px',
+                        height: '100px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '50%',
+                        zIndex: 1
+                      }}></div>
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '-30%',
+                        left: '-10%',
+                        width: '80px',
+                        height: '80px',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        borderRadius: '50%',
+                        zIndex: 1
+                      }}></div>
+                      <h2 className="widget-title" style={{ 
+                        color: 'white', 
+                        fontSize: '1.6rem', 
+                        fontWeight: '700',
+                        margin: '0',
+                        textAlign: 'center',
+                        position: 'relative',
+                        zIndex: 2,
+                        textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                      }}>
+                        🏨 Đặt Phòng Ngay
+                      </h2>
+                      <p style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '0.9rem',
+                        margin: '0.5rem 0 0 0',
+                        position: 'relative',
+                        zIndex: 2
+                      }}>
+                        Ưu đãi đặc biệt hôm nay
+                      </p>
+                    </div>
+
+                    {/* Booking Section */}
                     <div className="booking">
-                      <div className="contact-bg">
+                      <div className="contact-bg" style={{
+                        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                        borderRadius: '0 0 15px 15px',
+                        padding: '2rem 1.5rem',
+                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid #e9ecef',
+                        borderTop: 'none',
+                        position: 'relative'
+                      }}>
+                        {/* Price Display */}
+                        <div style={{
+                          background: 'linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%)',
+                          borderRadius: '10px',
+                          padding: '1rem',
+                          marginBottom: '1.5rem',
+                          textAlign: 'center',
+                          border: '2px solid #e3f2fd'
+                        }}>
+                          <div style={{
+                            fontSize: '0.9rem',
+                            color: '#666',
+                            marginBottom: '0.25rem'
+                          }}>
+                            Giá từ
+                          </div>
+                          <div style={{
+                            fontSize: '1.8rem',
+                            fontWeight: '700',
+                            color: '#644222',
+                            marginBottom: '0.25rem'
+                          }}>
+                            {priceText} VNĐ
+                          </div>
+                          <div style={{
+                            fontSize: '0.8rem',
+                            color: '#888'
+                          }}>
+                            / đêm
+                          </div>
+                        </div>
+
                         <form className="contact-form mt-30" onSubmit={(e) => e.preventDefault()}>
                           <div className="row">
-                            
-                           
-                            
                             <div className="col-lg-12">
                               <div className="slider-btn mt-15">
-                              <div className="mb-50">
-                    <a href={`/booking?roomId=${id}`} className="btn ss-btn">Book This Room</a>
-                  </div>
+                                <div className="mb-50" style={{ textAlign: 'center' }}>
+                                  <a 
+                                    href={`/booking?roomId=${id}`} 
+                                    className="btn ss-btn"
+                                    style={{
+                                      background: 'linear-gradient(135deg, #644222 0%, #8b4513 100%)',
+                                      color: 'white',
+                                      padding: '15px 40px',
+                                      borderRadius: '30px',
+                                      textDecoration: 'none',
+                                      display: 'inline-block',
+                                      fontSize: '1.1rem',
+                                      fontWeight: '700',
+                                      textTransform: 'uppercase',
+                                      letterSpacing: '1px',
+                                      boxShadow: '0 6px 20px rgba(100, 66, 34, 0.4)',
+                                      transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      minWidth: '220px',
+                                      position: 'relative',
+                                      overflow: 'hidden'
+                                    }}
+                                    onMouseOver={(e) => {
+                                      e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+                                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(100, 66, 34, 0.5)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(100, 66, 34, 0.4)';
+                                    }}
+                                  >
+                                    <span style={{ position: 'relative', zIndex: 2 }}>
+                                      ✨ Đặt Phòng Ngay
+                                    </span>
+                                    <div style={{
+                                      position: 'absolute',
+                                      top: '0',
+                                      left: '-100%',
+                                      width: '100%',
+                                      height: '100%',
+                                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                                      transition: 'left 0.5s',
+                                      zIndex: 1
+                                    }}></div>
+                                  </a>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </form>
+
+                        {/* Features List */}
+                        <div style={{
+                          marginTop: '1.5rem',
+                          padding: '1rem',
+                          background: 'rgba(100, 66, 34, 0.05)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(100, 66, 34, 0.1)'
+                        }}>
+                          <div style={{
+                            fontSize: '0.9rem',
+                            color: '#644222',
+                            fontWeight: '600',
+                            marginBottom: '0.75rem',
+                            textAlign: 'center'
+                          }}>
+                            🎁 Ưu đãi bao gồm:
+                          </div>
+                          <ul style={{
+                            listStyle: 'none',
+                            padding: '0',
+                            margin: '0',
+                            fontSize: '0.85rem',
+                            color: '#666'
+                          }}>
+                            <li style={{ marginBottom: '0.4rem', display: 'flex', alignItems: 'center' }}>
+                              <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
+                              Miễn phí hủy đặt phòng
+                            </li>
+                            <li style={{ marginBottom: '0.4rem', display: 'flex', alignItems: 'center' }}>
+                              <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
+                              WiFi miễn phí tốc độ cao
+                            </li>
+                            <li style={{ marginBottom: '0.4rem', display: 'flex', alignItems: 'center' }}>
+                              <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
+                              Dịch vụ 24/7
+                            </li>
+                            <li style={{ marginBottom: '0', display: 'flex', alignItems: 'center' }}>
+                              <span style={{ color: '#28a745', marginRight: '0.5rem' }}>✓</span>
+                              Bữa sáng miễn phí
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
