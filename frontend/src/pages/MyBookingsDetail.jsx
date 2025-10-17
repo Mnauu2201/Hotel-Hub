@@ -16,7 +16,6 @@ const MyBookingsDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
 
   const themeColor = '#644222';
   const themeBgLight = '#faf7f2';
@@ -115,29 +114,6 @@ const MyBookingsDetail = () => {
     }
   };
 
-  const handleCancelBooking = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')) {
-      return;
-    }
-
-    try {
-      setCancelling(true);
-      await bookingService.cancelBooking(bookingId);
-      
-      // Refresh booking data
-      const response = await bookingService.getBookingById(bookingId);
-      if (response?.booking) {
-        setBooking(response.booking);
-      }
-      
-      alert('Hủy đặt phòng thành công!');
-    } catch (err) {
-      console.error('Error cancelling booking:', err);
-      alert('Hủy đặt phòng thất bại. Vui lòng thử lại.');
-    } finally {
-      setCancelling(false);
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -891,26 +867,6 @@ const MyBookingsDetail = () => {
                 </h3>
                 
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  {(booking.status?.toLowerCase() === 'pending' || booking.status?.toLowerCase() === 'confirmed') && (
-                    <button
-                      onClick={handleCancelBooking}
-                      disabled={cancelling}
-                      style={{
-                        background: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: 6,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        cursor: cancelling ? 'not-allowed' : 'pointer',
-                        opacity: cancelling ? 0.6 : 1
-                      }}
-                    >
-                      {cancelling ? '⏳ Đang hủy...' : '❌ Hủy đặt phòng'}
-                    </button>
-                  )}
-                  
                   <Link
                     to="/my-bookings"
                     style={{
@@ -926,23 +882,6 @@ const MyBookingsDetail = () => {
                   >
                     📋 Danh sách đặt phòng
                   </Link>
-                  
-                  {isAdmin && booking.status?.toLowerCase() === 'pending' && (
-                    <button
-                      style={{
-                        background: '#10b981',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: 6,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ✅ Duyệt đặt phòng
-                    </button>
-                  )}
                 </div>
               </div>
             </div>

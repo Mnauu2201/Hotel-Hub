@@ -8,7 +8,6 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [bookings, setBookings] = useState([]);
-  const [cancelling, setCancelling] = useState({});
 
   useEffect(() => {
     const load = async () => {
@@ -45,31 +44,6 @@ const MyBookings = () => {
     }
   }, [isAuthenticated]);
 
-  const handleCancelBooking = async (bookingId) => {
-    try {
-      setCancelling(prev => ({ ...prev, [bookingId]: true }));
-      await bookingService.cancelBooking(bookingId);
-      
-      // Reload bookings after successful cancellation
-      const data = await bookingService.getUserBookings();
-      let bookingsList = [];
-      if (Array.isArray(data)) {
-        bookingsList = data;
-      } else if (data?.bookings && Array.isArray(data.bookings)) {
-        bookingsList = data.bookings;
-      } else if (data?.data?.bookings && Array.isArray(data.data.bookings)) {
-        bookingsList = data.data.bookings;
-      }
-      setBookings(bookingsList);
-      
-      alert('Hủy đặt phòng thành công!');
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      alert('Không thể hủy đặt phòng. Vui lòng thử lại sau.');
-    } finally {
-      setCancelling(prev => ({ ...prev, [bookingId]: false }));
-    }
-  };
 
   if (!isAuthenticated) {
     return (
@@ -540,46 +514,6 @@ const MyBookings = () => {
                     >
                       🏨 Xem phòng
                   </a>
-                )}
-                {b.status?.toLowerCase() === 'pending' && (
-                  <button
-                    style={{
-                        color: 'white',
-                        background: 'rgba(239, 68, 68, 0.2)',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
-                      fontSize: 14,
-                        fontWeight: 600,
-                      cursor: cancelling[b.bookingId] ? 'not-allowed' : 'pointer',
-                        padding: '10px 20px',
-                        borderRadius: 12,
-                        opacity: cancelling[b.bookingId] ? 0.6 : 1,
-                        backdropFilter: 'blur(10px)',
-                        transition: 'all 0.3s ease',
-                        textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-                    }}
-                    disabled={cancelling[b.bookingId]}
-                    onClick={() => {
-                      if (window.confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')) {
-                        handleCancelBooking(b.bookingId);
-                      }
-                    }}
-                      onMouseEnter={(e) => {
-                        if (!cancelling[b.bookingId]) {
-                          e.target.style.background = 'rgba(239, 68, 68, 0.3)';
-                          e.target.style.transform = 'translateY(-2px)';
-                          e.target.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.2)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!cancelling[b.bookingId]) {
-                          e.target.style.background = 'rgba(239, 68, 68, 0.2)';
-                          e.target.style.transform = 'translateY(0)';
-                          e.target.style.boxShadow = 'none';
-                        }
-                      }}
-                  >
-                    {cancelling[b.bookingId] ? '⏳ Đang hủy...' : '❌ Hủy đặt phòng'}
-                  </button>
                 )}
               </div>
             </div>
