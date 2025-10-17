@@ -75,6 +75,9 @@ public class SecurityConfig {
 
                         // ✅ Cho phép các endpoint email
                         .requestMatchers("/api/email/**").permitAll()
+                        
+                        // ✅ Cho phép truy cập upload files
+                        .requestMatchers("/uploads/**").permitAll()
 
                         // ✅ Cho phép đăng ký / đăng nhập
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh", "/api/auth/logout").permitAll()

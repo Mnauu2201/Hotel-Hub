@@ -110,6 +110,13 @@ public class RoomCRUDService {
         // Cập nhật images
         updateRoomImages(room, request.getImageUrls());
 
+        // Force refresh room from database để lấy images mới nhất
+        room = roomRepository.findById(room.getRoomId()).orElse(room);
+        
+        // Force clear JPA cache and refresh again
+        roomRepository.flush();
+        room = roomRepository.findById(room.getRoomId()).orElse(room);
+        
         return convertToResponse(room);
     }
 
@@ -260,11 +267,11 @@ public class RoomCRUDService {
     }
 
     private void updateRoomImages(Room room, List<String> imageUrls) {
-        if (imageUrls != null) {
-            // Xóa images cũ
-            roomImageRepository.deleteByRoom_RoomId(room.getRoomId());
-            
-            // Thêm images mới
+        // Luôn xóa images cũ trước
+        roomImageRepository.deleteByRoom_RoomId(room.getRoomId());
+        
+        // Chỉ thêm images mới nếu có
+        if (imageUrls != null && !imageUrls.isEmpty()) {
             addImagesToRoom(room, imageUrls);
         }
     }
