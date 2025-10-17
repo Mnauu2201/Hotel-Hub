@@ -8,7 +8,7 @@ import team1 from '../../assets/img/team/team01.jpg';
 import team2 from '../../assets/img/team/team02.jpg';
 import team3 from '../../assets/img/team/team03.jpg';
 import team4 from '../../assets/img/team/team04.jpg';
-import team5 from '../../assets/img/team/team05.jpg';
+
 import { Link } from "react-router-dom";
 
 const TeamArea = () => {
@@ -43,7 +43,7 @@ const TeamArea = () => {
     { img: team2, name: 'Trần Thị Lan', role: 'Quản lý lễ tân' },
     { img: team3, name: 'Lê Văn Hùng', role: 'Quản lý dịch vụ' },
     { img: team4, name: 'Phạm Thị Mai', role: 'Quản lý nhà hàng' },
-    { img: team5, name: 'Hoàng Văn Đức', role: 'Quản lý kỹ thuật' },
+    
   ];
 
   return (
