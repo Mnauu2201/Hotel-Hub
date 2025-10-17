@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useNotification } from '../../hooks/useNotification';
 import './AdminPages.css';
 
 interface User {
@@ -18,6 +19,10 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<User>>({});
+  const { showSuccess, showError, showWarning, showInfo, NotificationContainer } = useNotification();
 
   useEffect(() => {
     fetchUsers();
@@ -26,43 +31,33 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          name: 'Nguyễn Văn A',
-          email: 'user1@example.com',
-          phone: '0123456789',
-          enabled: true,
-          emailVerified: true,
-          roles: ['ROLE_CUSTOMER'],
-          createdAt: '2024-01-15'
-        },
-        {
-          id: 2,
-          name: 'Trần Thị B',
-          email: 'user2@example.com',
-          phone: '0987654321',
-          enabled: true,
-          emailVerified: false,
-          roles: ['ROLE_CUSTOMER'],
-          createdAt: '2024-01-20'
-        },
-        {
-          id: 3,
-          name: 'Admin User',
-          email: 'admin@hotelhub.com',
-          phone: '0123456789',
-          enabled: true,
-          emailVerified: true,
-          roles: ['ROLE_ADMIN'],
-          createdAt: '2024-01-01'
+      const token = localStorage.getItem('accessToken');
+      
+      if (!token) {
+        showError('Bạn cần đăng nhập để truy cập trang này');
+        return;
+      }
+
+      const response = await fetch('/api/admin/users', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-      setUsers(mockUsers);
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data.users || []);
+      } else if (response.status === 401) {
+        showError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      } else if (response.status === 403) {
+        showError('Bạn không có quyền truy cập trang này.');
+      } else {
+        showError('Không thể tải danh sách người dùng');
+      }
     } catch (error) {
-      console.error('Error fetching users:', error);
-      setUsers([]); // Set empty array on error
+      showError('Lỗi kết nối khi lấy danh sách người dùng: ' + (error as Error).message);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -81,15 +76,67 @@ const UserManagement: React.FC = () => {
       });
       
       if (response.ok) {
+        showSuccess(currentStatus ? 'Đã khóa người dùng' : 'Đã mở khóa người dùng');
         setUsers(users.map(user => 
           user.id === userId 
             ? { ...user, enabled: !currentStatus }
             : user
         ));
+      } else {
+        const errorData = await response.json();
+        showError('Lỗi: ' + (errorData.message || 'Không thể thay đổi trạng thái người dùng'));
       }
     } catch (error) {
-      console.error('Error toggling user status:', error);
+      showError('Lỗi kết nối: ' + (error as Error).message);
     }
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setEditFormData({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      enabled: user.enabled,
+      roles: user.roles
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!selectedUser) return;
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editFormData)
+      });
+
+      if (response.ok) {
+        showSuccess('Cập nhật thông tin người dùng thành công!');
+        setShowEditModal(false);
+        setSelectedUser(null);
+        fetchUsers(); // Refresh the list
+      } else {
+        const errorData = await response.json();
+        showError('Lỗi: ' + (errorData.message || 'Không thể cập nhật thông tin người dùng'));
+      }
+    } catch (error) {
+      showError('Lỗi kết nối: ' + (error as Error).message);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: name === 'roles' ? [value] : value
+    }));
   };
 
   const getRoleBadge = (roles: string[] | undefined) => {
@@ -115,6 +162,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <AdminLayout title="Quản lý người dùng" breadcrumb="Quản lý người dùng">
+      <NotificationContainer />
       <div className="admin-page">
         {/* Filters */}
         <div className="admin-filters">
@@ -189,7 +237,12 @@ const UserManagement: React.FC = () => {
                       >
                         {user.enabled ? '🔒 Khóa' : '🔓 Mở khóa'}
                       </button>
-                      <button className="btn-action btn-edit">✏️ Sửa</button>
+                      <button 
+                        className="btn-action btn-edit"
+                        onClick={() => handleEditUser(user)}
+                      >
+                        ✏️ Sửa
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -201,6 +254,85 @@ const UserManagement: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Edit User Modal */}
+        {showEditModal && selectedUser && (
+          <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>Sửa thông tin người dùng</h3>
+                <button className="modal-close" onClick={() => setShowEditModal(false)}>×</button>
+              </div>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label>Tên:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editFormData.name || ''}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editFormData.email || ''}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Số điện thoại:</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={editFormData.phone || ''}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Vai trò:</label>
+                  <select
+                    name="roles"
+                    value={editFormData.roles?.[0] || ''}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  >
+                    <option value="ROLE_CUSTOMER">Customer</option>
+                    <option value="ROLE_STAFF">Staff</option>
+                    <option value="ROLE_ADMIN">Admin</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="enabled"
+                      checked={editFormData.enabled || false}
+                      onChange={(e) => setEditFormData(prev => ({
+                        ...prev,
+                        enabled: e.target.checked
+                      }))}
+                    />
+                    Tài khoản hoạt động
+                  </label>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn-secondary" onClick={() => setShowEditModal(false)}>
+                  Hủy
+                </button>
+                <button className="btn-primary" onClick={handleUpdateUser}>
+                  Cập nhật
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

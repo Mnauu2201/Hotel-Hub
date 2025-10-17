@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useNotification } from '../../hooks/useNotification';
 import './AdminPages.css';
 
 interface Role {
-  id: number;
+  id?: number;
+  roleId?: number;
   name: string;
   description: string;
   permissions: string[];
@@ -15,7 +17,14 @@ const RoleManagement: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    permissions: [] as string[]
+  });
+  const { showSuccess, showError, showWarning, showInfo, NotificationContainer } = useNotification();
 
   useEffect(() => {
     fetchRoles();
@@ -24,36 +33,33 @@ const RoleManagement: React.FC = () => {
   const fetchRoles = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockRoles: Role[] = [
-        {
-          id: 1,
-          name: 'ROLE_ADMIN',
-          description: 'Quản trị viên hệ thống',
-          permissions: ['READ', 'WRITE', 'DELETE', 'MANAGE_USERS', 'MANAGE_ROLES'],
-          userCount: 2,
-          createdAt: '2024-01-01'
-        },
-        {
-          id: 2,
-          name: 'ROLE_STAFF',
-          description: 'Nhân viên khách sạn',
-          permissions: ['READ', 'WRITE', 'MANAGE_BOOKINGS'],
-          userCount: 5,
-          createdAt: '2024-01-01'
-        },
-        {
-          id: 3,
-          name: 'ROLE_CUSTOMER',
-          description: 'Khách hàng',
-          permissions: ['READ', 'BOOK_ROOM'],
-          userCount: 82,
-          createdAt: '2024-01-01'
+      const token = localStorage.getItem('accessToken');
+      
+      if (!token) {
+        showError('Bạn cần đăng nhập để truy cập trang này');
+        return;
+      }
+
+      const response = await fetch('/api/admin/roles', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-      setRoles(mockRoles);
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setRoles(data.roles || []);
+      } else if (response.status === 401) {
+        showError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      } else if (response.status === 403) {
+        showError('Bạn không có quyền truy cập trang này.');
+      } else {
+        showError('Không thể tải danh sách vai trò');
+      }
     } catch (error) {
-      console.error('Error fetching roles:', error);
+      showError('Lỗi kết nối khi lấy danh sách vai trò: ' + (error as Error).message);
+      setRoles([]);
     } finally {
       setLoading(false);
     }
@@ -61,6 +67,11 @@ const RoleManagement: React.FC = () => {
 
   const handleDeleteRole = async (roleId: number) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa vai trò này?')) {
+      if (!roleId) {
+        showError('Lỗi: Không tìm thấy ID vai trò để xóa');
+        return;
+      }
+
       try {
         const token = localStorage.getItem('accessToken');
         const response = await fetch(`/api/admin/roles/${roleId}`, {
@@ -72,12 +83,113 @@ const RoleManagement: React.FC = () => {
         });
         
         if (response.ok) {
+          showSuccess('Xóa vai trò thành công!');
           setRoles(roles.filter(role => role.id !== roleId));
+        } else {
+          const errorData = await response.json();
+          showError('Lỗi: ' + (errorData.message || 'Không thể xóa vai trò'));
         }
       } catch (error) {
-        console.error('Error deleting role:', error);
+        showError('Lỗi kết nối: ' + (error as Error).message);
       }
     }
+  };
+
+  const handleAddRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name.trim() || !formData.description.trim()) {
+      showError('Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        showSuccess('Thêm vai trò thành công!');
+        setShowAddModal(false);
+        setFormData({ name: '', description: '', permissions: [] });
+        fetchRoles();
+      } else {
+        const errorData = await response.json();
+        showError('Lỗi: ' + (errorData.message || 'Không thể thêm vai trò'));
+      }
+    } catch (error) {
+      showError('Lỗi kết nối: ' + (error as Error).message);
+    }
+  };
+
+  const handleEditRole = (role: Role) => {
+    setEditingRole(role);
+    setFormData({
+      name: role.name,
+      description: role.description,
+      permissions: role.permissions
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingRole) return;
+
+    const roleId = editingRole.roleId || editingRole.id;
+    if (!roleId) {
+      showError('Lỗi: Không tìm thấy ID vai trò để cập nhật');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/roles/${roleId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        showSuccess('Cập nhật vai trò thành công!');
+        setShowEditModal(false);
+        setEditingRole(null);
+        setFormData({ name: '', description: '', permissions: [] });
+        fetchRoles();
+      } else {
+        const errorData = await response.json();
+        showError('Lỗi: ' + (errorData.message || 'Không thể cập nhật vai trò'));
+      }
+    } catch (error) {
+      showError('Lỗi kết nối: ' + (error as Error).message);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handlePermissionChange = (permission: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: checked 
+        ? [...(prev.permissions || []), permission]
+        : (prev.permissions || []).filter(p => p !== permission)
+    }));
   };
 
   const getPermissionBadge = (permission: string) => {
@@ -97,6 +209,7 @@ const RoleManagement: React.FC = () => {
 
   return (
     <AdminLayout title="Quản lý vai trò" breadcrumb="Quản lý vai trò">
+      <NotificationContainer />
       <div className="admin-page">
         {/* Header Actions */}
         <div className="admin-page-actions">
@@ -119,43 +232,31 @@ const RoleManagement: React.FC = () => {
                   <th>ID</th>
                   <th>Tên vai trò</th>
                   <th>Mô tả</th>
-                  <th>Quyền hạn</th>
                   <th>Số người dùng</th>
-                  <th>Ngày tạo</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {roles.map((role) => (
-                  <tr key={role.id}>
-                    <td>{role.id}</td>
+                {(roles || []).map((role) => (
+                  <tr key={role.roleId || role.id}>
+                    <td>{role.roleId || role.id}</td>
                     <td>
                       <span className="role-name">{role.name}</span>
                     </td>
                     <td>{role.description}</td>
                     <td>
-                      <div className="permissions-list">
-                        {role.permissions.map((permission, index) => (
-                          <span key={index}>
-                            {getPermissionBadge(permission)}
-                          </span>
-                        ))}
-                      </div>
+                      <span className="user-count">{role.userCount || 0} người</span>
                     </td>
-                    <td>
-                      <span className="user-count">{role.userCount} người</span>
-                    </td>
-                    <td>{new Date(role.createdAt).toLocaleDateString('vi-VN')}</td>
                     <td>
                       <button 
                         className="btn-action btn-edit"
-                        onClick={() => setEditingRole(role)}
+                        onClick={() => handleEditRole(role)}
                       >
                         ✏️ Sửa
                       </button>
                       <button 
                         className="btn-action btn-delete"
-                        onClick={() => handleDeleteRole(role.id)}
+                        onClick={() => handleDeleteRole(role.roleId || role.id || 0)}
                       >
                         🗑️ Xóa
                       </button>
@@ -167,47 +268,216 @@ const RoleManagement: React.FC = () => {
           )}
         </div>
 
-        {/* Add/Edit Modal */}
+        {/* Add Role Modal */}
         {showAddModal && (
-          <div className="modal-overlay">
-            <div className="modal">
+          <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>Thêm vai trò mới</h2>
-                <button 
-                  className="modal-close"
-                  onClick={() => setShowAddModal(false)}
-                >
-                  ✕
-                </button>
+                <h3>Thêm vai trò mới</h3>
+                <button className="modal-close" onClick={() => setShowAddModal(false)}>×</button>
               </div>
-              <div className="modal-content">
-                <form>
+              <div className="modal-body">
+                <form onSubmit={handleAddRole}>
                   <div className="form-group">
                     <label>Tên vai trò:</label>
-                    <input type="text" className="form-input" placeholder="ROLE_NAME" />
+                    <input 
+                      type="text" 
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="form-input" 
+                      placeholder="ROLE_NAME" 
+                      required
+                    />
                   </div>
                   <div className="form-group">
                     <label>Mô tả:</label>
-                    <textarea className="form-input" rows={3} placeholder="Mô tả vai trò..."></textarea>
+                    <textarea 
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="form-input" 
+                      rows={3} 
+                      placeholder="Mô tả vai trò..."
+                      required
+                    />
                   </div>
                   <div className="form-group">
                     <label>Quyền hạn:</label>
                     <div className="permissions-checkboxes">
-                      <label><input type="checkbox" /> Đọc</label>
-                      <label><input type="checkbox" /> Ghi</label>
-                      <label><input type="checkbox" /> Xóa</label>
-                      <label><input type="checkbox" /> Quản lý người dùng</label>
-                      <label><input type="checkbox" /> Quản lý vai trò</label>
-                      <label><input type="checkbox" /> Quản lý đặt phòng</label>
-                      <label><input type="checkbox" /> Đặt phòng</label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('READ')}
+                          onChange={(e) => handlePermissionChange('READ', e.target.checked)}
+                        /> 
+                        Đọc
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('WRITE')}
+                          onChange={(e) => handlePermissionChange('WRITE', e.target.checked)}
+                        /> 
+                        Ghi
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('DELETE')}
+                          onChange={(e) => handlePermissionChange('DELETE', e.target.checked)}
+                        /> 
+                        Xóa
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_USERS')}
+                          onChange={(e) => handlePermissionChange('MANAGE_USERS', e.target.checked)}
+                        /> 
+                        Quản lý người dùng
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_ROLES')}
+                          onChange={(e) => handlePermissionChange('MANAGE_ROLES', e.target.checked)}
+                        /> 
+                        Quản lý vai trò
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_BOOKINGS')}
+                          onChange={(e) => handlePermissionChange('MANAGE_BOOKINGS', e.target.checked)}
+                        /> 
+                        Quản lý đặt phòng
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('BOOK_ROOM')}
+                          onChange={(e) => handlePermissionChange('BOOK_ROOM', e.target.checked)}
+                        /> 
+                        Đặt phòng
+                      </label>
                     </div>
                   </div>
-                  <div className="form-actions">
+                  <div className="modal-footer">
                     <button type="button" className="btn-secondary" onClick={() => setShowAddModal(false)}>
                       Hủy
                     </button>
                     <button type="submit" className="btn-primary">
                       Thêm vai trò
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Role Modal */}
+        {showEditModal && editingRole && (
+          <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>Sửa vai trò</h3>
+                <button className="modal-close" onClick={() => setShowEditModal(false)}>×</button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleUpdateRole}>
+                  <div className="form-group">
+                    <label>Tên vai trò:</label>
+                    <input 
+                      type="text" 
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="form-input" 
+                      placeholder="ROLE_NAME" 
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Mô tả:</label>
+                    <textarea 
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="form-input" 
+                      rows={3} 
+                      placeholder="Mô tả vai trò..."
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Quyền hạn:</label>
+                    <div className="permissions-checkboxes">
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('READ')}
+                          onChange={(e) => handlePermissionChange('READ', e.target.checked)}
+                        /> 
+                        Đọc
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('WRITE')}
+                          onChange={(e) => handlePermissionChange('WRITE', e.target.checked)}
+                        /> 
+                        Ghi
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('DELETE')}
+                          onChange={(e) => handlePermissionChange('DELETE', e.target.checked)}
+                        /> 
+                        Xóa
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_USERS')}
+                          onChange={(e) => handlePermissionChange('MANAGE_USERS', e.target.checked)}
+                        /> 
+                        Quản lý người dùng
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_ROLES')}
+                          onChange={(e) => handlePermissionChange('MANAGE_ROLES', e.target.checked)}
+                        /> 
+                        Quản lý vai trò
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('MANAGE_BOOKINGS')}
+                          onChange={(e) => handlePermissionChange('MANAGE_BOOKINGS', e.target.checked)}
+                        /> 
+                        Quản lý đặt phòng
+                      </label>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={(formData.permissions || []).includes('BOOK_ROOM')}
+                          onChange={(e) => handlePermissionChange('BOOK_ROOM', e.target.checked)}
+                        /> 
+                        Đặt phòng
+                      </label>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn-secondary" onClick={() => setShowEditModal(false)}>
+                      Hủy
+                    </button>
+                    <button type="submit" className="btn-primary">
+                      Cập nhật vai trò
                     </button>
                   </div>
                 </form>

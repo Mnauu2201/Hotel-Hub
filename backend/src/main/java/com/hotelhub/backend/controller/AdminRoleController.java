@@ -327,5 +327,211 @@ public class AdminRoleController {
             ));
         }
     }
+
+    /**
+     * 7. Tạo role mới
+     */
+    @PostMapping
+    public ResponseEntity<?> createRole(
+            @RequestBody Map<String, Object> request,
+            Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            
+            String name = (String) request.get("name");
+            String description = (String) request.get("description");
+
+            if (name == null || name.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Thiếu thông tin role",
+                    "message", "Tên role là bắt buộc"
+                ));
+            }
+
+            // Kiểm tra role đã tồn tại chưa
+            if (roleRepository.findByName(name).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Role đã tồn tại",
+                    "message", "Role " + name + " đã tồn tại trong hệ thống"
+                ));
+            }
+
+            // Tạo role mới
+            Role newRole = new Role();
+            newRole.setName(name);
+            newRole.setDescription(description);
+            newRole = roleRepository.save(newRole);
+
+            // Log activity
+            activityLogService.logSystemActivity("CREATE_ROLE", 
+                "Admin tạo role mới: " + name + " by admin: " + adminEmail);
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Tạo role thành công",
+                "role", Map.of(
+                    "id", newRole.getRoleId(),
+                    "name", newRole.getName(),
+                    "description", newRole.getDescription()
+                )
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Tạo role thất bại",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * 8. Cập nhật role
+     */
+    @PutMapping("/{roleId}")
+    public ResponseEntity<?> updateRole(
+            @PathVariable Long roleId,
+            @RequestBody Map<String, Object> request,
+            Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            
+            Optional<Role> roleOpt = roleRepository.findById(roleId);
+            if (roleOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Role không tồn tại",
+                    "message", "Không tìm thấy role với ID: " + roleId
+                ));
+            }
+
+            Role role = roleOpt.get();
+
+            // Cập nhật thông tin role
+            if (request.containsKey("name")) {
+                String newName = (String) request.get("name");
+                if (newName != null && !newName.trim().isEmpty()) {
+                    // Kiểm tra tên mới có trùng với role khác không
+                    Optional<Role> existingRole = roleRepository.findByName(newName);
+                    if (existingRole.isPresent() && !existingRole.get().getRoleId().equals(roleId)) {
+                        return ResponseEntity.badRequest().body(Map.of(
+                            "error", "Tên role đã tồn tại",
+                            "message", "Role " + newName + " đã tồn tại trong hệ thống"
+                        ));
+                    }
+                    role.setName(newName);
+                }
+            }
+
+            if (request.containsKey("description")) {
+                role.setDescription((String) request.get("description"));
+            }
+
+            role = roleRepository.save(role);
+
+            // Log activity
+            activityLogService.logSystemActivity("UPDATE_ROLE", 
+                "Admin cập nhật role: " + role.getName() + " by admin: " + adminEmail);
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Cập nhật role thành công",
+                "role", Map.of(
+                    "id", role.getRoleId(),
+                    "name", role.getName(),
+                    "description", role.getDescription()
+                )
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Cập nhật role thất bại",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * 9. Xóa role
+     */
+    @DeleteMapping("/{roleId}")
+    public ResponseEntity<?> deleteRole(
+            @PathVariable Long roleId,
+            Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            
+            Optional<Role> roleOpt = roleRepository.findById(roleId);
+            if (roleOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Role không tồn tại",
+                    "message", "Không tìm thấy role với ID: " + roleId
+                ));
+            }
+
+            Role role = roleOpt.get();
+
+            // Kiểm tra có user nào đang sử dụng role này không
+            List<User> usersWithRole = userRepository.findAll().stream()
+                    .filter(user -> user.getRoles().contains(role))
+                    .toList();
+
+            if (!usersWithRole.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Không thể xóa role",
+                    "message", "Role " + role.getName() + " đang được sử dụng bởi " + usersWithRole.size() + " user(s). Vui lòng chuyển role cho các user trước khi xóa."
+                ));
+            }
+
+            // Xóa role
+            roleRepository.delete(role);
+
+            // Log activity
+            activityLogService.logSystemActivity("DELETE_ROLE", 
+                "Admin xóa role: " + role.getName() + " by admin: " + adminEmail);
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Xóa role thành công",
+                "deletedRole", role.getName()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Xóa role thất bại",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * 10. Xem chi tiết role
+     */
+    @GetMapping("/{roleId}")
+    public ResponseEntity<?> getRoleDetails(@PathVariable Long roleId) {
+        try {
+            Optional<Role> roleOpt = roleRepository.findById(roleId);
+            if (roleOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Role không tồn tại",
+                    "message", "Không tìm thấy role với ID: " + roleId
+                ));
+            }
+
+            Role role = roleOpt.get();
+            
+            // Đếm số user có role này
+            long userCount = userRepository.findAll().stream()
+                    .filter(user -> user.getRoles().contains(role))
+                    .count();
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Thông tin role",
+                "role", Map.of(
+                    "id", role.getRoleId(),
+                    "name", role.getName(),
+                    "description", role.getDescription(),
+                    "userCount", userCount
+                )
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Lấy thông tin role thất bại",
+                "message", e.getMessage()
+            ));
+        }
+    }
 }
 

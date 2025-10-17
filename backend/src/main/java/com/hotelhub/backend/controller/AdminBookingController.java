@@ -237,6 +237,28 @@ public class AdminBookingController {
             ));
         }
     }
+
+    // Admin cập nhật thông tin booking
+    @PutMapping("/bookings/{bookingId}")
+    public ResponseEntity<?> updateBooking(
+            @PathVariable Long bookingId,
+            @RequestBody Map<String, Object> request,
+            Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            
+            BookingResponse booking = adminBookingService.updateBooking(bookingId, request, adminEmail);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Cập nhật booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Cập nhật booking thất bại",
+                    "message", e.getMessage()
+            ));
+        }
+    }
 }
 
 
