@@ -36,6 +36,7 @@ const BookingManagement: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<Booking>>({});
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [latestBooking, setLatestBooking] = useState<Booking | null>(null);
   const { showSuccess, showError, NotificationContainer } = useNotification();
 
   useEffect(() => {
@@ -78,6 +79,12 @@ const BookingManagement: React.FC = () => {
         const data = await response.json();
         setBookings(data.bookings || []);
         setTotalPages(data.totalPages || 0);
+        
+        // Lấy booking mới nhất (PENDING status)
+        const latestPendingBooking = data.bookings.find((booking: Booking) => 
+          booking.status === 'PENDING'
+        );
+        setLatestBooking(latestPendingBooking || null);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -164,6 +171,56 @@ const BookingManagement: React.FC = () => {
       ...prev,
       [name]: name === 'guests' ? Number(value) : value
     }));
+  };
+
+  const handleConfirmBooking = async (bookingId: number) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/bookings/${bookingId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'CONFIRMED' })
+      });
+
+      if (response.ok) {
+        showSuccess('Đã xác nhận đặt phòng thành công!');
+        setLatestBooking(null);
+        fetchBookings();
+      } else {
+        showError('Có lỗi xảy ra khi xác nhận đặt phòng');
+      }
+    } catch (error) {
+      console.error('Error confirming booking:', error);
+      showError('Có lỗi xảy ra khi xác nhận đặt phòng');
+    }
+  };
+
+  const handleCancelBooking = async (bookingId: number) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/bookings/${bookingId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'CANCELLED' })
+      });
+
+      if (response.ok) {
+        showSuccess('Đã hủy đặt phòng thành công!');
+        setLatestBooking(null);
+        fetchBookings();
+      } else {
+        showError('Có lỗi xảy ra khi hủy đặt phòng');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      showError('Có lỗi xảy ra khi hủy đặt phòng');
+    }
   };
 
   // Get modal styles based on dark mode
@@ -277,6 +334,64 @@ const BookingManagement: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Latest Booking Section */}
+        {latestBooking && (
+          <div className="latest-booking-section">
+            <div className="latest-booking-card">
+              <div className="latest-booking-header">
+                <h3>📋 Đặt phòng mới nhất cần xử lý</h3>
+                <span className="urgent-badge">URGENT</span>
+              </div>
+              <div className="latest-booking-content">
+                <div className="booking-info-grid">
+                  <div className="info-item">
+                    <label>Mã đặt phòng:</label>
+                    <span>{latestBooking.bookingReference || `#${latestBooking.id}`}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Email khách hàng:</label>
+                    <span>{latestBooking.userEmail || latestBooking.guestEmail}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Phòng:</label>
+                    <span>{latestBooking.roomNumber} ({latestBooking.roomType})</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Ngày nhận:</label>
+                    <span>{new Date(latestBooking.checkIn).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Ngày trả:</label>
+                    <span>{new Date(latestBooking.checkOut).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Tổng tiền:</label>
+                    <span className="price">{latestBooking.totalPrice.toLocaleString('vi-VN')} VNĐ</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Trạng thái:</label>
+                    <span className="status-pending">Chờ xác nhận</span>
+                  </div>
+                </div>
+                <div className="booking-actions">
+                  <button 
+                    className="btn-confirm"
+                    onClick={() => handleConfirmBooking(latestBooking.id)}
+                  >
+                    ✅ Xác nhận
+                  </button>
+                  <button 
+                    className="btn-cancel"
+                    onClick={() => handleCancelBooking(latestBooking.id)}
+                  >
+                    ❌ Hủy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bookings Table */}
         <div className="admin-table-container">

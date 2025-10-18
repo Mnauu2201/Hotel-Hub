@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import userApi from '../services/userApi';
 import bookingService from '../services/bookingService';
 import fallbackRoomImg from '../assets/img/gallery/room-img01.png';
+import BookingCountdownModal from '../components/BookingCountdownModal';
+import '../components/BookingCountdownModal.css';
 
 const BookingPage = () => {
   const navigate = useNavigate();
@@ -29,6 +31,8 @@ const BookingPage = () => {
   const [success, setSuccess] = useState('');
   const [availableRooms, setAvailableRooms] = useState([]);
   const [loadingAvailable, setLoadingAvailable] = useState(false);
+  const [showCountdownModal, setShowCountdownModal] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState(null);
 
   // Tính số đêm
   const getNights = () => {
@@ -354,27 +358,18 @@ const BookingPage = () => {
       
       // If we get here, booking was successful
       console.log('Booking process completed successfully');
-      setSuccess('Đặt phòng thành công! Vui lòng kiểm tra email xác nhận.');
-      setTimeout(() => {
-        navigate('/booking-confirmation', {
-          state: {
-            bookingData: {
-              checkInDate: formData.checkIn,
-              checkOutDate: formData.checkOut,
-              totalNights: getNights(),
-              totalPrice: getTotalPrice(),
-              guestCount: formData.guests,
-              specialRequests: formData.notes,
-              guestName: formData.guestName,
-              guestEmail: formData.guestEmail,
-              guestPhone: formData.guestPhone,
-              bookingReference: bookingReference
-            },
-            selectedRooms,
-            isAuthenticated
-          }
-        });
-      }, 2000);
+      
+      // Hiển thị modal countdown thay vì redirect
+      const bookingData = {
+        bookingId: response?.booking?.bookingId || response?.booking?.id || 'BK' + Date.now(),
+        totalAmount: getTotalPrice(),
+        roomNumber: selectedRooms[0]?.roomNumber || selectedRooms[0]?.name || 'N/A',
+        checkInDate: formData.checkIn,
+        checkOutDate: formData.checkOut
+      };
+      
+      setCurrentBooking(bookingData);
+      setShowCountdownModal(true);
       return; // Exit the function successfully
       
     } catch (retryError) {
@@ -755,6 +750,33 @@ const BookingPage = () => {
           </div>
         </div>
       </section>
+      
+      {/* Booking Countdown Modal */}
+      {currentBooking && (
+        <BookingCountdownModal
+          isOpen={showCountdownModal}
+          onClose={() => {
+            setShowCountdownModal(false);
+            setCurrentBooking(null);
+            // Reset form after modal closes
+            setFormData({
+              checkIn: '',
+              checkOut: '',
+              guests: 1,
+              notes: '',
+              guestName: '',
+              guestEmail: '',
+              guestPhone: ''
+            });
+            setSelectedRooms([]);
+          }}
+          bookingId={currentBooking.bookingId}
+          totalAmount={currentBooking.totalAmount}
+          roomNumber={currentBooking.roomNumber}
+          checkInDate={currentBooking.checkInDate}
+          checkOutDate={currentBooking.checkOutDate}
+        />
+      )}
     </div>
   );
 };

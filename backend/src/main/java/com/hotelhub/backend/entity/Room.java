@@ -40,6 +40,7 @@ public class Room {
     private Integer capacity = 1;
 
     @Column(columnDefinition = "TEXT")
+    @Lob
     private String description;
 
     @Column(name = "created_at", updatable = false)

@@ -49,22 +49,6 @@ const RoomManagement: React.FC = () => {
     fetchRooms();
   }, []);
 
-  // Test API function
-  const testAPI = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      
-      const response = await fetch('/api/rooms', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      const data = await response.json();
-    } catch (error) {
-    }
-  };
 
   const fetchRooms = async () => {
     try {
@@ -77,7 +61,7 @@ const RoomManagement: React.FC = () => {
         return;
       }
       
-      const response = await fetch('/api/rooms', {
+      const response = await fetch('http://localhost:8080/api/rooms', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -124,7 +108,7 @@ const RoomManagement: React.FC = () => {
       try {
         const token = localStorage.getItem('accessToken');
         
-        const response = await fetch(`/api/rooms/${roomId}`, {
+        const response = await fetch(`http://localhost:8080/api/rooms/${roomId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -137,7 +121,16 @@ const RoomManagement: React.FC = () => {
           setRooms(rooms.filter(room => (room.id || room.roomId) !== roomId));
         } else {
           const errorData = await response.json();
-          showError('Lỗi: ' + (errorData.message || 'Không thể xóa phòng'));
+          const errorMessage = errorData.message || 'Không thể xóa phòng';
+          
+          // Kiểm tra nếu lỗi do foreign key constraint
+          if (errorMessage.includes('booking') || errorMessage.includes('MAINTENANCE')) {
+            showWarning('Phòng có booking còn hoạt động. Đã chuyển status thành MAINTENANCE. Vui lòng refresh trang để xem thay đổi.');
+            // Refresh danh sách phòng để cập nhật status
+            fetchRooms();
+          } else {
+            showError('Lỗi: ' + errorMessage);
+          }
         }
       } catch (error) {
         showError('Lỗi kết nối: ' + error.message);
@@ -259,7 +252,7 @@ const RoomManagement: React.FC = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const roomId = editingRoom ? (editingRoom.id || editingRoom.roomId) : null;
-      const url = editingRoom ? `/api/rooms/${roomId}` : '/api/rooms';
+      const url = editingRoom ? `http://localhost:8080/api/rooms/${roomId}` : 'http://localhost:8080/api/rooms';
       const method = editingRoom ? 'PUT' : 'POST';
       
       // Convert formData to match backend expectations
@@ -386,15 +379,15 @@ const RoomManagement: React.FC = () => {
           <button 
             className="btn-primary"
             onClick={handleAddRoom}
+            style={{
+              padding: '0.3rem 0.6rem',
+              fontSize: '0.8rem',
+              minWidth: 'auto',
+              width: 'auto',
+              maxWidth: '200px'
+            }}
           >
             ➕ Thêm phòng mới
-          </button>
-          <button 
-            className="btn-secondary"
-            onClick={testAPI}
-            style={{marginLeft: '10px'}}
-          >
-            🔧 Test API
           </button>
         </div>
 
@@ -635,6 +628,8 @@ const RoomManagement: React.FC = () => {
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
+                      maxLength={500}
+                      placeholder="Mô tả ngắn gọn về phòng (tối đa 500 ký tự)"
                       style={{
                         width: '100%',
                         padding: '0.5rem',

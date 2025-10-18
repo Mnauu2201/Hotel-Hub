@@ -33,7 +33,7 @@ public class RoomRequest {
     @Max(value = 10, message = "Sức chứa không được quá 10 người")
     private Integer capacity;
 
-    @Size(max = 1000, message = "Mô tả không được quá 1000 ký tự")
+    @Size(max = 500, message = "Mô tả không được quá 500 ký tự")
     private String description;
 
     // Room Detail fields
