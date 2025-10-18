@@ -60,6 +60,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         // Lấy booking theo phòng
         List<Booking> findByRoomId(Long roomId);
         
+        // Đếm booking theo phòng
+        long countByRoomId(Long roomId);
+        
+        // Đếm booking còn hoạt động theo phòng (không bao gồm cancelled và completed)
+        @Query("SELECT COUNT(b) FROM Booking b WHERE b.roomId = :roomId AND b.status NOT IN :statuses")
+        long countByRoomIdAndStatusNotIn(@Param("roomId") Long roomId, @Param("statuses") List<String> statuses);
+        
         // Lấy booking theo user (sử dụng custom query để tránh N+1)
         @Query("SELECT b FROM Booking b WHERE b.user.userId = :userId")
         List<Booking> findByUserId(@Param("userId") Long userId);

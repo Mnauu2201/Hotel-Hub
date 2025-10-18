@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +28,9 @@ public class RoomCRUDService {
 
     @Autowired
     private RoomDetailRepository roomDetailRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Autowired
     private RoomImageRepository roomImageRepository;
@@ -121,23 +125,63 @@ public class RoomCRUDService {
     }
 
     /**
-     * Xóa phòng (Hard Delete với kiểm tra)
+     * Xóa phòng (Soft Delete với kiểm tra booking)
      */
     public void deleteRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Phòng không tồn tại"));
 
-        // Kiểm tra phòng có booking không
-        // TODO: Thêm logic kiểm tra booking
+        // Kiểm tra phòng có booking còn hoạt động không (không bao gồm cancelled, paid và refunded)
+        List<String> inactiveStatuses = Arrays.asList("cancelled", "paid", "refunded");
+        long activeBookingCount = bookingRepository.countByRoomIdAndStatusNotIn(roomId, inactiveStatuses);
         
-        // HARD DELETE - Xóa thực sự
-        try {
-            roomRepository.delete(room);
-        } catch (Exception e) {
-            // Nếu có lỗi foreign key, chuyển sang soft delete
+        // Debug: In ra thông tin booking
+        System.out.println("=== DEBUG DELETE ROOM ===");
+        System.out.println("Room ID: " + roomId);
+        System.out.println("Active booking count: " + activeBookingCount);
+        System.out.println("Inactive statuses: " + inactiveStatuses);
+        
+        // Lấy tất cả booking của phòng để debug
+        List<Booking> allBookings = bookingRepository.findByRoomId(roomId);
+        System.out.println("All bookings for room " + roomId + ":");
+        for (Booking booking : allBookings) {
+            System.out.println("- Booking ID: " + booking.getBookingId() + ", Status: " + booking.getStatus());
+        }
+        
+        // Debug: Test query trực tiếp
+        long totalBookings = bookingRepository.countByRoomId(roomId);
+        System.out.println("Total bookings for room: " + totalBookings);
+        
+        // Debug: Đếm booking theo từng status
+        for (String status : inactiveStatuses) {
+            long count = bookingRepository.countByRoomIdAndStatusNotIn(roomId, List.of(status));
+            System.out.println("Bookings NOT " + status + ": " + count);
+        }
+        
+        System.out.println("=== END DEBUG ===");
+        
+        if (activeBookingCount > 0) {
+            // Nếu có booking còn hoạt động, chuyển sang soft delete (MAINTENANCE)
             room.setStatus(RoomStatus.MAINTENANCE);
             roomRepository.save(room);
-            throw new RuntimeException("Không thể xóa phòng vì có booking liên quan. Đã chuyển status thành MAINTENANCE.");
+            throw new RuntimeException("Không thể xóa phòng vì có " + activeBookingCount + " booking còn hoạt động. Đã chuyển status thành MAINTENANCE.");
+        }
+        
+        // Nếu không có booking còn hoạt động, xóa tất cả booking trước khi xóa phòng
+        if (!allBookings.isEmpty()) {
+            System.out.println("Deleting " + allBookings.size() + " inactive bookings for room " + roomId);
+            bookingRepository.deleteAll(allBookings);
+        }
+        
+        // Bây giờ xóa phòng
+        try {
+            roomRepository.delete(room);
+            System.out.println("Room " + roomId + " deleted successfully");
+        } catch (Exception e) {
+            // Nếu vẫn có lỗi, chuyển sang soft delete
+            room.setStatus(RoomStatus.MAINTENANCE);
+            roomRepository.save(room);
+            throw new RuntimeException("Không thể xóa phòng vì có dữ liệu liên quan. Đã chuyển status thành MAINTENANCE.");
         }
     }
 

@@ -74,8 +74,9 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
-        // Không cập nhật room status cho guest booking để tránh lỗi database
-        // Room status sẽ được cập nhật khi booking được confirm
+        // Cập nhật room status khi có booking
+        room.setStatus(RoomStatus.BOOKED);
+        roomRepository.save(room);
 
 
         // Ghi log hoạt động
@@ -129,8 +130,9 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
-        // Không cập nhật room status để tránh lỗi database
-        // Room status sẽ được cập nhật khi booking được confirm
+        // Cập nhật room status khi có booking
+        room.setStatus(RoomStatus.BOOKED);
+        roomRepository.save(room);
 
         // Ghi log thao tác
         activityLogService.logActivity(user.getUserId().intValue(), "CREATE_USER_BOOKING", 
@@ -248,7 +250,7 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
 
         // Kiểm tra trạng thái hợp lệ
-        List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid");
+        List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded");
         if (!validStatuses.contains(newStatus)) {
             throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
         }
@@ -261,13 +263,17 @@ public class BookingService {
             booking.setHoldUntil(null);
         }
         
-        // Nếu booking bị hủy, cập nhật room status về AVAILABLE
-        if ("cancelled".equals(newStatus)) {
-            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
-            if (room != null) {
+        // Cập nhật room status dựa trên booking status
+        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        if (room != null) {
+            if ("cancelled".equals(newStatus) || "refunded".equals(newStatus)) {
+                // Booking bị hủy hoặc hoàn tiền → phòng về AVAILABLE
                 room.setStatus(RoomStatus.AVAILABLE);
-                roomRepository.save(room);
+            } else if ("confirmed".equals(newStatus) || "paid".equals(newStatus)) {
+                // Booking được xác nhận hoặc thanh toán → phòng BOOKED
+                room.setStatus(RoomStatus.BOOKED);
             }
+            roomRepository.save(room);
         }
         
         booking = bookingRepository.save(booking);

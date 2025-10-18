@@ -231,7 +231,7 @@ public class AdminBookingService {
         // Cập nhật các trường có thể sửa
         if (request.containsKey("status")) {
             String newStatus = (String) request.get("status");
-            List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "completed");
+            List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded");
             if (!validStatuses.contains(newStatus)) {
                 throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
             }

@@ -229,6 +229,25 @@
   transition: background-color 0.2s;
 }
 
+/* Smaller buttons for room management */
+.admin-page-actions .btn-primary,
+.admin-page-actions .btn-secondary {
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.85rem !important;
+  min-width: auto !important;
+  width: auto !important;
+}
+
+/* Force smaller buttons specifically for room management */
+.admin-page .admin-page-actions button.btn-primary,
+.admin-page .admin-page-actions button.btn-secondary {
+  padding: 0.3rem 0.6rem !important;
+  font-size: 0.8rem !important;
+  min-width: auto !important;
+  width: auto !important;
+  max-width: 200px !important;
+}
+
 .btn-primary:hover {
   background-color: #0056b3;
 }
@@ -944,7 +963,10 @@ textarea.form-input {
 }
 
 /* Dark mode cho status-default */
-.dark-mode .status-badge.status-default,
+.dark-mode .status-badge.status-default {
+  background: #718096 !important;
+  color: #fff !important;
+}
 @media (prefers-color-scheme: dark) {
   .status-badge.status-default {
     background: #718096 !important;
@@ -953,7 +975,10 @@ textarea.form-input {
 }
 
 /* Dark mode cho status-warning */
-.dark-mode .status-badge.status-warning,
+.dark-mode .status-badge.status-warning {
+  background: #ed8936 !important;
+  color: #fff !important;
+}
 @media (prefers-color-scheme: dark) {
   .status-badge.status-warning {
     background: #ed8936 !important;
@@ -1286,7 +1311,12 @@ textarea.form-input {
 }
 
 /* Dark mode modal styles */
-.dark-mode .modal-content,
+.dark-mode .modal-content {
+  background: #1a202c !important;
+  color: #ffffff !important;
+  border: 1px solid #4a5568 !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-content {
     background: #1a202c !important;
@@ -1295,7 +1325,11 @@ textarea.form-input {
   }
 }
 
-.dark-mode .modal-header,
+.dark-mode .modal-header {
+  background: #1a202c !important;
+  border-bottom: 1px solid #4a5568 !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-header {
     background: #1a202c !important;
@@ -1303,21 +1337,31 @@ textarea.form-input {
   }
 }
 
-.dark-mode .modal-header h3,
+.dark-mode .modal-header h3 {
+  color: #ffffff !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-header h3 {
     color: #ffffff !important;
   }
 }
 
-.dark-mode .modal-close,
+.dark-mode .modal-close {
+  color: #e2e8f0 !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-close {
     color: #e2e8f0 !important;
   }
 }
 
-.dark-mode .modal-close:hover,
+.dark-mode .modal-close:hover {
+  background: #4a5568 !important;
+  color: #f7fafc !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-close:hover {
     background: #4a5568 !important;
@@ -1325,7 +1369,11 @@ textarea.form-input {
   }
 }
 
-.dark-mode .modal-footer,
+.dark-mode .modal-footer {
+  border-top: 1px solid #4a5568 !important;
+  background: #1a202c !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .modal-footer {
     border-top: 1px solid #4a5568 !important;
@@ -1333,21 +1381,24 @@ textarea.form-input {
   }
 }
 
-.dark-mode .detail-row,
+.dark-mode .detail-row {
+  border-bottom: 1px solid #4a5568 !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .detail-row {
     border-bottom: 1px solid #4a5568 !important;
   }
 }
 
-.dark-mode .detail-row label,
+.dark-mode .detail-row label {
 @media (prefers-color-scheme: dark) {
   .detail-row label {
     color: #ffffff !important;
   }
 }
 
-.dark-mode .detail-row span,
+.dark-mode .detail-row span {
 @media (prefers-color-scheme: dark) {
   .detail-row span {
     color: #e2e8f0 !important;
@@ -1355,14 +1406,14 @@ textarea.form-input {
 }
 
 /* Đảm bảo status badge có màu chữ phù hợp với dark mode */
-.dark-mode .detail-row .status-badge,
+.dark-mode .detail-row .status-badge {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge {
     color: #ffffff !important;
   }
 }
 
-.dark-mode .detail-row .status-badge.status-pending,
+.dark-mode .detail-row .status-badge.status-pending {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge.status-pending {
     background: #ed8936 !important;
@@ -1370,7 +1421,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .detail-row .status-badge.status-confirmed,
+.dark-mode .detail-row .status-badge.status-confirmed {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge.status-confirmed {
     background: #38a169 !important;
@@ -1378,7 +1429,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .detail-row .status-badge.status-cancelled,
+.dark-mode .detail-row .status-badge.status-cancelled {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge.status-cancelled {
     background: #e53e3e !important;
@@ -1386,7 +1437,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .detail-row .status-badge.status-completed,
+.dark-mode .detail-row .status-badge.status-completed {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge.status-completed {
     background: #3182ce !important;
@@ -1394,7 +1445,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .detail-row .status-badge.status-paid,
+.dark-mode .detail-row .status-badge.status-paid {
 @media (prefers-color-scheme: dark) {
   .detail-row .status-badge.status-paid {
     background: #805ad5 !important;
@@ -1403,7 +1454,7 @@ textarea.form-input {
 }
 
 /* Form inputs trong edit modal */
-.dark-mode .form-input,
+.dark-mode .form-input {
 @media (prefers-color-scheme: dark) {
   .form-input {
     background: #2d3748 !important;
@@ -1412,7 +1463,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .form-input:focus,
+.dark-mode .form-input:focus {
 @media (prefers-color-scheme: dark) {
   .form-input:focus {
     border-color: #63b3ed !important;
@@ -1422,7 +1473,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .form-input::placeholder,
+.dark-mode .form-input::placeholder {
 @media (prefers-color-scheme: dark) {
   .form-input::placeholder {
     color: #cbd5e0 !important;
@@ -1430,7 +1481,7 @@ textarea.form-input {
 }
 
 /* Select dropdown */
-.dark-mode .form-input select,
+.dark-mode .form-input select {
 @media (prefers-color-scheme: dark) {
   .form-input select {
     background: #2d3748 !important;
@@ -1438,7 +1489,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .form-input select option,
+.dark-mode .form-input select option {
 @media (prefers-color-scheme: dark) {
   .form-input select option {
     background: #2d3748 !important;
@@ -1447,7 +1498,7 @@ textarea.form-input {
 }
 
 /* Textarea */
-.dark-mode .form-input textarea,
+.dark-mode .form-input textarea {
 @media (prefers-color-scheme: dark) {
   .form-input textarea {
     background: #2d3748 !important;
@@ -1457,7 +1508,7 @@ textarea.form-input {
 }
 
 /* Buttons trong modal */
-.dark-mode .btn-primary,
+.dark-mode .btn-primary {
 @media (prefers-color-scheme: dark) {
   .btn-primary {
     background: #3182ce !important;
@@ -1466,7 +1517,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .btn-primary:hover,
+.dark-mode .btn-primary:hover {
 @media (prefers-color-scheme: dark) {
   .btn-primary:hover {
     background: #2c5aa0 !important;
@@ -1475,7 +1526,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .btn-secondary,
+.dark-mode .btn-secondary {
 @media (prefers-color-scheme: dark) {
   .btn-secondary {
     background: #4a5568 !important;
@@ -1484,7 +1535,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .btn-secondary:hover,
+.dark-mode .btn-secondary:hover {
 @media (prefers-color-scheme: dark) {
   .btn-secondary:hover {
     background: #718096 !important;
@@ -1494,7 +1545,7 @@ textarea.form-input {
 }
 
 /* Form group labels */
-.dark-mode .form-group label,
+.dark-mode .form-group label {
 @media (prefers-color-scheme: dark) {
   .form-group label {
     color: #ffffff !important;
@@ -1502,7 +1553,7 @@ textarea.form-input {
 }
 
 /* Status badges trong bảng chính */
-.dark-mode .status-badge,
+.dark-mode .status-badge {
 @media (prefers-color-scheme: dark) {
   .status-badge {
     color: #ffffff !important;
@@ -1510,8 +1561,8 @@ textarea.form-input {
 }
 
 /* Dark mode cho tất cả status badges - override mọi style khác */
-.dark-mode .status-badge *,
-.dark-mode .status-badge,
+.dark-mode .status-badge * {
+.dark-mode .status-badge {
 @media (prefers-color-scheme: dark) {
   .status-badge *,
   .status-badge {
@@ -1520,11 +1571,11 @@ textarea.form-input {
 }
 
 /* Force white text for all status badges in dark mode */
-.dark-mode .status-badge span,
-.dark-mode .status-badge div,
-.dark-mode .status-badge p,
-.dark-mode .status-badge strong,
-.dark-mode .status-badge em,
+.dark-mode .status-badge span {
+.dark-mode .status-badge div {
+.dark-mode .status-badge p {
+.dark-mode .status-badge strong {
+.dark-mode .status-badge em {
 @media (prefers-color-scheme: dark) {
   .status-badge span,
   .status-badge div,
@@ -1536,10 +1587,10 @@ textarea.form-input {
 }
 
 /* Ultra strong CSS for status badges in dark mode */
-.dark-mode .admin-table .status-badge,
-.dark-mode .admin-table .status-badge *,
-.dark-mode .admin-table .status-badge span,
-.dark-mode .admin-table .status-badge div,
+.dark-mode .admin-table .status-badge {
+.dark-mode .admin-table .status-badge * {
+.dark-mode .admin-table .status-badge span {
+.dark-mode .admin-table .status-badge div {
 @media (prefers-color-scheme: dark) {
   .admin-table .status-badge,
   .admin-table .status-badge *,
@@ -1551,8 +1602,8 @@ textarea.form-input {
 }
 
 /* Specific dark mode for status badges in tables */
-.dark-mode table .status-badge,
-.dark-mode table .status-badge *,
+.dark-mode table .status-badge {
+.dark-mode table .status-badge * {
 @media (prefers-color-scheme: dark) {
   table .status-badge,
   table .status-badge * {
@@ -1562,17 +1613,23 @@ textarea.form-input {
 }
 
 /* Override all status badge colors in dark mode */
-.dark-mode .status-badge.status-pending,
-.dark-mode .status-badge.status-confirmed,
-.dark-mode .status-badge.status-cancelled,
-.dark-mode .status-badge.status-completed,
-.dark-mode .status-badge.status-paid,
-.dark-mode .status-badge.status-active,
-.dark-mode .status-badge.status-inactive,
-.dark-mode .status-badge.status-verified,
-.dark-mode .status-badge.status-unverified,
-.dark-mode .status-badge.status-default,
-.dark-mode .status-badge.status-warning,
+.dark-mode .status-badge.status-pending {
+.dark-mode .status-badge.status-confirmed {
+.dark-mode .status-badge.status-cancelled {
+.dark-mode .status-badge.status-completed {
+.dark-mode .status-badge.status-paid {
+.dark-mode .status-badge.status-active {
+.dark-mode .status-badge.status-inactive {
+.dark-mode .status-badge.status-verified {
+.dark-mode .status-badge.status-unverified {
+.dark-mode .status-badge.status-default {
+  background: #718096 !important;
+  color: #fff !important;
+}
+.dark-mode .status-badge.status-warning {
+  background: #ed8936 !important;
+  color: #fff !important;
+}
 @media (prefers-color-scheme: dark) {
   .status-badge.status-pending,
   .status-badge.status-confirmed,
@@ -1590,12 +1647,12 @@ textarea.form-input {
 }
 
 /* NUCLEAR OPTION - Force all status badges to have proper dark mode colors */
-.dark-mode .admin-page .admin-table .status-badge,
-.dark-mode .admin-page .admin-table .status-badge *,
-.dark-mode .admin-page .admin-table .status-badge span,
-.dark-mode .admin-page .admin-table .status-badge div,
-.dark-mode .admin-page .admin-table .status-badge strong,
-.dark-mode .admin-page .admin-table .status-badge em,
+.dark-mode .admin-page .admin-table .status-badge {
+.dark-mode .admin-page .admin-table .status-badge * {
+.dark-mode .admin-page .admin-table .status-badge span {
+.dark-mode .admin-page .admin-table .status-badge div {
+.dark-mode .admin-page .admin-table .status-badge strong {
+.dark-mode .admin-page .admin-table .status-badge em {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table .status-badge,
   .admin-page .admin-table .status-badge *,
@@ -1609,17 +1666,17 @@ textarea.form-input {
 }
 
 /* Force specific status badge colors in dark mode */
-.dark-mode .admin-page .admin-table .status-badge.status-pending,
-.dark-mode .admin-page .admin-table .status-badge.status-confirmed,
-.dark-mode .admin-page .admin-table .status-badge.status-cancelled,
-.dark-mode .admin-page .admin-table .status-badge.status-completed,
-.dark-mode .admin-page .admin-table .status-badge.status-paid,
-.dark-mode .admin-page .admin-table .status-badge.status-active,
-.dark-mode .admin-page .admin-table .status-badge.status-inactive,
-.dark-mode .admin-page .admin-table .status-badge.status-verified,
-.dark-mode .admin-page .admin-table .status-badge.status-unverified,
-.dark-mode .admin-page .admin-table .status-badge.status-default,
-.dark-mode .admin-page .admin-table .status-badge.status-warning,
+.dark-mode .admin-page .admin-table .status-badge.status-pending {
+.dark-mode .admin-page .admin-table .status-badge.status-confirmed {
+.dark-mode .admin-page .admin-table .status-badge.status-cancelled {
+.dark-mode .admin-page .admin-table .status-badge.status-completed {
+.dark-mode .admin-page .admin-table .status-badge.status-paid {
+.dark-mode .admin-page .admin-table .status-badge.status-active {
+.dark-mode .admin-page .admin-table .status-badge.status-inactive {
+.dark-mode .admin-page .admin-table .status-badge.status-verified {
+.dark-mode .admin-page .admin-table .status-badge.status-unverified {
+.dark-mode .admin-page .admin-table .status-badge.status-default {
+.dark-mode .admin-page .admin-table .status-badge.status-warning {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table .status-badge.status-pending {
     background: #ed8936 !important;
@@ -1668,12 +1725,12 @@ textarea.form-input {
 }
 
 /* FINAL NUCLEAR OPTION - Highest specificity possible */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge,
   .admin-page .admin-table tbody tr td .status-badge *,
@@ -1687,17 +1744,17 @@ textarea.form-input {
 }
 
 /* Force specific status badge colors with highest specificity */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge.status-pending {
     background: #ed8936 !important;
@@ -1746,15 +1803,15 @@ textarea.form-input {
 }
 
 /* ULTIMATE FIX - Force all status badges to have visible text in dark mode */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge,
   .admin-page .admin-table tbody tr td .status-badge *,
@@ -1772,17 +1829,17 @@ textarea.form-input {
 }
 
 /* Force specific status badge colors with dark backgrounds and white text */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-pending {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-confirmed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-cancelled {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-completed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-paid {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge.status-pending {
     background: #d69e2e !important;
@@ -1842,10 +1899,10 @@ textarea.form-input {
 }
 
 /* ACTIVITY LOG SPECIFIC - Fix for ActivityLog.tsx status badges */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge.status-success {
     background: #2d7d32 !important;
@@ -1870,15 +1927,15 @@ textarea.form-input {
 }
 
 /* ULTIMATE FIX FOR ACTIVITY LOG - Force all status badges in activity log */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge,
   .admin-page .admin-table tbody tr td .status-badge *,
@@ -1896,14 +1953,14 @@ textarea.form-input {
 }
 
 /* NUCLEAR OPTION FOR ACTIVITY LOG - Highest specificity possible */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default * {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge.status-success,
   .admin-page .admin-table tbody tr td .status-badge.status-failed,
@@ -1956,15 +2013,15 @@ textarea.form-input {
 }
 
 /* Override any existing CSS for status badges */
-.dark-mode .status-badge,
-.dark-mode .status-badge *,
-.dark-mode .status-badge span,
-.dark-mode .status-badge div,
-.dark-mode .status-badge strong,
-.dark-mode .status-badge em,
-.dark-mode .status-badge p,
-.dark-mode .status-badge a,
-.dark-mode .status-badge button,
+.dark-mode .status-badge {
+.dark-mode .status-badge * {
+.dark-mode .status-badge span {
+.dark-mode .status-badge div {
+.dark-mode .status-badge strong {
+.dark-mode .status-badge em {
+.dark-mode .status-badge p {
+.dark-mode .status-badge a {
+.dark-mode .status-badge button {
 @media (prefers-color-scheme: dark) {
   .status-badge,
   .status-badge *,
@@ -1982,14 +2039,14 @@ textarea.form-input {
 }
 
 /* USER MANAGEMENT SPECIFIC - Fix for UserManagement.tsx email verification status badges */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive *,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive * {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge.status-verified {
     background: #2d7d32 !important;
@@ -2026,15 +2083,15 @@ textarea.form-input {
 }
 
 /* ULTIMATE FIX FOR USER MANAGEMENT - Force all status badges in user management */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge,
   .admin-page .admin-table tbody tr td .status-badge *,
@@ -2088,15 +2145,15 @@ textarea.form-input {
 }
 
 /* Override any existing CSS for status badges in user management */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge *,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge p,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge a,
-.dark-mode .admin-page .admin-table tbody tr td .status-badge button,
+.dark-mode .admin-page .admin-table tbody tr td .status-badge {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge p {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge a {
+.dark-mode .admin-page .admin-table tbody tr td .status-badge button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .status-badge,
   .admin-page .admin-table tbody tr td .status-badge *,
@@ -2114,15 +2171,15 @@ textarea.form-input {
 }
 
 /* ROLE MANAGEMENT SPECIFIC - Fix for RoleManagement.tsx role names */
-.dark-mode .admin-page .admin-table tbody tr td .role-name,
-.dark-mode .admin-page .admin-table tbody tr td .role-name *,
-.dark-mode .admin-page .admin-table tbody tr td .role-name span,
-.dark-mode .admin-page .admin-table tbody tr td .role-name div,
-.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
-.dark-mode .admin-page .admin-table tbody tr td .role-name em,
-.dark-mode .admin-page .admin-table tbody tr td .role-name p,
-.dark-mode .admin-page .admin-table tbody tr td .role-name a,
-.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+.dark-mode .admin-page .admin-table tbody tr td .role-name {
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+.dark-mode .admin-page .admin-table tbody tr td .role-name span {
+.dark-mode .admin-page .admin-table tbody tr td .role-name div {
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong {
+.dark-mode .admin-page .admin-table tbody tr td .role-name em {
+.dark-mode .admin-page .admin-table tbody tr td .role-name p {
+.dark-mode .admin-page .admin-table tbody tr td .role-name a {
+.dark-mode .admin-page .admin-table tbody tr td .role-name button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .role-name,
   .admin-page .admin-table tbody tr td .role-name *,
@@ -2147,15 +2204,15 @@ textarea.form-input {
 }
 
 /* Override any existing CSS for role names in role management */
-.dark-mode .admin-page .admin-table tbody tr td .role-name,
-.dark-mode .admin-page .admin-table tbody tr td .role-name *,
-.dark-mode .admin-page .admin-table tbody tr td .role-name span,
-.dark-mode .admin-page .admin-table tbody tr td .role-name div,
-.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
-.dark-mode .admin-page .admin-table tbody tr td .role-name em,
-.dark-mode .admin-page .admin-table tbody tr td .role-name p,
-.dark-mode .admin-page .admin-table tbody tr td .role-name a,
-.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+.dark-mode .admin-page .admin-table tbody tr td .role-name {
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+.dark-mode .admin-page .admin-table tbody tr td .role-name span {
+.dark-mode .admin-page .admin-table tbody tr td .role-name div {
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong {
+.dark-mode .admin-page .admin-table tbody tr td .role-name em {
+.dark-mode .admin-page .admin-table tbody tr td .role-name p {
+.dark-mode .admin-page .admin-table tbody tr td .role-name a {
+.dark-mode .admin-page .admin-table tbody tr td .role-name button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .role-name,
   .admin-page .admin-table tbody tr td .role-name *,
@@ -2193,15 +2250,15 @@ textarea.form-input {
 }
 
 /* Override any existing CSS for role names in role management */
-.dark-mode .admin-page .admin-table tbody tr td .role-name,
-.dark-mode .admin-page .admin-table tbody tr td .role-name *,
-.dark-mode .admin-page .admin-table tbody tr td .role-name span,
-.dark-mode .admin-page .admin-table tbody tr td .role-name div,
-.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
-.dark-mode .admin-page .admin-table tbody tr td .role-name em,
-.dark-mode .admin-page .admin-table tbody tr td .role-name p,
-.dark-mode .admin-page .admin-table tbody tr td .role-name a,
-.dark-mode .admin-page .admin-table tbody tr td .role-name button,
+.dark-mode .admin-page .admin-table tbody tr td .role-name {
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+.dark-mode .admin-page .admin-table tbody tr td .role-name span {
+.dark-mode .admin-page .admin-table tbody tr td .role-name div {
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong {
+.dark-mode .admin-page .admin-table tbody tr td .role-name em {
+.dark-mode .admin-page .admin-table tbody tr td .role-name p {
+.dark-mode .admin-page .admin-table tbody tr td .role-name a {
+.dark-mode .admin-page .admin-table tbody tr td .role-name button {
 @media (prefers-color-scheme: dark) {
   .admin-page .admin-table tbody tr td .role-name,
   .admin-page .admin-table tbody tr td .role-name *,
@@ -2218,7 +2275,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-pending,
+.dark-mode .status-badge.status-pending {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-pending {
     background: #ed8936 !important;
@@ -2226,7 +2283,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-confirmed,
+.dark-mode .status-badge.status-confirmed {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-confirmed {
     background: #38a169 !important;
@@ -2234,7 +2291,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-cancelled,
+.dark-mode .status-badge.status-cancelled {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-cancelled {
     background: #e53e3e !important;
@@ -2242,7 +2299,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-completed,
+.dark-mode .status-badge.status-completed {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-completed {
     background: #3182ce !important;
@@ -2250,7 +2307,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-paid,
+.dark-mode .status-badge.status-paid {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-paid {
     background: #805ad5 !important;
@@ -2259,7 +2316,7 @@ textarea.form-input {
 }
 
 /* Dark mode cho user status badges */
-.dark-mode .status-badge.status-active,
+.dark-mode .status-badge.status-active {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-active {
     background: #38a169 !important;
@@ -2267,7 +2324,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-inactive,
+.dark-mode .status-badge.status-inactive {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-inactive {
     background: #e53e3e !important;
@@ -2275,7 +2332,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-verified,
+.dark-mode .status-badge.status-verified {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-verified {
     background: #38a169 !important;
@@ -2283,7 +2340,7 @@ textarea.form-input {
   }
 }
 
-.dark-mode .status-badge.status-unverified,
+.dark-mode .status-badge.status-unverified {
 @media (prefers-color-scheme: dark) {
   .status-badge.status-unverified {
     background: #ed8936 !important;
@@ -2292,7 +2349,10 @@ textarea.form-input {
 }
 
 /* Dark mode cho status-default */
-.dark-mode .status-badge.status-default,
+.dark-mode .status-badge.status-default {
+  background: #718096 !important;
+  color: #fff !important;
+}
 @media (prefers-color-scheme: dark) {
   .status-badge.status-default {
     background: #718096 !important;
@@ -2317,7 +2377,7 @@ textarea.form-input {
   color: #2c3e50;
 }
 
-.dark-mode .role-name,
+.dark-mode .role-name {
 @media (prefers-color-scheme: dark) {
   .role-name {
     color: #ffffff !important;

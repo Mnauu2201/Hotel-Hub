@@ -3,15 +3,19 @@ package com.hotelhub.backend.controller;
 import com.hotelhub.backend.dto.request.RoomRequest;
 import com.hotelhub.backend.dto.response.RoomResponse;
 import com.hotelhub.backend.entity.RoomStatus;
+import com.hotelhub.backend.entity.Booking;
 import com.hotelhub.backend.service.RoomCRUDService;
+import com.hotelhub.backend.repository.BookingRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -19,6 +23,9 @@ public class RoomCRUDController {
 
     @Autowired
     private RoomCRUDService roomCRUDService;
+    
+    @Autowired
+    private BookingRepository bookingRepository;
 
     /**
      * Tạo phòng mới (Admin only)
@@ -175,6 +182,41 @@ public class RoomCRUDController {
         }
     }
 
+    
+    /**
+     * Debug endpoint để kiểm tra booking của phòng
+     */
+    @GetMapping("/{roomId}/bookings")
+    public ResponseEntity<?> getRoomBookings(@PathVariable Long roomId) {
+        try {
+            List<Booking> bookings = bookingRepository.findByRoomId(roomId);
+            List<Map<String, Object>> bookingInfo = bookings.stream()
+                .map(booking -> {
+                    Map<String, Object> bookingMap = new java.util.HashMap<>();
+                    bookingMap.put("bookingId", booking.getBookingId());
+                    bookingMap.put("status", booking.getStatus());
+                    bookingMap.put("checkIn", booking.getCheckIn());
+                    bookingMap.put("checkOut", booking.getCheckOut());
+                    bookingMap.put("guestEmail", booking.getGuestEmail() != null ? booking.getGuestEmail() : "N/A");
+                    return bookingMap;
+                })
+                .collect(Collectors.toList());
+            
+            // Test query logic
+            List<String> inactiveStatuses = Arrays.asList("cancelled", "paid", "refunded");
+            long activeBookingCount = bookingRepository.countByRoomIdAndStatusNotIn(roomId, inactiveStatuses);
+            
+            return ResponseEntity.ok(Map.of(
+                "roomId", roomId,
+                "totalBookings", bookings.size(),
+                "activeBookingCount", activeBookingCount,
+                "inactiveStatuses", inactiveStatuses,
+                "bookings", bookingInfo
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+=======
+
     /**
      * Lấy phòng gợi ý (loại trừ phòng hiện tại) (Public)
      */
@@ -194,6 +236,7 @@ public class RoomCRUDController {
                     "error", "Lấy danh sách phòng gợi ý thất bại",
                     "message", e.getMessage()
             ));
+
         }
     }
 }
