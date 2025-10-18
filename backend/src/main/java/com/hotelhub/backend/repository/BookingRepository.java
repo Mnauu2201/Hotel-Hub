@@ -100,4 +100,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                "GROUP BY YEAR(b.createdAt), MONTH(b.createdAt) ORDER BY YEAR(b.createdAt), MONTH(b.createdAt)")
         List<Object[]> getMonthlyRevenue(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
         
+        // Tìm booking pending đã hết hạn
+        List<Booking> findByStatusAndHoldUntilBefore(String status, LocalDateTime holdUntil);
+        
+        // Tìm booking theo room và status
+        @Query("SELECT b FROM Booking b WHERE b.roomId = :roomId AND b.status IN :statuses")
+        List<Booking> findByRoomIdAndStatusIn(@Param("roomId") Long roomId, @Param("statuses") List<String> statuses);
+        
 }

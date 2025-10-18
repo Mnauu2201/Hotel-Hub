@@ -5,6 +5,7 @@ import com.hotelhub.backend.dto.response.RoomResponse;
 import com.hotelhub.backend.entity.RoomStatus;
 import com.hotelhub.backend.entity.Booking;
 import com.hotelhub.backend.service.RoomCRUDService;
+import com.hotelhub.backend.service.RoomStatusSyncService;
 import com.hotelhub.backend.repository.BookingRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,10 @@ public class RoomCRUDController {
 
     @Autowired
     private RoomCRUDService roomCRUDService;
-    
+
+    @Autowired
+    private RoomStatusSyncService roomStatusSyncService;
+
     @Autowired
     private BookingRepository bookingRepository;
 
@@ -37,13 +41,11 @@ public class RoomCRUDController {
             RoomResponse room = roomCRUDService.createRoom(request);
             return ResponseEntity.ok(Map.of(
                     "message", "Tạo phòng thành công",
-                    "room", room
-            ));
+                    "room", room));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Tạo phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -52,19 +54,17 @@ public class RoomCRUDController {
      */
     @PutMapping("/{roomId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateRoom(@PathVariable Long roomId, 
-                                      @Valid @RequestBody RoomRequest request) {
+    public ResponseEntity<?> updateRoom(@PathVariable Long roomId,
+            @Valid @RequestBody RoomRequest request) {
         try {
             RoomResponse room = roomCRUDService.updateRoom(roomId, request);
             return ResponseEntity.ok(Map.of(
                     "message", "Cập nhật phòng thành công",
-                    "room", room
-            ));
+                    "room", room));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Cập nhật phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -77,13 +77,11 @@ public class RoomCRUDController {
         try {
             roomCRUDService.deleteRoom(roomId);
             return ResponseEntity.ok(Map.of(
-                    "message", "Xóa phòng thành công"
-            ));
+                    "message", "Xóa phòng thành công"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Xóa phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -98,8 +96,7 @@ public class RoomCRUDController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy thông tin phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -112,13 +109,11 @@ public class RoomCRUDController {
             List<RoomResponse> rooms = roomCRUDService.getAllRooms();
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
-                    "count", rooms.size()
-            ));
+                    "count", rooms.size()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -132,13 +127,11 @@ public class RoomCRUDController {
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size(),
-                    "status", status
-            ));
+                    "status", status));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng theo trạng thái thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -152,13 +145,11 @@ public class RoomCRUDController {
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size(),
-                    "roomTypeId", roomTypeId
-            ));
+                    "roomTypeId", roomTypeId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng theo loại thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
@@ -172,17 +163,14 @@ public class RoomCRUDController {
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size(),
-                    "status", "available"
-            ));
+                    "status", "available"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng trống thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
         }
     }
 
-    
     /**
      * Debug endpoint để kiểm tra booking của phòng
      */
@@ -215,29 +203,66 @@ public class RoomCRUDController {
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-=======
+        }
+    }
 
     /**
      * Lấy phòng gợi ý (loại trừ phòng hiện tại) (Public)
      */
     @GetMapping("/suggested")
     public ResponseEntity<?> getSuggestedRooms(@RequestParam(required = false) Long excludeRoomId,
-                                             @RequestParam(defaultValue = "3") int limit) {
+            @RequestParam(defaultValue = "3") int limit) {
         try {
             List<RoomResponse> rooms = roomCRUDService.getSuggestedRooms(excludeRoomId, limit);
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size(),
                     "excludeRoomId", excludeRoomId,
-                    "limit", limit
-            ));
+                    "limit", limit));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy danh sách phòng gợi ý thất bại",
-                    "message", e.getMessage()
-            ));
+                    "message", e.getMessage()));
 
         }
     }
-}
 
+    /**
+     * Sync room status với booking status (Admin only)
+     */
+    @PostMapping("/sync-status")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> syncRoomStatuses() {
+        try {
+            int updatedCount = roomStatusSyncService.syncAllRoomStatuses();
+            return ResponseEntity.ok(Map.of(
+                    "message", "Sync room status thành công",
+                    "updatedCount", updatedCount));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Sync room status thất bại",
+                    "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * Test sync room status (Public for testing)
+     */
+    @GetMapping("/test-sync")
+    public ResponseEntity<?> testSyncRoomStatuses() {
+        try {
+            System.out.println("=== STARTING ROOM STATUS SYNC ===");
+            int updatedCount = roomStatusSyncService.syncAllRoomStatuses();
+            System.out.println("=== SYNC COMPLETED: " + updatedCount + " rooms updated ===");
+            return ResponseEntity.ok(Map.of(
+                    "message", "Test sync room status thành công",
+                    "updatedCount", updatedCount));
+        } catch (Exception e) {
+            System.err.println("=== SYNC ERROR: " + e.getMessage() + " ===");
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Test sync room status thất bại",
+                    "message", e.getMessage()));
+        }
+    }
+}
