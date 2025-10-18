@@ -215,28 +215,6 @@ public class AdminBookingController {
         }
     }
 
-    // Admin hủy booking
-    @PutMapping("/bookings/{bookingId}/cancel")
-    public ResponseEntity<?> cancelBooking(
-            @PathVariable Long bookingId,
-            @RequestBody Map<String, String> request,
-            Authentication authentication) {
-        try {
-            String reason = request.get("reason");
-            String adminEmail = authentication.getName();
-            
-            BookingResponse booking = adminBookingService.cancelBooking(bookingId, reason, adminEmail);
-            return ResponseEntity.ok(Map.of(
-                    "message", "Hủy booking thành công",
-                    "booking", booking
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Hủy booking thất bại",
-                    "message", e.getMessage()
-            ));
-        }
-    }
 
     // Admin cập nhật thông tin booking
     @PutMapping("/bookings/{bookingId}")
@@ -255,6 +233,44 @@ public class AdminBookingController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Cập nhật booking thất bại",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    // Xác nhận booking (Admin only)
+    @PutMapping("/bookings/{bookingId}/confirm")
+    public ResponseEntity<?> confirmBooking(@PathVariable Long bookingId,
+                                           Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            BookingResponse booking = adminBookingService.confirmBooking(bookingId, adminEmail);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Xác nhận booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Xác nhận booking thất bại",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    // Hủy booking (Admin only)
+    @PutMapping("/bookings/{bookingId}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId,
+                                          Authentication authentication) {
+        try {
+            String adminEmail = authentication.getName();
+            BookingResponse booking = adminBookingService.cancelBooking(bookingId, adminEmail);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Hủy booking thành công",
+                    "booking", booking
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Hủy booking thất bại",
                     "message", e.getMessage()
             ));
         }

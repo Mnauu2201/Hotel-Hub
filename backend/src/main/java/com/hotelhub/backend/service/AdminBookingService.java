@@ -3,6 +3,7 @@ package com.hotelhub.backend.service;
 import com.hotelhub.backend.dto.response.BookingResponse;
 import com.hotelhub.backend.entity.Booking;
 import com.hotelhub.backend.entity.Room;
+import com.hotelhub.backend.entity.RoomStatus;
 import com.hotelhub.backend.repository.BookingRepository;
 import com.hotelhub.backend.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,6 +195,19 @@ public class AdminBookingService {
             booking.setHoldUntil(null);
         }
         
+        // Cập nhật room status dựa trên booking status
+        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        if (room != null) {
+            if ("confirmed".equals(newStatus) || "paid".equals(newStatus)) {
+                // Booking được xác nhận hoặc thanh toán → phòng BOOKED
+                room.setStatus(RoomStatus.BOOKED);
+            } else if ("cancelled".equals(newStatus) || "refunded".equals(newStatus)) {
+                // Booking bị hủy hoặc hoàn tiền → phòng AVAILABLE
+                room.setStatus(RoomStatus.AVAILABLE);
+            }
+            roomRepository.save(room);
+        }
+        
         booking = bookingRepository.save(booking);
 
         // Ghi log thao tác
@@ -310,6 +324,67 @@ public class AdminBookingService {
         response.setAmenities(null); // TODO: Implement amenities
         
         return response;
+    }
+
+    /**
+     * Xác nhận booking (Admin only)
+     */
+    public BookingResponse confirmBooking(Long bookingId, String adminEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+        // Kiểm tra booking có thể xác nhận không
+        if (!"pending".equals(booking.getStatus())) {
+            throw new RuntimeException("Booking không thể xác nhận. Trạng thái hiện tại: " + booking.getStatus());
+        }
+
+        // Cập nhật booking status
+        booking.setStatus("confirmed");
+        booking.setHoldUntil(null); // Bỏ hold time
+        booking = bookingRepository.save(booking);
+
+        // Cập nhật room status thành BOOKED
+        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        if (room != null) {
+            room.setStatus(RoomStatus.BOOKED);
+            roomRepository.save(room);
+        }
+
+        // Ghi log thao tác
+        activityLogService.logSystemActivity("ADMIN_CONFIRM_BOOKING",
+            "Admin " + adminEmail + " confirmed booking " + booking.getBookingReference());
+
+        return convertToResponse(booking);
+    }
+
+    /**
+     * Hủy booking (Admin only)
+     */
+    public BookingResponse cancelBooking(Long bookingId, String adminEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+        // Kiểm tra booking có thể hủy không
+        if (!"pending".equals(booking.getStatus())) {
+            throw new RuntimeException("Booking không thể hủy. Trạng thái hiện tại: " + booking.getStatus());
+        }
+
+        // Cập nhật booking status
+        booking.setStatus("cancelled");
+        booking = bookingRepository.save(booking);
+
+        // Cập nhật room status về AVAILABLE khi booking bị cancelled
+        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+        if (room != null) {
+            room.setStatus(RoomStatus.AVAILABLE);
+            roomRepository.save(room);
+        }
+
+        // Ghi log thao tác
+        activityLogService.logSystemActivity("ADMIN_CANCEL_BOOKING",
+            "Admin " + adminEmail + " cancelled booking " + booking.getBookingReference());
+
+        return convertToResponse(booking);
     }
 }
 

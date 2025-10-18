@@ -266,12 +266,12 @@ public class BookingService {
         // Cập nhật room status dựa trên booking status
         Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
         if (room != null) {
-            if ("cancelled".equals(newStatus) || "refunded".equals(newStatus)) {
-                // Booking bị hủy hoặc hoàn tiền → phòng về AVAILABLE
-                room.setStatus(RoomStatus.AVAILABLE);
-            } else if ("confirmed".equals(newStatus) || "paid".equals(newStatus)) {
+            if ("confirmed".equals(newStatus) || "paid".equals(newStatus)) {
                 // Booking được xác nhận hoặc thanh toán → phòng BOOKED
                 room.setStatus(RoomStatus.BOOKED);
+            } else if ("cancelled".equals(newStatus) || "refunded".equals(newStatus)) {
+                // Booking bị hủy hoặc hoàn tiền → phòng AVAILABLE
+                room.setStatus(RoomStatus.AVAILABLE);
             }
             roomRepository.save(room);
         }

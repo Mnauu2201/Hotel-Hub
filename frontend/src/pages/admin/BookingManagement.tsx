@@ -165,6 +165,68 @@ const BookingManagement: React.FC = () => {
     }
   };
 
+  const handleConfirmBooking = async (bookingId: number) => {
+    if (!bookingId) {
+      showError('Lỗi: Không tìm thấy ID booking để xác nhận');
+      return;
+    }
+
+    if (window.confirm('Bạn có chắc chắn muốn xác nhận booking này?')) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        
+        const response = await fetch(`http://localhost:8080/api/admin/bookings/${bookingId}/confirm`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          showSuccess('Xác nhận booking thành công!');
+          fetchBookings(); // Refresh danh sách
+        } else {
+          const errorData = await response.json();
+          showError('Lỗi: ' + (errorData.message || 'Không thể xác nhận booking'));
+        }
+      } catch (error) {
+        showError('Lỗi kết nối: ' + (error as Error).message);
+      }
+    }
+  };
+
+  const handleCancelBooking = async (bookingId: number) => {
+    if (!bookingId) {
+      showError('Lỗi: Không tìm thấy ID booking để hủy');
+      return;
+    }
+
+    if (window.confirm('Bạn có chắc chắn muốn hủy booking này?')) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        
+        const response = await fetch(`http://localhost:8080/api/admin/bookings/${bookingId}/cancel`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          showSuccess('Hủy booking thành công!');
+          fetchBookings(); // Refresh danh sách
+        } else {
+          const errorData = await response.json();
+          showError('Lỗi: ' + (errorData.message || 'Không thể hủy booking'));
+        }
+      } catch (error) {
+        showError('Lỗi kết nối: ' + (error as Error).message);
+      }
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditFormData(prev => ({
@@ -173,55 +235,7 @@ const BookingManagement: React.FC = () => {
     }));
   };
 
-  const handleConfirmBooking = async (bookingId: number) => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(`/api/admin/bookings/${bookingId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status: 'CONFIRMED' })
-      });
 
-      if (response.ok) {
-        showSuccess('Đã xác nhận đặt phòng thành công!');
-        setLatestBooking(null);
-        fetchBookings();
-      } else {
-        showError('Có lỗi xảy ra khi xác nhận đặt phòng');
-      }
-    } catch (error) {
-      console.error('Error confirming booking:', error);
-      showError('Có lỗi xảy ra khi xác nhận đặt phòng');
-    }
-  };
-
-  const handleCancelBooking = async (bookingId: number) => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(`/api/admin/bookings/${bookingId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status: 'CANCELLED' })
-      });
-
-      if (response.ok) {
-        showSuccess('Đã hủy đặt phòng thành công!');
-        setLatestBooking(null);
-        fetchBookings();
-      } else {
-        showError('Có lỗi xảy ra khi hủy đặt phòng');
-      }
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      showError('Có lỗi xảy ra khi hủy đặt phòng');
-    }
-  };
 
   // Get modal styles based on dark mode
   const getModalStyles = () => {
@@ -441,6 +455,24 @@ const BookingManagement: React.FC = () => {
                       >
                         Sửa
                       </button>
+                      {booking.status === 'pending' && (
+                        <>
+                          <button 
+                            className="btn-action btn-confirm"
+                            onClick={() => handleConfirmBooking(booking.bookingId || booking.id)}
+                            style={{ backgroundColor: '#28a745', color: 'white', marginLeft: '5px' }}
+                          >
+                            Xác nhận
+                          </button>
+                          <button 
+                            className="btn-action btn-cancel"
+                            onClick={() => handleCancelBooking(booking.bookingId || booking.id)}
+                            style={{ backgroundColor: '#dc3545', color: 'white', marginLeft: '5px' }}
+                          >
+                            Hủy
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
