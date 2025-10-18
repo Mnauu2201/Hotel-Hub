@@ -1,10 +1,26 @@
 import React from 'react';
-import sveIcon1 from '../assets/img/icon/sve-icon1.png';
-import sveIcon2 from '../assets/img/icon/sve-icon2.png';
-import sveIcon3 from '../assets/img/icon/sve-icon3.png';
-import sveIcon4 from '../assets/img/icon/sve-icon4.png';
-import sveIcon5 from '../assets/img/icon/sve-icon5.png';
-import sveIcon6 from '../assets/img/icon/sve-icon6.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+  faWifi, 
+  faSnowflake, 
+  faWineBottle, 
+  faUmbrellaBeach, 
+  faWater, 
+  faPaw, 
+  faSmokingBan, 
+  faCheckCircle,
+  faShieldAlt,
+  faConciergeBell,
+  faDumbbell,
+  faTv,
+  faSwimmingPool,
+  faSpa,
+  faUtensils,
+  faParking,
+  faTshirt,
+  faBriefcase,
+  faCoffee
+} from '@fortawesome/free-solid-svg-icons'
 
 const RoomCard = ({ room, onBook }) => {
   return (
@@ -57,26 +73,180 @@ const RoomCard = ({ room, onBook }) => {
         }}>
           {room.description}
         </div>
+        {/* Room Details Amenities */}
+        {room.roomDetail && (
+          <div style={{ margin: '0 0 0.5rem 0' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              {room.roomDetail.wifiSpeed && (
+                <div title="WiFi" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faWifi} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+              {room.roomDetail.airConditioning && (
+                <div title="Air Conditioning" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faSnowflake} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+              {room.roomDetail.minibar && (
+                <div title="Minibar" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faWineBottle} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+              {room.roomDetail.balcony && (
+                <div title="Balcony" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faUmbrellaBeach} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+              {room.roomDetail.oceanView && (
+                <div title="Ocean View" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faWater} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+              {room.roomDetail.petFriendly && (
+                <div title="Pet Friendly" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <FontAwesomeIcon icon={faPaw} style={{ fontSize: '16px', color: '#644222' }} />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Additional Amenities from Database */}
         {Array.isArray(room.amenities) && room.amenities.length > 0 && (
           <div style={{ margin: '0 0 0.5rem 0' }}>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {room.amenities.slice(0, 8).map((a) => {
-                const name = (a.name || '').toLowerCase();
-                let icon = sveIcon1;
-                if (name.includes('wifi')) icon = sveIcon3;
-                else if (name.includes('điều hòa') || name.includes('air')) icon = sveIcon4;
-                else if (name.includes('minibar')) icon = sveIcon5;
-                else if (name.includes('ban công') || name.includes('balcony')) icon = sveIcon2;
-                else if (name.includes('biển') || name.includes('ocean') || name.includes('sea')) icon = sveIcon6;
-                else if (name.includes('thú cưng') || name.includes('pet')) icon = sveIcon1;
-                else if (name.includes('hút thuốc') || name.includes('smok')) icon = sveIcon4;
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              {room.amenities.slice(0, 8).map((amenity) => {
+                // Function to get appropriate icon based on amenity name
+                const getAmenityIcon = (name) => {
+                  const lowerName = (name || '').toLowerCase();
+                  if (lowerName.includes('wifi') || lowerName.includes('internet')) return faWifi;
+                  if (lowerName.includes('tv') || lowerName.includes('television')) return faTv;
+                  if (lowerName.includes('air') || lowerName.includes('conditioning') || lowerName.includes('điều hòa')) return faSnowflake;
+                  if (lowerName.includes('safe') || lowerName.includes('security')) return faShieldAlt;
+                  if (lowerName.includes('minibar') || lowerName.includes('mini bar')) return faWineBottle;
+                  if (lowerName.includes('balcony') || lowerName.includes('terrace') || lowerName.includes('ban công')) return faUmbrellaBeach;
+                  if (lowerName.includes('ocean') || lowerName.includes('sea') || lowerName.includes('view') || lowerName.includes('biển')) return faWater;
+                  if (lowerName.includes('pet') || lowerName.includes('animal') || lowerName.includes('thú cưng')) return faPaw;
+                  if (lowerName.includes('room service') || lowerName.includes('service')) return faConciergeBell;
+                  if (lowerName.includes('gym') || lowerName.includes('fitness') || lowerName.includes('exercise')) return faDumbbell;
+                  if (lowerName.includes('pool') || lowerName.includes('swimming')) return faSwimmingPool;
+                  if (lowerName.includes('spa') || lowerName.includes('wellness')) return faSpa;
+                  if (lowerName.includes('restaurant') || lowerName.includes('dining')) return faUtensils;
+                  if (lowerName.includes('parking') || lowerName.includes('car')) return faParking;
+                  if (lowerName.includes('laundry') || lowerName.includes('cleaning')) return faTshirt;
+                  if (lowerName.includes('business') || lowerName.includes('office')) return faBriefcase;
+                  if (lowerName.includes('concierge') || lowerName.includes('assistance')) return faConciergeBell;
+                  if (lowerName.includes('breakfast') || lowerName.includes('meal')) return faCoffee;
+                  if (lowerName.includes('housekeeping') || lowerName.includes('cleaning')) return faTshirt;
+                  if (lowerName.includes('smoking') || lowerName.includes('hút thuốc')) return faSmokingBan;
+                  return faCheckCircle; // Default icon
+                };
+
                 return (
-                  <li key={a.amenityId || a.name} title={a.name} style={{ width: 28, height: 28 }}>
-                    <img src={icon} alt={a.name} style={{ width: 28, height: 28 }} />
-                  </li>
+                  <div 
+                    key={amenity.amenityId || amenity.name} 
+                    title={amenity.name}
+                    style={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '6px',
+                      border: '1px solid #e9ecef',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#644222';
+                      e.currentTarget.style.color = 'white';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f8f9fa';
+                      e.currentTarget.style.color = '#644222';
+                    }}
+                  >
+                    <FontAwesomeIcon 
+                      icon={getAmenityIcon(amenity.name)} 
+                      style={{ 
+                        fontSize: '16px',
+                        color: '#644222'
+                      }} 
+                    />
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           </div>
         )}
       </div>

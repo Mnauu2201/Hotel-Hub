@@ -17,7 +17,7 @@ public class RoomDetail {
     @Column(name = "detail_id")
     private Long detailId;
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
     

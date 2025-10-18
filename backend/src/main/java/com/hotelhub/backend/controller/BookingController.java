@@ -3,8 +3,10 @@ package com.hotelhub.backend.controller;
 import com.hotelhub.backend.dto.request.GuestBookingRequest;
 import com.hotelhub.backend.dto.request.UserBookingRequest;
 import com.hotelhub.backend.dto.response.BookingResponse;
+import com.hotelhub.backend.dto.response.RoomResponse;
 import com.hotelhub.backend.service.BookingService;
 import com.hotelhub.backend.service.RoomService;
+import com.hotelhub.backend.service.RoomCRUDService;
 import com.hotelhub.backend.entity.Room;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class BookingController {
 
     @Autowired
     private RoomService roomService;
+    
+    @Autowired
+    private RoomCRUDService roomCRUDService;
 
     /**
      * booking cho guest (không cần login)
@@ -184,7 +189,7 @@ public class BookingController {
     @GetMapping("/rooms")
     public ResponseEntity<?> getAllRooms() {
         try {
-            List<Room> rooms = roomService.getAllRooms();
+            List<RoomResponse> rooms = roomCRUDService.getAllRooms();
             return ResponseEntity.ok(Map.of(
                     "rooms", rooms,
                     "count", rooms.size()));
@@ -221,12 +226,8 @@ public class BookingController {
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<?> getRoomDetails(@PathVariable Long roomId) {
         try {
-            Optional<Room> room = roomService.getRoomById(roomId);
-            if (room.isPresent()) {
-                return ResponseEntity.ok(room.get());
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            RoomResponse room = roomCRUDService.getRoomById(roomId);
+            return ResponseEntity.ok(room);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Lấy chi tiết phòng thất bại",

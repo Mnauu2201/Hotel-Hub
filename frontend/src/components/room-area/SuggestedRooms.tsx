@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import $ from "jquery";
-import "slick-carousel";
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import fallbackRoomImg from '../../assets/img/gallery/room-img01.png'
@@ -24,89 +22,253 @@ import {
   faParking,
   faTshirt,
   faBriefcase,
-  faCoffee
+  faCoffee,
+  faChevronLeft,
+  faChevronRight
 } from '@fortawesome/free-solid-svg-icons'
 
-const RoomArea = () => {
+interface SuggestedRoomsProps {
+  currentRoomId?: number;
+  limit?: number;
+}
+
+const SuggestedRooms = ({ currentRoomId, limit = 3 }: SuggestedRoomsProps) => {
   const navigate = useNavigate()
   const [rooms, setRooms] = useState<any[]>([])
+  const [allRooms, setAllRooms] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
 
   useEffect(() => {
-    const fetchRooms = async () => {
+    const fetchSuggestedRooms = async () => {
       try {
-        const res = await api.get('/rooms/available')
-        setRooms(res.data?.rooms || [])
+        // Lấy tất cả phòng available để có thể pagination
+        const params = new URLSearchParams()
+        if (currentRoomId) {
+          params.append('excludeRoomId', currentRoomId.toString())
+        }
+        // Lấy nhiều phòng hơn để có thể pagination
+        params.append('limit', '20')
+        
+        const res = await api.get(`/rooms/suggested?${params.toString()}`)
+        const roomsData = res.data?.rooms || []
+        
+        setAllRooms(roomsData)
+        setTotalPages(Math.ceil(roomsData.length / limit))
+        
+        // Hiển thị trang đầu tiên
+        const firstPageRooms = roomsData.slice(0, limit)
+        setRooms(firstPageRooms)
       } catch (e: any) {
-        setError('Không thể tải danh sách phòng nổi bật')
+        setError('Không thể tải danh sách phòng gợi ý')
       } finally {
         setLoading(false)
       }
     }
-    fetchRooms()
-  }, [])
+    fetchSuggestedRooms()
+  }, [currentRoomId, limit])
 
-  useEffect(() => {
-    const $slider = $(".services-active");
-
-    if ($slider.hasClass("slick-initialized")) {
-      $slider.slick("unslick");
+  // Hàm xử lý chuyển trang với hiệu ứng
+  const handlePageChange = (direction: 'prev' | 'next') => {
+    if (isTransitioning) return
+    
+    if (direction === 'prev' && currentPage > 0) {
+      setIsTransitioning(true)
+      const newPage = currentPage - 1
+      setCurrentPage(newPage)
+      const startIndex = newPage * limit
+      const endIndex = startIndex + limit
+      setRooms(allRooms.slice(startIndex, endIndex))
+      
+      // Reset transition state sau 300ms
+      setTimeout(() => setIsTransitioning(false), 300)
+    } else if (direction === 'next' && currentPage < totalPages - 1) {
+      setIsTransitioning(true)
+      const newPage = currentPage + 1
+      setCurrentPage(newPage)
+      const startIndex = newPage * limit
+      const endIndex = startIndex + limit
+      setRooms(allRooms.slice(startIndex, endIndex))
+      
+      // Reset transition state sau 300ms
+      setTimeout(() => setIsTransitioning(false), 300)
     }
+  }
 
-    if (rooms.length > 0) {
-      $slider.slick({
-        dots: true,
-        infinite: true,
-        arrows: false,
-        speed: 1000,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-          {
-            breakpoint: 1200,
-            settings: { slidesToShow: 3, slidesToScroll: 1, infinite: true, dots: true },
-          },
-          { breakpoint: 992, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-          { breakpoint: 767, settings: { slidesToShow: 1, slidesToScroll: 1 } },
-        ],
-      });
-    }
+  if (loading) {
+    return (
+      <section className="services-area pt-80 pb-80">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-xl-12">
+              <div className="section-title center-align mb-50 text-center">
+                <h5>Gợi ý cho bạn</h5>
+                <h2>Phòng tương tự</h2>
+                <p>Đang tải các phòng gợi ý...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
-    return () => {
-      if ($slider.hasClass("slick-initialized")) {
-        $slider.slick("unslick");
-      }
-    };
-  }, [rooms])
+  if (error || rooms.length === 0) {
+    return null
+  }
+
   return (
-    <section id="services" className="services-area pt-113 pb-150">
+    <section className="services-area pt-80 pb-80">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-xl-12">
             <div className="section-title center-align mb-50 text-center">
-              <h5>Niềm vui của sự sang trọng</h5>
-              <h2>Phòng &amp; Suite</h2>
-              <p>Chúng tôi mang đến không gian nghỉ dưỡng đẳng cấp với thiết kế tinh tế và tiện nghi hiện đại. Mỗi phòng đều được trang bị đầy đủ để đảm bảo sự thoải mái và tiện lợi tối đa cho quý khách.</p>
+              <h5>Gợi ý cho bạn</h5>
+              <h2>Phòng tương tự</h2>
+              <p>Khám phá thêm các phòng khác với tiện nghi tương tự để có thêm lựa chọn cho chuyến đi của bạn.</p>
             </div>
           </div>
         </div>
-        <div className="row services-active" style={{ rowGap: 24 }}>
-          {loading && (
-            <div className="col-12"><p style={{ textAlign: 'center' }}>Đang tải phòng nổi bật...</p></div>
-          )}
-          {!loading && error && (
-            <div className="col-12"><p style={{ textAlign: 'center', color: '#b91c1c' }}>{error}</p></div>
-          )}
-          {!loading && !error && rooms.map((room) => {
+        {/* Navigation Controls */}
+        {totalPages > 1 && (
+          <div className="row mb-30">
+            <div className="col-12">
+              <div className="navigation-controls" style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '20px',
+                marginBottom: '20px'
+              }}>
+                <button
+                  onClick={() => handlePageChange('prev')}
+                  disabled={currentPage === 0 || isTransitioning}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    border: '2px solid #644222',
+                    backgroundColor: currentPage === 0 ? '#f5f5f5' : '#644222',
+                    color: currentPage === 0 ? '#999' : 'white',
+                    cursor: (currentPage === 0 || isTransitioning) ? 'not-allowed' : 'pointer',
+                    fontSize: '16px',
+                    transition: 'all 0.3s ease',
+                    opacity: (currentPage === 0 || isTransitioning) ? 0.5 : 1,
+                    boxShadow: '0 2px 8px rgba(100, 66, 34, 0.2)'
+                  }}
+                  onMouseOver={(e) => {
+                    if (currentPage > 0 && !isTransitioning) {
+                      e.currentTarget.style.backgroundColor = '#4a2f1a'
+                      e.currentTarget.style.transform = 'scale(1.1)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(100, 66, 34, 0.3)'
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (currentPage > 0 && !isTransitioning) {
+                      e.currentTarget.style.backgroundColor = '#644222'
+                      e.currentTarget.style.transform = 'scale(1)'
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(100, 66, 34, 0.2)'
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '16px',
+                  color: '#644222',
+                  fontWeight: '500'
+                }}>
+                  <span>Trang {currentPage + 1} / {totalPages}</span>
+                </div>
+                
+                <button
+                  onClick={() => handlePageChange('next')}
+                  disabled={currentPage === totalPages - 1 || isTransitioning}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    border: '2px solid #644222',
+                    backgroundColor: currentPage === totalPages - 1 ? '#f5f5f5' : '#644222',
+                    color: currentPage === totalPages - 1 ? '#999' : 'white',
+                    cursor: (currentPage === totalPages - 1 || isTransitioning) ? 'not-allowed' : 'pointer',
+                    fontSize: '16px',
+                    transition: 'all 0.3s ease',
+                    opacity: (currentPage === totalPages - 1 || isTransitioning) ? 0.5 : 1,
+                    boxShadow: '0 2px 8px rgba(100, 66, 34, 0.2)'
+                  }}
+                  onMouseOver={(e) => {
+                    if (currentPage < totalPages - 1 && !isTransitioning) {
+                      e.currentTarget.style.backgroundColor = '#4a2f1a'
+                      e.currentTarget.style.transform = 'scale(1.1)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(100, 66, 34, 0.3)'
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (currentPage < totalPages - 1 && !isTransitioning) {
+                      e.currentTarget.style.backgroundColor = '#644222'
+                      e.currentTarget.style.transform = 'scale(1)'
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(100, 66, 34, 0.2)'
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div 
+          className="row" 
+          style={{ 
+            rowGap: 24,
+            opacity: isTransitioning ? 0.7 : 1,
+            transition: 'opacity 0.3s ease-in-out'
+          }}
+        >
+          {rooms.map((room) => {
             const primaryImg = room.images?.find((i: any) => i.isPrimary)?.imageUrl || room.images?.[0]?.imageUrl
             const priceText = (room.price?.toLocaleString?.() || room.price || room.priceAsDouble)?.toString()
+            
+            // Xử lý URL hình ảnh
+            let imageUrl = primaryImg || fallbackRoomImg
+            if (imageUrl && typeof imageUrl === 'string' && !imageUrl.startsWith('http')) {
+              if (imageUrl.startsWith('/uploads/')) {
+                imageUrl = 'http://localhost:8080' + imageUrl
+              } else if (!imageUrl.startsWith('/')) {
+                imageUrl = 'http://localhost:8080/uploads/' + imageUrl
+              } else {
+                imageUrl = 'http://localhost:8080' + imageUrl
+              }
+            }
+            
             return (
               <div key={room.roomId} className="col-xl-4 col-md-6" style={{ display: 'flex', paddingLeft: 12, paddingRight: 12 }}>
                 <div className="single-services mb-30" style={{ height: '100%', minHeight: 560, display: 'flex', flexDirection: 'column', width: '100%' }}>
                   <div className="services-thumb" style={{ width: '100%' }}>
                     <Link className="gallery-link popup-image" to={`/room-detail/${room.roomId}`}>
-                      <img src={primaryImg || fallbackRoomImg} alt={room.roomTypeName || 'room'} style={{ width: '100%', height: 260, objectFit: 'cover' }} />
+                      <img 
+                        src={imageUrl} 
+                        alt={room.roomTypeName || 'room'} 
+                        style={{ width: '100%', height: 260, objectFit: 'cover' }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = fallbackRoomImg
+                        }}
+                      />
                     </Link>
                   </div>
                   <div className="services-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -126,11 +288,19 @@ const RoomArea = () => {
                         </li>
                       </ul>
                     </div>
-                    <h4 style={{ marginTop: 10 }}><Link to={`/room-detail/${room.roomId}`}>{`Số phòng ${room.roomNumber || ''}`}</Link></h4>
+                    <h4 style={{ marginTop: 10 }}>
+                      <Link to={`/room-detail/${room.roomId}`}>
+                        {`Số phòng ${room.roomNumber || ''}`}
+                      </Link>
+                    </h4>
                     {room.roomTypeName && (
-                      <div style={{ color: '#64748b', marginTop: 4, fontSize: 14 }}>Loại phòng: {room.roomTypeName}</div>
+                      <div style={{ color: '#64748b', marginTop: 4, fontSize: 14 }}>
+                        Loại phòng: {room.roomTypeName}
+                      </div>
                     )}
-                    <p style={{ marginBottom: 'auto' }}>{room.description || 'Trải nghiệm không gian sang trọng và tiện nghi.'}</p>
+                    <p style={{ marginBottom: 'auto' }}>
+                      {room.description || 'Trải nghiệm không gian sang trọng và tiện nghi.'}
+                    </p>
                     {room.roomDetail && (
                       <ul style={{ marginTop: 8 }}>
                         {room.roomDetail.bedType && <li>Giường: {room.roomDetail.bedType}</li>}
@@ -322,4 +492,4 @@ const RoomArea = () => {
   )
 }
 
-export default RoomArea
+export default SuggestedRooms

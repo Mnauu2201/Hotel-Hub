@@ -221,6 +221,26 @@ public class RoomCRUDService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lấy phòng gợi ý (loại trừ phòng hiện tại)
+     */
+    public List<RoomResponse> getSuggestedRooms(Long excludeRoomId, int limit) {
+        List<Room> allAvailableRooms = roomRepository.findByStatus(RoomStatus.AVAILABLE);
+        
+        // Lọc ra phòng hiện tại nếu có
+        if (excludeRoomId != null) {
+            allAvailableRooms = allAvailableRooms.stream()
+                    .filter(room -> !room.getRoomId().equals(excludeRoomId))
+                    .collect(Collectors.toList());
+        }
+        
+        // Giới hạn số lượng và chuyển đổi sang response
+        return allAvailableRooms.stream()
+                .limit(limit)
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
     // Helper methods
     private boolean hasRoomDetailInfo(RoomRequest request) {
         return request.getBedType() != null || request.getRoomSize() != null ||

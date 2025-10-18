@@ -181,6 +181,7 @@ public class RoomCRUDController {
             ));
         }
     }
+
     
     /**
      * Debug endpoint để kiểm tra booking của phòng
@@ -214,6 +215,28 @@ public class RoomCRUDController {
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+=======
+
+    /**
+     * Lấy phòng gợi ý (loại trừ phòng hiện tại) (Public)
+     */
+    @GetMapping("/suggested")
+    public ResponseEntity<?> getSuggestedRooms(@RequestParam(required = false) Long excludeRoomId,
+                                             @RequestParam(defaultValue = "3") int limit) {
+        try {
+            List<RoomResponse> rooms = roomCRUDService.getSuggestedRooms(excludeRoomId, limit);
+            return ResponseEntity.ok(Map.of(
+                    "rooms", rooms,
+                    "count", rooms.size(),
+                    "excludeRoomId", excludeRoomId,
+                    "limit", limit
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Lấy danh sách phòng gợi ý thất bại",
+                    "message", e.getMessage()
+            ));
+
         }
     }
 }

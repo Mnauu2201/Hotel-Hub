@@ -445,7 +445,7 @@ const BookingPage = () => {
       } else if (error.response?.status === 400) {
         // Show actual error for both guest and authenticated users
         const errorMsg = error.response?.data?.message || error.message || 'Lỗi không xác định';
-        setError(`Xin Lỗi ${errorMsg}. Vui lòng quý khách chọn ngày khác hoặc phòng khác.Xin cảm ơn!`);
+        setError(`Xin Lỗi . Vui lòng quý khách chọn ngày khác hoặc phòng khác.Xin cảm ơn!`);
       } else if (error.response?.data?.message && 
           error.response.data.message.includes('Data truncated for column \'status\'')) {
         setError('Hệ thống đang bảo trì. Vui lòng thử lại sau ít phút hoặc liên hệ hotline để được hỗ trợ đặt phòng.');

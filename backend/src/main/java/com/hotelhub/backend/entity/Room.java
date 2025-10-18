@@ -50,7 +50,7 @@ public class Room {
     private LocalDateTime updatedAt;
 
     // Quan hệ với room_details
-    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private RoomDetail roomDetail;
 
     // Quan hệ với room_images
@@ -58,7 +58,7 @@ public class Room {
     private List<RoomImage> images = new ArrayList<>();
 
     // Quan hệ với amenities (N:M)
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
         name = "room_amenities",
         joinColumns = @JoinColumn(name = "room_id"),
