@@ -22,15 +22,17 @@ public class AdminBookingController {
     @Autowired
     private AdminBookingService adminBookingService;
 
-    // Xem tất cả booking với phân trang
+    // Xem tất cả booking với phân trang và lọc theo ngày
     @GetMapping("/bookings")
     public ResponseEntity<?> getAllBookings(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         try {
-            Page<BookingResponse> bookings = adminBookingService.getAllBookings(page, size, sortBy, sortDir);
+            Page<BookingResponse> bookings = adminBookingService.getAllBookings(page, size, sortBy, sortDir, startDate, endDate);
             return ResponseEntity.ok(Map.of(
                     "bookings", bookings.getContent(),
                     "totalElements", bookings.getTotalElements(),
@@ -263,7 +265,7 @@ public class AdminBookingController {
                                           Authentication authentication) {
         try {
             String adminEmail = authentication.getName();
-            BookingResponse booking = adminBookingService.cancelBooking(bookingId, adminEmail);
+            BookingResponse booking = adminBookingService.cancelBooking(bookingId, "Admin cancelled", adminEmail);
             return ResponseEntity.ok(Map.of(
                     "message", "Hủy booking thành công",
                     "booking", booking

@@ -44,7 +44,6 @@ const RoomsPage = () => {
       setRooms(response.data?.rooms || []);
     } catch (error) {
       console.error('Lỗi khi tải phòng:', error);
-      alert('Không thể tải danh sách phòng');
     } finally {
       setLoading(false);
     }
@@ -66,7 +65,6 @@ const RoomsPage = () => {
       setRooms(filteredRooms);
     } catch (error) {
       console.error('Lỗi khi tải phòng trống:', error);
-      alert('Không thể tải danh sách phòng trống');
     } finally {
       setLoading(false);
     }
@@ -90,12 +88,10 @@ const RoomsPage = () => {
   const handleSubmitBooking = async (bookingData) => {
     try {
       const response = await api.post('/bookings/guest', bookingData);
-      alert('Đặt phòng thành công! Mã booking: ' + response.data.booking.bookingReference);
       setShowBookingForm(false);
       setSelectedRoom(null);
     } catch (error) {
       console.error('Lỗi khi đặt phòng:', error);
-      alert('Đặt phòng thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
     }
   };
 

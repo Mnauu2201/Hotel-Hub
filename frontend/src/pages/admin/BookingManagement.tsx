@@ -28,6 +28,8 @@ const BookingManagement: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [totalPages, setTotalPages] = useState(0);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +43,7 @@ const BookingManagement: React.FC = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [currentPage, statusFilter]);
+  }, [currentPage, statusFilter, startDate, endDate]);
 
   useEffect(() => {
     // Check if dark mode is enabled
@@ -64,9 +66,19 @@ const BookingManagement: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
-      const url = statusFilter === 'ALL' 
+      
+      // Tạo URL với tham số lọc theo ngày
+      let url = statusFilter === 'ALL' 
         ? `/api/admin/bookings?page=${currentPage}&size=10`
         : `/api/admin/bookings/status/${statusFilter}?page=${currentPage}&size=10`;
+      
+      // Thêm tham số lọc theo ngày nếu có
+      if (startDate) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate) {
+        url += `&endDate=${endDate}`;
+      }
       
       const response = await fetch(url, {
         headers: {
@@ -227,6 +239,17 @@ const BookingManagement: React.FC = () => {
     }
   };
 
+  const handleDateFilter = () => {
+    setCurrentPage(0); // Reset về trang đầu
+    fetchBookings();
+  };
+
+  const clearDateFilter = () => {
+    setStartDate('');
+    setEndDate('');
+    setCurrentPage(0);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditFormData(prev => ({
@@ -346,6 +369,41 @@ const BookingManagement: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="filter-input"
             />
+          </div>
+          
+          <div className="filter-group">
+            <label>Lọc theo ngày:</label>
+            <div className="date-filter-container">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="filter-input"
+                placeholder="Từ ngày"
+              />
+              <span className="date-separator">đến</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="filter-input"
+                placeholder="Đến ngày"
+              />
+              <button 
+                onClick={handleDateFilter}
+                className="btn-filter"
+                style={{ backgroundColor: '#007bff', color: 'white', marginLeft: '10px' }}
+              >
+                Lọc
+              </button>
+              <button 
+                onClick={clearDateFilter}
+                className="btn-clear"
+                style={{ backgroundColor: '#6c757d', color: 'white', marginLeft: '5px' }}
+              >
+                Xóa
+              </button>
+            </div>
           </div>
         </div>
 

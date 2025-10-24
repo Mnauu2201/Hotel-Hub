@@ -125,30 +125,25 @@
   margin: 8px 0;
 }
 
-.qr-section {
+.payment-section {
   text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
-.qr-section h4 {
-  margin: 0 0 16px 0;
+.payment-section h4 {
+  margin: 0 0 12px 0;
   color: #1f2937;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.qr-container {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  display: inline-block;
-  margin: 16px 0;
-}
-
-.qr-instruction {
+.payment-section p {
   color: #6b7280;
   font-size: 0.9rem;
-  margin: 8px 0;
+  margin: 8px 0 16px 0;
 }
 
 .booking-countdown-footer {
