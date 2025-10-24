@@ -33,7 +33,51 @@ axiosInstance.interceptors.request.use(
 // Hàm đăng nhập
 export const userLogin = async (email: string, password: string) => {
   try {
-    const response = await axiosInstance.post(`/auth/login`, {
+    const response = 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    await axiosInstance.post(`/auth/login`, {
       email,
       password
     }, {
@@ -71,8 +115,7 @@ export const userLogin = async (email: string, password: string) => {
       if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
       if (user) localStorage.setItem('user', JSON.stringify(user));
       
-      // Thêm thông báo đăng nhập thành công
-      alert('Đăng nhập thành công!');
+      // Đăng nhập thành công
     } else {
       console.error('❌ No accessToken found in response:', response.data);
     }
@@ -107,8 +150,7 @@ export const userRegister = async (email: string, password: string, fullName: st
       }
     });
     
-    // Thêm thông báo đăng ký thành công
-    alert('Đăng ký thành công!');
+    // Đăng ký thành công
     
     return response.data;
   } catch (error: any) {

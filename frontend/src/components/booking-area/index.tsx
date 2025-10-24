@@ -117,7 +117,6 @@ const BookingArea = () => {
       setCurrentPage(1); // Reset to first page when new search
     } catch (error) {
       console.error('Error checking availability:', error);
-      alert('Có lỗi xảy ra khi kiểm tra phòng trống. Vui lòng thử lại.');
       setSearchResults([]);
       setShowResults(false);
     } finally {

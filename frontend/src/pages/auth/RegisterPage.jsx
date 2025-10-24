@@ -86,8 +86,7 @@ const RegisterPage = () => {
         phone: sanitizedPhone
       });
       
-      // Show success message and redirect to login
-      alert('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
+      // Redirect to login after successful registration
       navigate('/login');
     } catch (error) {
       const msg = error?.message || '';

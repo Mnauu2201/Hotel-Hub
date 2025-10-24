@@ -1,0 +1,169 @@
+.payment-qr-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.payment-qr-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.payment-qr-header h3 {
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.payment-qr-header p {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 14px;
+}
+
+.payment-qr-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.qr-code-section {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-code-wrapper {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  display: inline-block;
+}
+
+.qr-code-image {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+
+.payment-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.bank-info, .amount-info {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.bank-info h4, .amount-info h4 {
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bank-details p, .amount-details p {
+  margin: 8px 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.bank-details strong, .amount-details strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.method-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .payment-qr-container {
+    background: #2c3e50;
+    color: #ecf0f1;
+  }
+  
+  .payment-qr-header h3 {
+    color: #ecf0f1;
+  }
+  
+  .payment-qr-header p {
+    color: #bdc3c7;
+  }
+  
+  .qr-code-wrapper {
+    background: #34495e;
+    border-color: #495057;
+  }
+  
+  .bank-info, .amount-info {
+    background: #34495e;
+    border-color: #495057;
+  }
+  
+  .bank-info h4, .amount-info h4 {
+    color: #ecf0f1;
+  }
+  
+  .bank-details p, .amount-details p {
+    color: #bdc3c7;
+  }
+  
+  .bank-details strong, .amount-details strong {
+    color: #ecf0f1;
+  }
+  
+  .payment-methods {
+    border-color: #495057;
+  }
+  
+  .payment-method {
+    color: #bdc3c7;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .payment-info {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .payment-methods {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+
+
+

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import PaymentQRCode from './PaymentQRCode';
 
 interface BookingCountdownModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
   checkInDate,
   checkOutDate
 }) => {
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 phút = 900 giây
+  const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 phút = 300 giây
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
@@ -46,17 +46,7 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const generatePaymentQR = () => {
-    const paymentData = {
-      bookingId,
-      amount: totalAmount,
-      roomNumber,
-      checkInDate,
-      checkOutDate,
-      timestamp: new Date().toISOString()
-    };
-    return JSON.stringify(paymentData);
-  };
+  const [showPaymentQR, setShowPaymentQR] = useState(false);
 
   if (!isOpen) return null;
 
@@ -91,20 +81,23 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
             </p>
           </div>
 
-          <div className="qr-section">
-            <h4>Quét mã QR để thanh toán</h4>
-            <div className="qr-container">
-              <QRCodeSVG 
-                value={generatePaymentQR()}
-                size={200}
-                level="M"
-                includeMargin={true}
-              />
+          {showPaymentQR ? (
+            <PaymentQRCode 
+              amount={totalAmount} 
+              bookingReference={bookingId} 
+            />
+          ) : (
+            <div className="payment-section">
+              <h4>Thanh toán</h4>
+              <p>Nhấn nút bên dưới để hiển thị QR code thanh toán</p>
+              <button 
+                className="btn-primary"
+                onClick={() => setShowPaymentQR(true)}
+              >
+                Thanh toán ngay
+              </button>
             </div>
-            <p className="qr-instruction">
-              Sử dụng ứng dụng ngân hàng để quét mã QR và thanh toán
-            </p>
-          </div>
+          )}
         </div>
 
         <div className="booking-countdown-footer">
@@ -119,7 +112,6 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
             className="btn-primary" 
             onClick={() => {
               // Xử lý thanh toán thành công
-              alert('Thanh toán thành công! Đơn đặt phòng đã được xác nhận.');
               onClose();
             }}
             disabled={isExpired}
