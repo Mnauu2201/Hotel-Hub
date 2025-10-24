@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../hooks/useNotification';
 import './AuthStyles.css';
 
 const RegisterPage = () => {
@@ -16,6 +17,7 @@ const RegisterPage = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { showSuccess, NotificationContainer } = useNotification();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +88,8 @@ const RegisterPage = () => {
         phone: sanitizedPhone
       });
       
-      // Redirect to login after successful registration
+      // Show success message and redirect to login
+      showSuccess('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
       navigate('/login');
     } catch (error) {
       const msg = error?.message || '';
@@ -251,6 +254,8 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
+      
+      <NotificationContainer />
     </div>
   );
 };

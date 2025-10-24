@@ -4,10 +4,12 @@ import api from '../services/api';
 import bookingService from '../services/bookingService';
 import RoomCard from '../components/RoomCard';
 import BookingForm from '../components/BookingForm';
+import { useNotification } from '../hooks/useNotification';
 
 const RoomsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { showError, showSuccess, NotificationContainer } = useNotification();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -44,6 +46,7 @@ const RoomsPage = () => {
       setRooms(response.data?.rooms || []);
     } catch (error) {
       console.error('Lỗi khi tải phòng:', error);
+      showError('Không thể tải danh sách phòng');
     } finally {
       setLoading(false);
     }
@@ -65,6 +68,7 @@ const RoomsPage = () => {
       setRooms(filteredRooms);
     } catch (error) {
       console.error('Lỗi khi tải phòng trống:', error);
+      showError('Không thể tải danh sách phòng trống');
     } finally {
       setLoading(false);
     }
@@ -88,10 +92,12 @@ const RoomsPage = () => {
   const handleSubmitBooking = async (bookingData) => {
     try {
       const response = await api.post('/bookings/guest', bookingData);
+      showSuccess('Đặt phòng thành công! Mã booking: ' + response.data.booking.bookingReference);
       setShowBookingForm(false);
       setSelectedRoom(null);
     } catch (error) {
       console.error('Lỗi khi đặt phòng:', error);
+      showError('Đặt phòng thất bại: ' + (error.response?.data?.message || 'Lỗi không xác định'));
     }
   };
 
@@ -254,6 +260,8 @@ const RoomsPage = () => {
           onCancel={handleCancelBooking}
         />
       )}
+      
+      <NotificationContainer />
     </div>
   );
 };

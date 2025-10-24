@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bookingService from '../../services/bookingService';
+import { useNotification } from '../../hooks/useNotification';
 
 interface Room {
   roomId?: number;
@@ -36,6 +37,7 @@ interface Errors {
 
 const BookingArea = () => {
   const navigate = useNavigate();
+  const { showError, NotificationContainer } = useNotification();
   const [formData, setFormData] = useState<FormData>({
     checkIn: '',
     checkOut: '',
@@ -117,6 +119,7 @@ const BookingArea = () => {
       setCurrentPage(1); // Reset to first page when new search
     } catch (error) {
       console.error('Error checking availability:', error);
+      showError('Có lỗi xảy ra khi kiểm tra phòng trống. Vui lòng thử lại.');
       setSearchResults([]);
       setShowResults(false);
     } finally {
@@ -538,6 +541,8 @@ const BookingArea = () => {
           </div>
         )}
       </div>
+      
+      <NotificationContainer />
     </div>
   )
 }

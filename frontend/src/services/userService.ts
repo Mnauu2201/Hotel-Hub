@@ -1,5 +1,57 @@
 import axios, { AxiosHeaders } from 'axios';
 
+// Helper function để hiển thị notification
+const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+  // Tạo một element notification tạm thời
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 400px;
+    word-wrap: break-word;
+    animation: slideInRight 0.3s ease-out;
+  `;
+  
+  // Thêm animation CSS
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+  notification.innerHTML = `${icon} ${message}`;
+  
+  document.body.appendChild(notification);
+  
+  // Tự động ẩn sau 3 giây
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease-in';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+};
+
 // Cấu hình axios để xử lý CORS
 axios.defaults.withCredentials = true;
 
@@ -33,51 +85,7 @@ axiosInstance.interceptors.request.use(
 // Hàm đăng nhập
 export const userLogin = async (email: string, password: string) => {
   try {
-    const response = 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    await axiosInstance.post(`/auth/login`, {
+    const response = await axiosInstance.post(`/auth/login`, {
       email,
       password
     }, {
@@ -115,7 +123,8 @@ export const userLogin = async (email: string, password: string) => {
       if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
       if (user) localStorage.setItem('user', JSON.stringify(user));
       
-      // Đăng nhập thành công
+      // Thêm thông báo đăng nhập thành công
+      showNotification('Đăng nhập thành công!', 'success');
     } else {
       console.error('❌ No accessToken found in response:', response.data);
     }
@@ -150,7 +159,8 @@ export const userRegister = async (email: string, password: string, fullName: st
       }
     });
     
-    // Đăng ký thành công
+    // Thêm thông báo đăng ký thành công
+    showNotification('Đăng ký thành công!', 'success');
     
     return response.data;
   } catch (error: any) {
