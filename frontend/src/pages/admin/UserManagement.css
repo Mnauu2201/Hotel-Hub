@@ -1,0 +1,72 @@
+/* User Management Dark Mode Status Badges - Pill shape like image */
+
+/* Status badges for dark mode - Trạng thái column (pill shape) */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
+  background-color: #d4edda !important; /* Light green background */
+  color: #155724 !important; /* Dark green text */
+  font-weight: bold !important; /* Bold text */
+  text-transform: uppercase !important; /* Uppercase text */
+  border: none !important;
+  border-radius: 20px !important; /* Pill shape with high border radius */
+  padding: 0.4rem 0.8rem !important; /* More padding for pill shape */
+  font-size: 0.75rem !important; /* Smaller font for pill */
+  display: inline-block !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  letter-spacing: 0.5px !important; /* Letter spacing for uppercase */
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
+  background-color: #f8d7da !important; /* Light red background */
+  color: #721c24 !important; /* Dark red text */
+  font-weight: bold !important; /* Bold text */
+  text-transform: uppercase !important; /* Uppercase text */
+  border: none !important;
+  border-radius: 20px !important; /* Pill shape with high border radius */
+  padding: 0.4rem 0.8rem !important; /* More padding for pill shape */
+  font-size: 0.75rem !important; /* Smaller font for pill */
+  display: inline-block !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  letter-spacing: 0.5px !important; /* Letter spacing for uppercase */
+}
+
+/* Email verification badges for dark mode - Email xác thực column (pill shape) */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
+  background-color: #d4edda !important; /* Light green background */
+  color: #155724 !important; /* Dark green text */
+  font-weight: bold !important; /* Bold text */
+  text-transform: uppercase !important; /* Uppercase text */
+  border: none !important;
+  border-radius: 20px !important; /* Pill shape with high border radius */
+  padding: 0.4rem 0.8rem !important; /* More padding for pill shape */
+  font-size: 0.75rem !important; /* Smaller font for pill */
+  display: inline-block !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  letter-spacing: 0.5px !important; /* Letter spacing for uppercase */
+}
+
+.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
+  background-color: #fff3cd !important; /* Light yellow background */
+  color: #856404 !important; /* Dark yellow text */
+  font-weight: bold !important; /* Bold text */
+  text-transform: uppercase !important; /* Uppercase text */
+  border: none !important;
+  border-radius: 20px !important; /* Pill shape with high border radius */
+  padding: 0.4rem 0.8rem !important; /* More padding for pill shape */
+  font-size: 0.75rem !important; /* Smaller font for pill */
+  display: inline-block !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  letter-spacing: 0.5px !important; /* Letter spacing for uppercase */
+}
+
+/* Force all text inside status badges to inherit styles in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+  color: inherit !important;
+  text-shadow: none !important;
+  font-weight: inherit !important;
+  text-transform: inherit !important;
+  letter-spacing: inherit !important;
+}

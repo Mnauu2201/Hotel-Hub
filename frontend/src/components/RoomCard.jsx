@@ -40,16 +40,11 @@ const RoomCard = ({ room, onBook }) => {
     }
   }
 
-  // Debug: Log room data
-  console.log('RoomCard - Room data:', room);
-  console.log('RoomCard - Room images:', room.images);
-  
   // Get first image from room.images array
   let firstImage = null;
   if (room.images && room.images.length > 0) {
     firstImage = room.images[0];
   }
-  console.log('RoomCard - First image:', firstImage);
   
   let imageUrl = null;
   
@@ -65,9 +60,7 @@ const RoomCard = ({ room, onBook }) => {
     }
   }
   
-  console.log('RoomCard - Image URL:', imageUrl);
   let processedImageUrl = processImageUrl(imageUrl);
-  console.log('RoomCard - Processed Image URL:', processedImageUrl);
   let fallbackImage = '/src/assets/img/gallery/room-img01.png';
 
   return (
@@ -101,7 +94,7 @@ const RoomCard = ({ room, onBook }) => {
             transition: 'transform 0.3s ease-in-out'
           }}
           onError={(e) => {
-            (e.target as HTMLImageElement).src = fallbackImage;
+            e.target.src = fallbackImage;
           }}
         />
         <div style={{
