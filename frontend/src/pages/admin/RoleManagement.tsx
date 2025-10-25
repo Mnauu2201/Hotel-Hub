@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useNotification } from '../../hooks/useNotification';
 import './AdminPages.css';
+import './RoleManagement.css';
 
 interface Role {
   id?: number;

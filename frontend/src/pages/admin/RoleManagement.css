@@ -1,0 +1,39 @@
+/* Role Management Dark Mode - Fix role name text color */
+
+/* Role name styling for dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .role-name {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+
+/* Force all text inside role names to be white in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td .role-name * {
+  color: #ffffff !important;
+  font-weight: inherit !important;
+  text-shadow: none !important;
+}
+
+/* Additional specificity for role management table */
+.dark-mode .admin-page .admin-table tbody tr td {
+  color: #ffffff !important;
+}
+
+/* Ensure role name column specifically has white text */
+.dark-mode .admin-page .admin-table tbody tr td:nth-child(2) {
+  color: #ffffff !important;
+}
+
+/* Override any existing dark text in role management */
+.dark-mode .admin-page .admin-table tbody tr td .role-name,
+.dark-mode .admin-page .admin-table tbody tr td .role-name span,
+.dark-mode .admin-page .admin-table tbody tr td .role-name div,
+.dark-mode .admin-page .admin-table tbody tr td .role-name strong,
+.dark-mode .admin-page .admin-table tbody tr td .role-name em,
+.dark-mode .admin-page .admin-table tbody tr td .role-name p,
+.dark-mode .admin-page .admin-table tbody tr td .role-name a,
+.dark-mode .admin-page .admin-table tbody tr td .role-name button {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
