@@ -2038,77 +2038,7 @@ textarea.form-input {
   }
 }
 
-/* USER MANAGEMENT SPECIFIC - Fix for UserManagement.tsx email verification status badges */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified * {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-unverified * {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-active * {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-inactive * {
-@media (prefers-color-scheme: dark) {
-  .admin-page .admin-table tbody tr td .status-badge.status-verified {
-    background: #2d7d32 !important;
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-  .admin-page .admin-table tbody tr td .status-badge.status-unverified {
-    background: #d69e2e !important;
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-  .admin-page .admin-table tbody tr td .status-badge.status-active {
-    background: #2d7d32 !important;
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-  .admin-page .admin-table tbody tr td .status-badge.status-inactive {
-    background: #d32f2f !important;
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-  .admin-page .admin-table tbody tr td .status-badge.status-verified *,
-  .admin-page .admin-table tbody tr td .status-badge.status-unverified *,
-  .admin-page .admin-table tbody tr td .status-badge.status-active *,
-  .admin-page .admin-table tbody tr td .status-badge.status-inactive * {
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-}
-
-/* ULTIMATE FIX FOR USER MANAGEMENT - Force all status badges in user management */
-.dark-mode .admin-page .admin-table tbody tr td .status-badge {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge span {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge div {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge em {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge p {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge a {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge button {
-@media (prefers-color-scheme: dark) {
-  .admin-page .admin-table tbody tr td .status-badge,
-  .admin-page .admin-table tbody tr td .status-badge *,
-  .admin-page .admin-table tbody tr td .status-badge span,
-  .admin-page .admin-table tbody tr td .status-badge div,
-  .admin-page .admin-table tbody tr td .status-badge strong,
-  .admin-page .admin-table tbody tr td .status-badge em,
-  .admin-page .admin-table tbody tr td .status-badge p,
-  .admin-page .admin-table tbody tr td .status-badge a,
-  .admin-page .admin-table tbody tr td .status-badge button {
-    color: #ffffff !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
-    font-weight: bold !important;
-  }
-}
-
-/* FINAL NUCLEAR OPTION FOR USER MANAGEMENT - Override everything */
+/* USER MANAGEMENT - Status badges for dark mode */
 .dark-mode .admin-page .admin-table tbody tr td .status-badge.status-verified {
   background: #2d7d32 !important;
   color: #ffffff !important;
@@ -2137,16 +2067,17 @@ textarea.form-input {
   font-weight: bold !important;
 }
 
-/* Force all status badges to have white text in dark mode */
+/* Force all text inside status badges to be white in dark mode */
 .dark-mode .admin-page .admin-table tbody tr td .status-badge * {
   color: #ffffff !important;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
   font-weight: bold !important;
 }
 
-/* Override any existing CSS for status badges in user management */
+/* Additional specificity for user management status badges */
 .dark-mode .admin-page .admin-table tbody tr td .status-badge {
-.dark-mode .admin-page .admin-table tbody tr td .status-badge * {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
 .dark-mode .admin-page .admin-table tbody tr td .status-badge span {
 .dark-mode .admin-page .admin-table tbody tr td .status-badge div {
 .dark-mode .admin-page .admin-table tbody tr td .status-badge strong {
