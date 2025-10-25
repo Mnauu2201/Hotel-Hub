@@ -23,6 +23,53 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 const RoomCard = ({ room, onBook }) => {
+  // Process room images to handle URL conversion (same logic as room detail page)
+  function processImageUrl(imageUrl) {
+    if (!imageUrl || typeof imageUrl !== 'string') return null;
+    
+    // If already absolute URL, return as is
+    if (imageUrl.startsWith('http')) return imageUrl;
+    
+    // Convert relative URLs to absolute backend URLs
+    if (imageUrl.startsWith('/uploads/')) {
+      return 'http://localhost:8080' + imageUrl;
+    } else if (!imageUrl.startsWith('/')) {
+      return 'http://localhost:8080/uploads/' + imageUrl;
+    } else {
+      return 'http://localhost:8080' + imageUrl;
+    }
+  }
+
+  // Debug: Log room data
+  console.log('RoomCard - Room data:', room);
+  console.log('RoomCard - Room images:', room.images);
+  
+  // Get first image from room.images array
+  let firstImage = null;
+  if (room.images && room.images.length > 0) {
+    firstImage = room.images[0];
+  }
+  console.log('RoomCard - First image:', firstImage);
+  
+  let imageUrl = null;
+  
+  if (firstImage) {
+    // Handle different image data structures
+    if (typeof firstImage === 'string') {
+      imageUrl = firstImage;
+    } else if (firstImage.imageUrl) {
+      // Handle RoomImageResponse structure from API
+      imageUrl = firstImage.imageUrl;
+    } else {
+      imageUrl = firstImage.url || '';
+    }
+  }
+  
+  console.log('RoomCard - Image URL:', imageUrl);
+  let processedImageUrl = processImageUrl(imageUrl);
+  console.log('RoomCard - Processed Image URL:', processedImageUrl);
+  let fallbackImage = '/src/assets/img/gallery/room-img01.png';
+
   return (
     <div style={{
       border: '1px solid #eee',
@@ -36,6 +83,42 @@ const RoomCard = ({ room, onBook }) => {
       display: 'flex',
       flexDirection: 'column'
     }}>
+      {/* Room Image */}
+      <div style={{
+        height: '200px',
+        overflow: 'hidden',
+        borderRadius: '8px',
+        marginBottom: '1rem',
+        position: 'relative'
+      }}>
+        <img 
+          src={processedImageUrl || fallbackImage} 
+          alt={`Phòng ${room.roomNumber || room.room_number}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transition: 'transform 0.3s ease-in-out'
+          }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = fallbackImage;
+          }}
+        />
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          backgroundColor: 'rgba(100, 66, 34, 0.9)',
+          color: 'white',
+          padding: '0.25rem 0.75rem',
+          borderRadius: '20px',
+          fontSize: '0.875rem',
+          fontWeight: '600'
+        }}>
+          Phòng {room.roomNumber || room.room_number}
+        </div>
+      </div>
+
       <h3 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>
         Số phòng {room.roomNumber || room.room_number}
       </h3>
