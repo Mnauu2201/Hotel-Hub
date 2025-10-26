@@ -200,47 +200,134 @@
 }
 
 .qr-section h4 {
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
   color: #1f2937;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
+/* VietQR Header */
+.vietqr-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 16px 20px;
+  margin-bottom: 0;
+}
+
+.vietqr-logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vietqr-text {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.vietqr-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bank-badge {
+  background: rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+}
+
+/* QR Code Container */
 .qr-container {
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 30px;
   background: white;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e5e7eb;
+  border-top: none;
+  margin: 0;
+}
+
+/* Bank Transfer Details */
+.bank-transfer-details {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0 0 12px 12px;
+  padding: 20px;
+  margin-top: 0;
+  text-align: left;
+}
+
+.transfer-info {
+  background: white;
+  padding: 16px;
   border-radius: 8px;
-  margin: 16px 0;
+  border: 1px solid #e9ecef;
+}
+
+.transfer-info p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transfer-info strong {
+  color: #2c3e50;
+  font-weight: 600;
+  min-width: 100px;
 }
 
 .qr-instruction {
   font-size: 0.9rem;
   color: #666;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 16px;
+  font-style: italic;
 }
 
-.bank-info {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  text-align: left;
+/* Dark mode support */
+.dark-mode .qr-section h4 {
+  color: #ffffff;
 }
 
-.bank-info p {
-  margin: 5px 0;
-  font-size: 0.9rem;
-  color: #333;
+.dark-mode .qr-container {
+  background: #2d3748;
+  border-color: #4a5568;
 }
 
-.bank-info strong {
-  color: #2c3e50;
-  font-weight: 600;
+.dark-mode .bank-transfer-details {
+  background: #4a5568;
+  border-color: #6b7280;
+}
+
+.dark-mode .transfer-info {
+  background: #2d3748;
+  border-color: #6b7280;
+}
+
+.dark-mode .transfer-info p {
+  color: #e2e8f0;
+}
+
+.dark-mode .transfer-info strong {
+  color: #ffffff;
+}
+
+.dark-mode .qr-instruction {
+  color: #a0aec0;
 }
 
 /* Responsive */

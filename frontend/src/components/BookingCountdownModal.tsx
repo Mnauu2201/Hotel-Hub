@@ -24,7 +24,7 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
   checkOutDate
 }) => {
   const { showSuccess, showError, NotificationContainer } = useNotification();
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 phút = 900 giây
+  const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 phút = 300 giây
   const [isExpired, setIsExpired] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -77,7 +77,7 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
       }
       showSuccess('Đã hủy đặt phòng thành công!');
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Lỗi khi hủy booking:', error);
       showError('Không thể hủy đặt phòng: ' + (error.response?.data?.message || 'Lỗi không xác định'));
     } finally {
@@ -119,20 +119,40 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
           </div>
 
           <div className="qr-section">
-            <h4>Quét mã QR để thanh toán</h4>
-            <div className="bank-info">
-              <p><strong>Ngân hàng:</strong> {vietqrService.getConfig().bankName}</p>
-              <p><strong>Số tài khoản:</strong> {vietqrService.getConfig().bankAccount}</p>
-              <p><strong>Số tiền:</strong> {totalAmount.toLocaleString('vi-VN')} VNĐ</p>
+            <h4>Quét mã VietQR để thanh toán</h4>
+            
+            {/* VietQR Header */}
+            <div className="vietqr-header">
+              <div className="vietqr-logo">
+                <span className="vietqr-text">VIETQR</span>
+                <div className="vietqr-badges">
+                  <span className="badge">napas 247</span>
+                  <span className="badge bank-badge">{vietqrService.getConfig().bankName}</span>
+                </div>
+              </div>
             </div>
+
+            {/* QR Code Container */}
             <div className="qr-container">
               <QRCodeSVG 
                 value={generateVietQR()}
-                size={200}
+                size={250}
                 level="M"
                 includeMargin={true}
               />
             </div>
+
+            {/* Bank Transfer Details */}
+            <div className="bank-transfer-details">
+              <div className="transfer-info">
+                <p><strong>Nội dung CK:</strong> HotelHub{bookingId}</p>
+                <p><strong>Số tiền:</strong> {totalAmount.toLocaleString('vi-VN')} VND</p>
+                <p><strong>Tên chủ TK:</strong> HOTEL HUB COMPANY</p>
+                <p><strong>Số TK:</strong> {vietqrService.getConfig().bankAccount}</p>
+                <p><strong>Ngân hàng:</strong> {vietqrService.getConfig().bankName}</p>
+              </div>
+            </div>
+
             <p className="qr-instruction">
               Sử dụng ứng dụng ngân hàng để quét mã QR và thanh toán
             </p>
