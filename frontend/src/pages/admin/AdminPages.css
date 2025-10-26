@@ -942,9 +942,115 @@ textarea.form-input {
   color: #616161;
 }
 
+/* Dark mode for action badges */
+.dark-mode .action-badge {
+  color: #ffffff !important;
+}
+
+.dark-mode .action-login {
+  background-color: #2d7d32 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-logout {
+  background-color: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-create {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-update {
+  background-color: #f57c00 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-cancel {
+  background-color: #c2185b !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-failed {
+  background-color: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .action-default {
+  background-color: #616161 !important;
+  color: #ffffff !important;
+}
+
+/* Force override for action badges in dark mode */
+.dark-mode .admin-table .action-badge {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-table .action-badge * {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-table .action-badge span {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-table .action-badge div {
+  color: #ffffff !important;
+}
+
+/* Ultra specific override for action badges */
+.dark-mode .admin-page .admin-table .action-badge {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-page .admin-table .action-badge * {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-page .admin-table .action-badge span {
+  color: #ffffff !important;
+}
+
+.dark-mode .admin-page .admin-table .action-badge div {
+  color: #ffffff !important;
+}
+
+/* Force all action badge text to be white in dark mode */
+.dark-mode .action-badge * {
+  color: #ffffff !important;
+}
+
+.dark-mode .action-badge span {
+  color: #ffffff !important;
+}
+
+.dark-mode .action-badge div {
+  color: #ffffff !important;
+}
+
+/* Override any inline styles for action badges */
+.dark-mode .action-badge[style] {
+  color: #ffffff !important;
+}
+
+/* NUCLEAR OPTION - Force all action badge text to be white */
+body.dark-mode .admin-page .admin-table .action-badge,
+body.dark-mode .admin-page .admin-table .action-badge *,
+body.dark-mode .admin-page .admin-table .action-badge span,
+body.dark-mode .admin-page .admin-table .action-badge div {
+  color: #ffffff !important;
+}
+
 .status-success {
   background-color: #d4edda;
   color: #155724;
+}
+
+/* Force dark mode override for status-success badge */
+.dark-mode .status-badge.status-success {
+  background-color: #0d4f0d !important; /* Much darker green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
 }
 
 .status-failed {
@@ -952,14 +1058,140 @@ textarea.form-input {
   color: #721c24;
 }
 
+/* Force dark mode override for status-failed badge */
+.dark-mode .status-badge.status-failed {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
 .status-warning {
   background-color: #fff3cd;
   color: #856404;
 }
 
+/* Force dark mode override for status-warning badge */
+.dark-mode .status-badge.status-warning {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
 .status-default {
   background-color: #f5f5f5;
   color: #616161;
+}
+
+/* Force dark mode override for status-default badge */
+.dark-mode .status-badge.status-default {
+  background-color: #404040 !important; /* Dark gray for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+/* Force override for System text in dark mode */
+.dark-mode .admin-page .admin-table tbody tr td span[style*="color: rgb(108, 117, 125)"] {
+  color: #ffffff !important; /* Force System text to be white */
+}
+
+.dark-mode .admin-page .admin-table tbody tr td span[style*="color: #6c757d"] {
+  color: #ffffff !important; /* Force System text to be white */
+}
+
+.dark-mode .admin-page .admin-table tbody tr td span {
+  color: #ffffff !important; /* Force all span text in table to be white */
+}
+
+/* Override inline styles for System text */
+.dark-mode .admin-page .admin-table tbody tr td span[style] {
+  color: #ffffff !important; /* Override any inline color styles */
+}
+
+/* ULTIMATE OVERRIDE for System text with maximum specificity */
+html body.dark-mode .admin-page .admin-table tbody tr td span {
+  color: #ffffff !important; /* Force all span text to be white */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td span[style] {
+  color: #ffffff !important; /* Override inline styles with maximum specificity */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
+  color: #ffffff !important; /* Override any color inline styles */
+}
+
+/* ===== NOTIFICATIONS PAGE DARK MODE FIXES ===== */
+
+/* Force dark mode override for notification status badges */
+.dark-mode .status-badge.status-sent {
+  background-color: #0d4f0d !important; /* Dark green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-pending {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-draft {
+  background-color: #404040 !important; /* Dark gray for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-failed {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+/* Force override for notification type badges */
+.dark-mode .type-badge.type-welcome {
+  background-color: #0d4f0d !important; /* Dark green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-booking {
+  background-color: #1a5f1a !important; /* Dark blue for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-payment {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-maintenance {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-promotion {
+  background-color: #6b46c1 !important; /* Dark purple for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+/* Force override for notification action buttons */
+.dark-mode .btn-edit {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .btn-delete {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .btn-send {
+  background-color: #1a5f1a !important; /* Dark green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+/* Force override for notification table headers */
+.dark-mode .admin-page .admin-table thead th {
+  color: #ffffff !important; /* Ensure table headers are white in dark mode */
+}
+
+/* Force override for notification dropdowns */
+.dark-mode .admin-page .filter-select {
+  background-color: #2d3748 !important; /* Dark background for dropdowns */
+  color: #ffffff !important; /* White text for dropdowns */
+  border-color: #4a5568 !important; /* Dark border for dropdowns */
 }
 
 /* Dark mode cho status-default */
@@ -1978,7 +2210,7 @@ textarea.form-input {
 
 /* FINAL NUCLEAR OPTION - Override everything */
 .dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success {
-  background: #2d7d32 !important;
+  background: #0d4f0d !important; /* Much darker green for better contrast in dark mode */
   color: #ffffff !important;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
   font-weight: bold !important;
@@ -1996,6 +2228,210 @@ textarea.form-input {
   color: #ffffff !important;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
   font-weight: bold !important;
+}
+
+/* ULTIMATE OVERRIDE FOR ACTIVITY LOG STATUS BADGES */
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success {
+  background: #0d4f0d !important; /* Much darker green for better contrast in dark mode */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed {
+  background: #8b1a1a !important; /* Darker red for better contrast */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
+  background: #b8860b !important; /* Darker orange for better contrast */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+  background: #404040 !important; /* Darker gray for better contrast */
+}
+
+/* Force override for all status badge text */
+.dark-mode .status-badge.status-success,
+.dark-mode .status-badge.status-failed,
+.dark-mode .status-badge.status-warning,
+.dark-mode .status-badge.status-default {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .status-badge.status-success {
+  background: #0d4f0d !important; /* Much darker green for better contrast in dark mode */
+}
+
+.dark-mode .status-badge.status-failed {
+  background: #8b1a1a !important; /* Darker red for better contrast */
+}
+
+.dark-mode .status-badge.status-warning {
+  background: #b8860b !important; /* Darker orange for better contrast */
+}
+
+.dark-mode .status-badge.status-default {
+  background: #404040 !important; /* Darker gray for better contrast */
+}
+
+/* FINAL NUCLEAR OPTION - Maximum specificity for Activity Log */
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success *,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed *,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning *,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override any inline styles */
+.dark-mode .status-badge[style] {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Force all status badge text to be white */
+.dark-mode .status-badge * {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* Override for specific status types with better contrast backgrounds */
+.dark-mode .status-badge.status-success,
+.dark-mode .status-badge.status-success * {
+  background: #0d4f0d !important; /* Much darker green for better contrast in dark mode */
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .status-badge.status-failed,
+.dark-mode .status-badge.status-failed * {
+  background: #8b1a1a !important; /* Darker red for better contrast */
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .status-badge.status-warning,
+.dark-mode .status-badge.status-warning * {
+  background: #b8860b !important; /* Darker orange for better contrast */
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .status-badge.status-default,
+.dark-mode .status-badge.status-default * {
+  background: #404040 !important; /* Darker gray for better contrast */
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+/* ULTIMATE FORCE OVERRIDE - Maximum specificity for status badges */
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-success,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning,
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+  background: #0d4f0d !important; /* Force dark green for success */
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-failed {
+  background: #8b1a1a !important; /* Force dark red for failed */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-warning {
+  background: #b8860b !important; /* Force dark orange for warning */
+}
+
+html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
+  background: #404040 !important; /* Force dark gray for default */
+}
+
+/* Override any existing background colors */
+.dark-mode .status-badge.status-success[style*="background"],
+.dark-mode .status-badge.status-failed[style*="background"],
+.dark-mode .status-badge.status-warning[style*="background"],
+.dark-mode .status-badge.status-default[style*="background"] {
+  background: #0d4f0d !important;
+}
+
+.dark-mode .status-badge.status-failed[style*="background"] {
+  background: #8b1a1a !important;
+}
+
+.dark-mode .status-badge.status-warning[style*="background"] {
+  background: #b8860b !important;
+}
+
+.dark-mode .status-badge.status-default[style*="background"] {
+  background: #404040 !important;
+}
+
+/* FINAL NUCLEAR OPTION - Override everything including inline styles */
+.dark-mode .status-badge[style] {
+  background: #0d4f0d !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .status-badge.status-success[style] {
+  background: #0d4f0d !important;
+}
+
+.dark-mode .status-badge.status-failed[style] {
+  background: #8b1a1a !important;
+}
+
+.dark-mode .status-badge.status-warning[style] {
+  background: #b8860b !important;
+}
+
+.dark-mode .status-badge.status-default[style] {
+  background: #404040 !important;
+}
+
+/* Force override for all status badges in activity log */
+.dark-mode .admin-page .admin-table .status-badge {
+  background: #0d4f0d !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+  font-weight: bold !important;
+}
+
+.dark-mode .admin-page .admin-table .status-badge.status-success {
+  background: #0d4f0d !important;
+}
+
+.dark-mode .admin-page .admin-table .status-badge.status-failed {
+  background: #8b1a1a !important;
+}
+
+.dark-mode .admin-page .admin-table .status-badge.status-warning {
+  background: #b8860b !important;
+}
+
+.dark-mode .admin-page .admin-table .status-badge.status-default {
+  background: #404040 !important;
 }
 
 .dark-mode .admin-page .admin-table tbody tr td .status-badge.status-default {
