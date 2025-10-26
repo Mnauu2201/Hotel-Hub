@@ -1387,11 +1387,22 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   align-items: end;
   justify-content: center;
   gap: 8px;
-  height: 200px;
+  height: 250px;
   padding: 1rem;
   background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
   border-radius: 12px;
   border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.chart-bars::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e2e8f0;
 }
 
 .chart-bar {
@@ -1400,15 +1411,18 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   align-items: center;
   gap: 8px;
   min-width: 40px;
+  height: 100%;
+  justify-content: flex-end;
 }
 
 .bar-fill {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 4px 4px 0 0;
   min-height: 20px;
-  width: 24px;
+  width: 28px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  position: relative;
+  display: block;
 }
 
 .bar-fill:hover {
@@ -1421,6 +1435,14 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   font-weight: 600;
   color: #4a5568;
   text-align: center;
+}
+
+.bar-value {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-align: center;
+  margin-top: 4px;
 }
 
 /* Status List */
@@ -1540,6 +1562,10 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
 }
 
 .dark-mode .bar-label {
+  color: #a0aec0;
+}
+
+.dark-mode .bar-value {
   color: #a0aec0;
 }
 
@@ -3275,4 +3301,237 @@ html body.dark-mode .admin-page .admin-table tbody tr td .status-badge.status-de
 
 .dark-mode .date-separator {
   color: #a0aec0;
+}
+
+/* ===== IMPROVED CHART DESIGN ===== */
+/* Enhanced Chart Container */
+.chart-container {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.chart-container h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.chart-container h3::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.chart-content {
+  position: relative;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  height: 250px;
+  padding: 20px 0;
+  gap: 8px;
+}
+
+.chart-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-bar:hover {
+  transform: translateY(-3px);
+}
+
+.bar-fill {
+  width: 100%;
+  min-width: 20px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #4ecdc4 0%, #45b7d1 100%);
+  transition: all 0.3s ease;
+  position: relative;
+  display: block;
+  min-height: 20px;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+}
+
+.bar-fill:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+}
+
+.bar-label {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4a5568;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.chart-bar:hover .bar-value {
+  opacity: 1;
+}
+
+/* Dark mode for charts */
+.dark-mode .chart-container {
+  background: #2d3748;
+  border-color: #4a5568;
+  color: #ffffff;
+}
+
+.dark-mode .chart-container h3 {
+  color: #ffffff;
+}
+
+.dark-mode .bar-fill {
+  background: linear-gradient(180deg, #68d391 0%, #4fd1c7 100%);
+  box-shadow: 0 4px 15px rgba(104, 211, 145, 0.3);
+}
+
+.dark-mode .bar-fill:hover {
+  box-shadow: 0 6px 20px rgba(104, 211, 145, 0.4);
+}
+
+.dark-mode .bar-label {
+  color: #ffffff;
+}
+
+.dark-mode .bar-value {
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+}
+
+/* Status Badge Styles */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-confirmed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-paid {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-refunded {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+.status-completed {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-default {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+/* Dark mode for status badges */
+.dark-mode .status-pending {
+  background-color: #b8860b;
+  color: #ffffff;
+}
+
+.dark-mode .status-confirmed {
+  background-color: #0d4f0d;
+  color: #ffffff;
+}
+
+.dark-mode .status-cancelled {
+  background-color: #8b1a1a;
+  color: #ffffff;
+}
+
+.dark-mode .status-paid {
+  background-color: #1a365d;
+  color: #ffffff;
+}
+
+.dark-mode .status-refunded {
+  background-color: #6b46c1;
+  color: #ffffff;
+}
+
+.dark-mode .status-completed {
+  background-color: #166534;
+  color: #ffffff;
+}
+
+.dark-mode .status-default {
+  background-color: #404040;
+  color: #ffffff;
 }

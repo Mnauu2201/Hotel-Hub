@@ -153,9 +153,28 @@ const BookingConfirmation = () => {
                       <div key={index} className="d-flex" style={{ gap: 16, border: '1px solid #f1f1f1', background: '#fcfcfc', padding: 14, borderRadius: 12 }}>
                         <div style={{ width: 96, height: 96, borderRadius: 8, overflow: 'hidden' }}>
                           <img 
-                            src={room.images?.[0]?.imageUrl || fallbackRoomImg} 
+                            src={(() => {
+                              const imageUrl = room.images?.[0]?.imageUrl;
+                              if (!imageUrl) return fallbackRoomImg;
+                              
+                              // Convert relative URLs to absolute backend URLs
+                              if (typeof imageUrl === 'string' && !imageUrl.startsWith('http')) {
+                                if (imageUrl.startsWith('/uploads/')) {
+                                  return 'http://localhost:8080' + imageUrl;
+                                } else if (!imageUrl.startsWith('/')) {
+                                  return 'http://localhost:8080/uploads/' + imageUrl;
+                                } else {
+                                  return 'http://localhost:8080' + imageUrl;
+                                }
+                              }
+                              return imageUrl;
+                            })()} 
                             alt="Room" 
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => {
+                              console.error('Image failed to load:', e.target.src);
+                              e.target.src = fallbackRoomImg;
+                            }}
                           />
                         </div>
                         <div style={{ flex: 1 }}>

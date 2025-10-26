@@ -98,10 +98,13 @@ public class ReportController {
     }
 
     /**
-     * API lấy doanh thu theo tháng - Sử dụng method có sẵn
+     * API lấy doanh thu theo tháng - Tính dựa trên trạng thái confirmed/completed và thời gian thanh toán
      */
     @GetMapping("/revenue-monthly")
-    public ResponseEntity<?> getRevenueMonthly(@RequestParam(defaultValue = "2025") int year) {
+    public ResponseEntity<?> getRevenueMonthly(
+            @RequestParam(defaultValue = "2025") int year,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         try {
             List<Map<String, Object>> monthlyRevenue = new ArrayList<>();
             
@@ -109,16 +112,75 @@ public class ReportController {
                 LocalDate startOfMonth = LocalDate.of(year, month, 1);
                 LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
                 
-                var revenue = bookingRepository.getRevenueByDateRange(startOfMonth, endOfMonth);
-                double monthRevenue = revenue != null ? revenue.doubleValue() : 0.0;
-                
-                Map<String, Object> monthData = new HashMap<>();
-                monthData.put("month", "T" + month);
-                monthData.put("revenue", monthRevenue);
-                monthData.put("year", year);
-                monthData.put("monthNumber", month);
-                
-                monthlyRevenue.add(monthData);
+                // Nếu có fromDate và toDate, chỉ tính doanh thu trong khoảng thời gian đó
+                if (fromDate != null && toDate != null) {
+                    // Kiểm tra xem tháng này có nằm trong khoảng thời gian không
+                    LocalDate monthStart = startOfMonth;
+                    LocalDate monthEnd = endOfMonth;
+                    
+                    // Nếu tháng không giao với khoảng thời gian, doanh thu = 0
+                    if (monthEnd.isBefore(fromDate) || monthStart.isAfter(toDate)) {
+                        Map<String, Object> monthData = new HashMap<>();
+                        monthData.put("month", "T" + month);
+                        monthData.put("revenue", 0.0);
+                        monthData.put("year", year);
+                        monthData.put("monthNumber", month);
+                        monthlyRevenue.add(monthData);
+                        continue;
+                    }
+                    
+                    // Điều chỉnh khoảng thời gian để chỉ tính trong tháng và trong khoảng đã chọn
+                    LocalDate actualStart = monthStart.isBefore(fromDate) ? fromDate : monthStart;
+                    LocalDate actualEnd = monthEnd.isAfter(toDate) ? toDate : monthEnd;
+                    
+                    // Tính doanh thu trong khoảng thời gian đã điều chỉnh
+                    var confirmedRevenue = bookingRepository.getRevenueByDateRangeConfirmed(actualStart, actualEnd);
+                    var paidRevenue = bookingRepository.getRevenueByDateRange(actualStart, actualEnd);
+                    
+                    double monthRevenue = 0.0;
+                    if (paidRevenue != null) {
+                        monthRevenue = paidRevenue.doubleValue();
+                    }
+                    if (confirmedRevenue != null && monthRevenue == 0.0) {
+                        monthRevenue = confirmedRevenue.doubleValue();
+                    }
+                    
+                    System.out.println("Month " + month + " (range: " + actualStart + " to " + actualEnd + 
+                        ", confirmed: " + (confirmedRevenue != null ? confirmedRevenue.doubleValue() : 0) + 
+                        ", paid: " + (paidRevenue != null ? paidRevenue.doubleValue() : 0) + 
+                        ", final: " + monthRevenue + ")");
+                    
+                    Map<String, Object> monthData = new HashMap<>();
+                    monthData.put("month", "T" + month);
+                    monthData.put("revenue", monthRevenue);
+                    monthData.put("year", year);
+                    monthData.put("monthNumber", month);
+                    monthlyRevenue.add(monthData);
+                } else {
+                    // Tính doanh thu cho toàn bộ tháng
+                    var confirmedRevenue = bookingRepository.getRevenueByDateRangeConfirmed(startOfMonth, endOfMonth);
+                    var paidRevenue = bookingRepository.getRevenueByDateRange(startOfMonth, endOfMonth);
+                    
+                    double monthRevenue = 0.0;
+                    if (paidRevenue != null) {
+                        monthRevenue = paidRevenue.doubleValue();
+                    }
+                    if (confirmedRevenue != null && monthRevenue == 0.0) {
+                        monthRevenue = confirmedRevenue.doubleValue();
+                    }
+                    
+                    System.out.println("Month " + month + " (confirmed: " + 
+                        (confirmedRevenue != null ? confirmedRevenue.doubleValue() : 0) + 
+                        ", paid: " + (paidRevenue != null ? paidRevenue.doubleValue() : 0) + 
+                        ", final: " + monthRevenue + ")");
+                    
+                    Map<String, Object> monthData = new HashMap<>();
+                    monthData.put("month", "T" + month);
+                    monthData.put("revenue", monthRevenue);
+                    monthData.put("year", year);
+                    monthData.put("monthNumber", month);
+                    monthlyRevenue.add(monthData);
+                }
             }
 
             return ResponseEntity.ok(monthlyRevenue);

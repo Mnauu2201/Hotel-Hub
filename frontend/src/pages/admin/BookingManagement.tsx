@@ -110,7 +110,15 @@ const BookingManagement: React.FC = () => {
       'PENDING': { class: 'status-pending', text: 'Chờ xử lý' },
       'CONFIRMED': { class: 'status-confirmed', text: 'Đã xác nhận' },
       'CANCELLED': { class: 'status-cancelled', text: 'Đã hủy' },
-      'COMPLETED': { class: 'status-completed', text: 'Hoàn thành' }
+      'PAID': { class: 'status-paid', text: 'Đã thanh toán' },
+      'REFUNDED': { class: 'status-refunded', text: 'Đã hoàn tiền' },
+      'COMPLETED': { class: 'status-completed', text: 'Hoàn thành' },
+      'pending': { class: 'status-pending', text: 'Chờ xử lý' },
+      'confirmed': { class: 'status-confirmed', text: 'Đã xác nhận' },
+      'cancelled': { class: 'status-cancelled', text: 'Đã hủy' },
+      'paid': { class: 'status-paid', text: 'Đã thanh toán' },
+      'refunded': { class: 'status-refunded', text: 'Đã hoàn tiền' },
+      'completed': { class: 'status-completed', text: 'Hoàn thành' }
     };
     
     const statusInfo = statusMap[status] || { class: 'status-default', text: status };
@@ -148,10 +156,19 @@ const BookingManagement: React.FC = () => {
       console.log('Updating booking with ID:', bookingId);
       console.log('Form data:', editFormData);
       
-      // Convert status to lowercase for backend compatibility
+      // Convert status to backend-compatible format
+      const statusMapping: { [key: string]: string } = {
+        'Chờ xử lý': 'pending',
+        'Đã xác nhận': 'confirmed', 
+        'Đã hủy': 'cancelled',
+        'Đã thanh toán': 'paid',
+        'Đã hoàn tiền': 'refunded',
+        'Hoàn thành': 'completed'
+      };
+      
       const submitData = {
         ...editFormData,
-        status: editFormData.status?.toLowerCase()
+        status: statusMapping[editFormData.status || ''] || editFormData.status?.toLowerCase()
       };
       
       const response = await fetch(`/api/admin/bookings/${bookingId}`, {
