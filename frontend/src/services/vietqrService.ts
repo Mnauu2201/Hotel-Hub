@@ -13,9 +13,9 @@ interface VietQRData {
 
 class VietQRService {
   private config: VietQRConfig = {
-    bankAccount: "1234567890", // Số tài khoản ngân hàng của khách sạn
-    bankName: "Vietcombank",
-    bankCode: "VCB"
+    bankAccount: "0975034306", // Số tài khoản ngân hàng của khách sạn
+    bankName: "VietinBank Nam Phương",
+    bankCode: "CTG"
   };
 
   /**
