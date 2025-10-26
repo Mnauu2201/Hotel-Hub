@@ -80,8 +80,14 @@ export const getStatistics = async (params: {
     };
 
     try {
-      // Get monthly revenue data
-      const revenueResponse = await fetch(`${API_BASE_URL}/admin/reports/revenue-monthly?year=2025`, {
+      // Get monthly revenue data for current year with date range
+      const currentYear = new Date().getFullYear();
+      const revenueQueryParams = new URLSearchParams();
+      revenueQueryParams.append('year', currentYear.toString());
+      if (params.startDate) revenueQueryParams.append('fromDate', params.startDate);
+      if (params.endDate) revenueQueryParams.append('toDate', params.endDate);
+      
+      const revenueResponse = await fetch(`${API_BASE_URL}/admin/reports/revenue-monthly?${revenueQueryParams.toString()}`, {
         method: 'GET',
         headers: getHeaders(),
       });
@@ -89,7 +95,22 @@ export const getStatistics = async (params: {
       if (revenueResponse.ok) {
         const revenueData = await revenueResponse.json();
         console.log('📊 Monthly revenue data:', revenueData);
-        monthlyRevenue = revenueData.map((item: any) => item.revenue || 0);
+        
+        // Transform API data to array format
+        if (Array.isArray(revenueData) && revenueData.length > 0) {
+          // Create array for 12 months
+          const monthlyData = new Array(12).fill(0);
+          revenueData.forEach((item: any) => {
+            const monthIndex = item.monthNumber - 1; // Convert to 0-based index
+            if (monthIndex >= 0 && monthIndex < 12) {
+              monthlyData[monthIndex] = item.revenue || 0;
+            }
+          });
+          monthlyRevenue = monthlyData;
+        } else {
+          // If no data, use zeros
+          monthlyRevenue = new Array(12).fill(0);
+        }
       }
     } catch (error) {
       console.log('⚠️ Failed to fetch monthly revenue, using mock data');
@@ -126,6 +147,24 @@ export const getStatistics = async (params: {
       console.log('⚠️ Failed to fetch booking status, using mock data');
     }
 
+
+    // Sử dụng dữ liệu thực từ API, không phân bổ đều
+    console.log('📊 Using real monthly revenue data from API:', monthlyRevenue);
+    console.log('📊 Total revenue from API:', data.totalRevenue);
+    
+    // Kiểm tra tính nhất quán giữa tổng doanh thu và doanh thu theo tháng
+    const sumMonthlyRevenue = monthlyRevenue.reduce((sum, revenue) => sum + revenue, 0);
+    console.log('📊 Sum of monthly revenue:', sumMonthlyRevenue);
+    console.log('📊 Total revenue from overview:', data.totalRevenue);
+    
+    if (sumMonthlyRevenue > 0 && data.totalRevenue > 0) {
+      const difference = Math.abs(sumMonthlyRevenue - data.totalRevenue);
+      console.log('📊 Revenue difference:', difference);
+      
+      if (difference > 1000) { // Nếu chênh lệch > 1000 VNĐ
+        console.warn('⚠️ Revenue mismatch detected! Monthly sum vs total revenue differ significantly');
+      }
+    }
 
     // Transform API response to match frontend interface
     const transformedData = {

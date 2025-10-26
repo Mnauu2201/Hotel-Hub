@@ -196,7 +196,7 @@ public class AdminBookingService {
                 .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
 
         // Kiểm tra trạng thái hợp lệ
-        List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded");
+        List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded", "completed");
         if (!validStatuses.contains(newStatus)) {
             throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
         }
@@ -215,6 +215,9 @@ public class AdminBookingService {
             if ("confirmed".equals(newStatus) || "paid".equals(newStatus)) {
                 // Booking được xác nhận hoặc thanh toán → phòng BOOKED
                 room.setStatus(RoomStatus.BOOKED);
+            } else if ("completed".equals(newStatus)) {
+                // Booking hoàn thành → phòng AVAILABLE (khách đã trả phòng)
+                room.setStatus(RoomStatus.AVAILABLE);
             } else if ("cancelled".equals(newStatus) || "refunded".equals(newStatus)) {
                 // Booking bị hủy hoặc hoàn tiền → phòng AVAILABLE
                 room.setStatus(RoomStatus.AVAILABLE);
@@ -266,7 +269,7 @@ public class AdminBookingService {
         // Cập nhật các trường có thể sửa
         if (request.containsKey("status")) {
             String newStatus = (String) request.get("status");
-            List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded");
+            List<String> validStatuses = List.of("pending", "confirmed", "cancelled", "paid", "refunded", "completed");
             if (!validStatuses.contains(newStatus)) {
                 throw new RuntimeException("Trạng thái không hợp lệ: " + newStatus);
             }

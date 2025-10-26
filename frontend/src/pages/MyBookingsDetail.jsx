@@ -505,14 +505,33 @@ const MyBookingsDetail = () => {
                   <div className="col-md-4">
                     <div style={{ marginBottom: 16 }}>
                       <img 
-                        src={room?.images?.[0]?.imageUrl || booking.room?.images?.[0]?.imageUrl || fallbackRoomImg} 
+                        src={(() => {
+                          const imageUrl = room?.images?.[0]?.imageUrl || booking.room?.images?.[0]?.imageUrl;
+                          if (!imageUrl) return fallbackRoomImg;
+                          
+                          // Convert relative URLs to absolute backend URLs
+                          if (typeof imageUrl === 'string' && !imageUrl.startsWith('http')) {
+                            if (imageUrl.startsWith('/uploads/')) {
+                              return 'http://localhost:8080' + imageUrl;
+                            } else if (!imageUrl.startsWith('/')) {
+                              return 'http://localhost:8080/uploads/' + imageUrl;
+                            } else {
+                              return 'http://localhost:8080' + imageUrl;
+                            }
+                          }
+                          return imageUrl;
+                        })()} 
                         alt="Room" 
                         style={{ 
                           width: '100%', 
                           height: 200, 
                           objectFit: 'cover', 
                           borderRadius: 8 
-                        }} 
+                        }}
+                        onError={(e) => {
+                          console.error('Image failed to load:', e.target.src);
+                          e.target.src = fallbackRoomImg;
+                        }}
                       />
                     </div>
                   </div>
