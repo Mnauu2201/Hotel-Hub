@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { getStatistics, testApiConnection } from '../../services/reportsApi';
 import './AdminPages.css';
 
 interface Statistics {
@@ -14,11 +15,6 @@ interface Statistics {
     cancelled: number;
     completed: number;
   };
-  topRooms: Array<{
-    roomName: string;
-    bookingCount: number;
-    revenue: number;
-  }>;
 }
 
 const StatisticsReport: React.FC = () => {
@@ -31,12 +27,37 @@ const StatisticsReport: React.FC = () => {
 
   useEffect(() => {
     fetchStatistics();
-  }, [dateRange]);
+  }, []); // Chỉ fetch một lần khi component mount
 
   const fetchStatistics = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
+      console.log('🔄 Fetching statistics from API...');
+      
+      // Test API connection first
+      const isApiConnected = await testApiConnection();
+      console.log('🔗 API connection status:', isApiConnected);
+      
+      // Try API call first
+      try {
+        const apiData = await getStatistics({
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate
+        });
+        
+        console.log('✅ API data received:', apiData);
+        console.log('💰 Revenue data:', {
+          totalRevenue: apiData.totalRevenue,
+          totalBookings: apiData.totalBookings,
+          dateRange: { startDate: dateRange.startDate, endDate: dateRange.endDate }
+        });
+        setStatistics(apiData);
+        return;
+      } catch (apiError) {
+        console.log('⚠️ API call failed, using mock data:', apiError);
+      }
+      
+      // Fallback to mock data if API fails
       const mockStats: Statistics = {
         totalBookings: 156,
         totalRevenue: 125000000,
@@ -48,16 +69,11 @@ const StatisticsReport: React.FC = () => {
           confirmed: 45,
           cancelled: 8,
           completed: 91
-        },
-        topRooms: [
-          { roomName: 'Deluxe Suite', bookingCount: 45, revenue: 45000000 },
-          { roomName: 'Standard Room', bookingCount: 38, revenue: 28000000 },
-          { roomName: 'Family Suite', bookingCount: 22, revenue: 35000000 }
-        ]
+        }
       };
       setStatistics(mockStats);
     } catch (error) {
-      console.error('Error fetching statistics:', error);
+      console.error('💥 Error fetching statistics:', error);
     } finally {
       setLoading(false);
     }
@@ -109,6 +125,35 @@ const StatisticsReport: React.FC = () => {
           <button className="btn-primary" onClick={fetchStatistics}>
             🔄 Cập nhật
           </button>
+          <button 
+            className="btn-secondary" 
+            onClick={async () => {
+              const isConnected = await testApiConnection();
+              alert(isConnected ? '✅ API kết nối thành công!' : '❌ API kết nối thất bại!');
+            }}
+            style={{ marginLeft: '10px', padding: '8px 16px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            🧪 Test API
+          </button>
+          <button 
+            className="btn-secondary" 
+            onClick={async () => {
+              try {
+                const apiData = await getStatistics({
+                  startDate: dateRange.startDate,
+                  endDate: dateRange.endDate
+                });
+                console.log('🔍 Debug revenue data:', apiData);
+                alert(`Doanh thu: ${apiData.totalRevenue.toLocaleString('vi-VN')} VNĐ\nTổng đặt phòng: ${apiData.totalBookings}\nKhoảng thời gian: ${dateRange.startDate} đến ${dateRange.endDate}`);
+              } catch (error) {
+                console.error('Debug error:', error);
+                alert('Lỗi khi debug: ' + error.message);
+              }
+            }}
+            style={{ marginLeft: '10px', padding: '8px 16px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            🔍 Debug Revenue
+          </button>
         </div>
 
         {/* Statistics Cards */}
@@ -140,17 +185,19 @@ const StatisticsReport: React.FC = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="charts-section">
+        <div className="charts-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
           <div className="chart-container">
-            <h3>Doanh thu theo tháng</h3>
-            <div className="chart-placeholder">
-              <p>📊 Biểu đồ doanh thu sẽ được hiển thị ở đây</p>
+            <h3>📈 Doanh thu theo tháng</h3>
+            <div className="chart-content">
+              <div className="chart-placeholder">
+                <p>📊 Biểu đồ doanh thu theo tháng</p>
+              </div>
               <div className="chart-bars">
                 {statistics?.monthlyRevenue.map((revenue, index) => (
                   <div key={index} className="chart-bar">
                     <div 
                       className="bar-fill" 
-                      style={{ height: `${(revenue / Math.max(...(statistics?.monthlyRevenue || [1]))) * 100}%` }}
+                      style={{ height: `${Math.max((revenue / Math.max(...(statistics?.monthlyRevenue || [1]))) * 100, 10)}%` }}
                     ></div>
                     <span className="bar-label">T{index + 1}</span>
                   </div>
@@ -160,46 +207,40 @@ const StatisticsReport: React.FC = () => {
           </div>
 
           <div className="chart-container">
-            <h3>Trạng thái đặt phòng</h3>
-            <div className="status-chart">
-              <div className="status-item">
-                <span className="status-dot status-pending"></span>
-                <span>Chờ xử lý: {statistics?.bookingStatusCounts.pending}</span>
-              </div>
-              <div className="status-item">
-                <span className="status-dot status-confirmed"></span>
-                <span>Đã xác nhận: {statistics?.bookingStatusCounts.confirmed}</span>
-              </div>
-              <div className="status-item">
-                <span className="status-dot status-cancelled"></span>
-                <span>Đã hủy: {statistics?.bookingStatusCounts.cancelled}</span>
-              </div>
-              <div className="status-item">
-                <span className="status-dot status-completed"></span>
-                <span>Hoàn thành: {statistics?.bookingStatusCounts.completed}</span>
-              </div>
-            </div>
+            <h3>📊 Trạng thái đặt phòng</h3>
+            <ul className="status-list">
+              <li>
+                <div className="status-item-content">
+                  <span className="status-dot" style={{ backgroundColor: '#fbbf24' }}></span>
+                  <span className="status-label">Chờ xử lý</span>
+                </div>
+                <span className="status-count">{statistics?.bookingStatusCounts.pending || 0}</span>
+              </li>
+              <li>
+                <div className="status-item-content">
+                  <span className="status-dot" style={{ backgroundColor: '#10b981' }}></span>
+                  <span className="status-label">Đã xác nhận</span>
+                </div>
+                <span className="status-count">{statistics?.bookingStatusCounts.confirmed || 0}</span>
+              </li>
+              <li>
+                <div className="status-item-content">
+                  <span className="status-dot" style={{ backgroundColor: '#ef4444' }}></span>
+                  <span className="status-label">Đã hủy</span>
+                </div>
+                <span className="status-count">{statistics?.bookingStatusCounts.cancelled || 0}</span>
+              </li>
+              <li>
+                <div className="status-item-content">
+                  <span className="status-dot" style={{ backgroundColor: '#3b82f6' }}></span>
+                  <span className="status-label">Hoàn thành</span>
+                </div>
+                <span className="status-count">{statistics?.bookingStatusCounts.completed || 0}</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Top Rooms */}
-        <div className="top-rooms-section">
-          <h3>Phòng được đặt nhiều nhất</h3>
-          <div className="top-rooms-list">
-            {statistics?.topRooms.map((room, index) => (
-              <div key={index} className="top-room-item">
-                <div className="room-rank">#{index + 1}</div>
-                <div className="room-info">
-                  <h4>{room.roomName}</h4>
-                  <p>{room.bookingCount} đặt phòng</p>
-                </div>
-                <div className="room-revenue">
-                  {room.revenue.toLocaleString('vi-VN')} VNĐ
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </AdminLayout>
   );

@@ -88,6 +88,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'paid' AND b.checkIn BETWEEN :startDate AND :endDate")
         BigDecimal getRevenueByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
         
+        // Tính doanh thu theo khoảng thời gian - tính booking confirmed
+        @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'confirmed' AND b.checkIn BETWEEN :startDate AND :endDate")
+        BigDecimal getRevenueByDateRangeConfirmed(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+        
         // Doanh thu theo ngày
         @Query("SELECT DATE(b.createdAt) as date, SUM(b.totalPrice) as revenue FROM Booking b " +
                "WHERE b.status IN ('confirmed', 'paid') AND b.createdAt BETWEEN :startDate AND :endDate " +
