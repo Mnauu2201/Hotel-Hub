@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/",           // Tất cả auth endpoints
             "/api/email/",          // Tất cả email endpoints
             "/api/bookings/guest",  // Guest booking
+            "/api/bookings/guest/", // Guest booking with ID
             "/api/bookings/rooms",  // Public room listing
             "/api/test/public",     // Public test
             "/api/public/"          // Các API public khác

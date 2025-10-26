@@ -89,6 +89,7 @@ public class SecurityConfig {
                         // ✅ Cho phép guest booking (không cần login)
                         .requestMatchers(HttpMethod.POST, "/api/bookings/guest").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/bookings/guest/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/bookings/guest/*/cancel").permitAll()
 
                         // ✅ Cho phép xem phòng (không cần login)
                         .requestMatchers(HttpMethod.GET, "/api/bookings/rooms/**").permitAll()

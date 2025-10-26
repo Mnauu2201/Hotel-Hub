@@ -69,6 +69,27 @@ public class BookingController {
     }
 
     /**
+     * Hủy booking cho guest (không cần login)
+     */
+    @PutMapping("/guest/{bookingId}/cancel")
+    public ResponseEntity<?> cancelGuestBooking(@PathVariable Long bookingId) {
+        try {
+            System.out.println("Guest cancel booking request for ID: " + bookingId);
+            BookingResponse booking = bookingService.cancelGuestBooking(bookingId);
+            System.out.println("Guest booking cancelled successfully: " + booking.getBookingReference());
+            return ResponseEntity.ok(Map.of(
+                    "message", "Hủy booking thành công",
+                    "booking", booking));
+        } catch (Exception e) {
+            System.out.println("Error cancelling guest booking: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Hủy booking thất bại",
+                    "message", e.getMessage()));
+        }
+    }
+
+    /**
      * Tra cứu booking theo email (cho guest)
      */
     @GetMapping("/guest/email/{email}")

@@ -236,29 +236,44 @@ public class AdminBookingService {
 
     // Admin hủy booking
     public BookingResponse cancelBooking(Long bookingId, String reason, String adminEmail) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+        try {
+            System.out.println("Starting admin cancel booking for ID: " + bookingId + ", reason: " + reason);
+            
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
 
-        if ("cancelled".equals(booking.getStatus())) {
-            throw new RuntimeException("Booking đã bị hủy trước đó");
+            System.out.println("Found booking: " + booking.getBookingReference() + ", status: " + booking.getStatus());
+
+            if ("cancelled".equals(booking.getStatus())) {
+                throw new RuntimeException("Booking đã bị hủy trước đó");
+            }
+
+            booking.setStatus("cancelled");
+            booking.setHoldUntil(null);
+            booking = bookingRepository.save(booking);
+            System.out.println("Booking status updated to cancelled");
+
+            // Cập nhật room status về AVAILABLE khi booking bị cancelled
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+            if (room != null) {
+                room.setStatus(RoomStatus.AVAILABLE);
+                roomRepository.save(room);
+                System.out.println("Room status updated to AVAILABLE");
+            }
+
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("ADMIN_CANCEL_BOOKING", 
+                "Admin cancelled booking " + booking.getBookingReference() + ". Reason: " + reason + " by admin: " + adminEmail);
+
+            System.out.println("Converting to response...");
+            BookingResponse response = convertToResponse(booking);
+            System.out.println("Admin booking cancelled successfully: " + response.getBookingReference());
+            return response;
+        } catch (Exception e) {
+            System.out.println("Error in admin cancelBooking: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-
-        booking.setStatus("cancelled");
-        booking.setHoldUntil(null);
-        booking = bookingRepository.save(booking);
-
-        // Cập nhật room status về AVAILABLE khi booking bị cancelled
-        Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
-        if (room != null) {
-            room.setStatus(RoomStatus.AVAILABLE);
-            roomRepository.save(room);
-        }
-
-        // Ghi log thao tác
-        activityLogService.logSystemActivity("ADMIN_CANCEL_BOOKING", 
-            "Admin cancelled booking " + booking.getBookingReference() + ". Reason: " + reason + " by admin: " + adminEmail);
-
-        return convertToResponse(booking);
     }
 
     // Admin cập nhật thông tin booking
