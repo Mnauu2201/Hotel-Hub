@@ -63,9 +63,19 @@ public class ReportController {
             // Tổng đặt phòng - sử dụng method có sẵn
             long totalBookings = bookingRepository.countByCreatedAtBetween(fromDate.atStartOfDay(), toDate.atTime(23, 59, 59));
 
-            // Tổng doanh thu - sử dụng method có sẵn
+            // Tổng doanh thu - tính cả confirmed và paid
             var totalRevenue = bookingRepository.getRevenueByDateRange(fromDate, toDate);
             double revenue = totalRevenue != null ? totalRevenue.doubleValue() : 0.0;
+            
+            // Nếu không có doanh thu từ paid, thử tính từ confirmed
+            if (revenue == 0.0) {
+                // Tính doanh thu từ booking confirmed trong khoảng thời gian
+                var confirmedRevenue = bookingRepository.getRevenueByDateRangeConfirmed(fromDate, toDate);
+                revenue = confirmedRevenue != null ? confirmedRevenue.doubleValue() : 0.0;
+            }
+            
+            // Debug: Log revenue calculation
+            System.out.println("Revenue calculation for " + fromDate + " to " + toDate + ": " + revenue);
 
             // Tổng người dùng - sử dụng method có sẵn
             long totalUsers = userRepository.count();
