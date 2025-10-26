@@ -39,6 +39,8 @@ const BookingManagement: React.FC = () => {
   const [editFormData, setEditFormData] = useState<Partial<Booking>>({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [latestBooking, setLatestBooking] = useState<Booking | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
   const { showSuccess, showError, NotificationContainer } = useNotification();
 
   useEffect(() => {
@@ -225,35 +227,46 @@ const BookingManagement: React.FC = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId: number) => {
-    if (!bookingId) {
-      showError('Lỗi: Không tìm thấy ID booking để hủy');
-      return;
-    }
+  const handleCancelBooking = (booking: Booking) => {
+    setBookingToCancel(booking);
+    setShowCancelModal(true);
+  };
 
-    if (window.confirm('Bạn có chắc chắn muốn hủy booking này?')) {
-      try {
-        const token = localStorage.getItem('accessToken');
-        
-        const response = await fetch(`http://localhost:8080/api/admin/bookings/${bookingId}/cancel`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.ok) {
-          showSuccess('Hủy booking thành công!');
-          fetchBookings(); // Refresh danh sách
-        } else {
-          const errorData = await response.json();
-          showError('Lỗi: ' + (errorData.message || 'Không thể hủy booking'));
-        }
-      } catch (error) {
-        showError('Lỗi kết nối: ' + (error as Error).message);
+  const confirmCancelBooking = async () => {
+    if (!bookingToCancel) return;
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      
+      const response = await fetch(`http://localhost:8080/api/admin/bookings/${bookingToCancel.bookingId || bookingToCancel.id}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reason: 'Admin cancelled',
+          adminEmail: 'admin@hotelhub.com'
+        })
+      });
+      
+      if (response.ok) {
+        showSuccess('Hủy booking thành công!');
+        fetchBookings(); // Refresh danh sách
+        setShowCancelModal(false);
+        setBookingToCancel(null);
+      } else {
+        const errorData = await response.json();
+        showError('Lỗi: ' + (errorData.message || 'Không thể hủy booking'));
       }
+    } catch (error) {
+      showError('Lỗi kết nối: ' + (error as Error).message);
     }
+  };
+
+  const cancelCancelBooking = () => {
+    setShowCancelModal(false);
+    setBookingToCancel(null);
   };
 
   const handleDateFilter = () => {
@@ -472,7 +485,7 @@ const BookingManagement: React.FC = () => {
                   </button>
                   <button 
                     className="btn-cancel"
-                    onClick={() => handleCancelBooking(latestBooking.id)}
+                    onClick={() => handleCancelBooking(latestBooking)}
                   >
                     ❌ Hủy
                   </button>
@@ -541,7 +554,7 @@ const BookingManagement: React.FC = () => {
                           </button>
                           <button 
                             className="btn-action btn-cancel"
-                            onClick={() => handleCancelBooking(booking.bookingId || booking.id)}
+                            onClick={() => handleCancelBooking(booking)}
                             style={{ backgroundColor: '#dc3545', color: 'white', marginLeft: '5px' }}
                           >
                             Hủy
@@ -728,6 +741,72 @@ const BookingManagement: React.FC = () => {
                 </button>
                 <button className="btn-primary" onClick={handleUpdateBooking} style={getModalStyles().buttonPrimary}>
                   Cập nhật
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cancel Confirmation Modal */}
+        {showCancelModal && bookingToCancel && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>Xác nhận hủy booking</h3>
+                <button 
+                  className="modal-close" 
+                  onClick={cancelCancelBooking}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+                  <p style={{ fontSize: '16px', marginBottom: '8px', fontWeight: '600' }}>
+                    Bạn có chắc chắn muốn hủy booking này?
+                  </p>
+                  <div style={{ 
+                    background: isDarkMode ? '#4a5568' : '#f8f9fa', 
+                    padding: '12px', 
+                    borderRadius: '8px', 
+                    margin: '16px 0',
+                    border: isDarkMode ? '1px solid #6b7280' : '1px solid #e9ecef'
+                  }}>
+                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                      <strong>Mã booking:</strong> {bookingToCancel.bookingReference || `#${bookingToCancel.id}`}
+                    </p>
+                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                      <strong>Email:</strong> {bookingToCancel.userEmail || bookingToCancel.guestEmail}
+                    </p>
+                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                      <strong>Phòng:</strong> {bookingToCancel.roomNumber} ({bookingToCancel.roomType})
+                    </p>
+                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                      <strong>Ngày nhận:</strong> {new Date(bookingToCancel.checkIn).toLocaleDateString('vi-VN')}
+                    </p>
+                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                      <strong>Ngày trả:</strong> {new Date(bookingToCancel.checkOut).toLocaleDateString('vi-VN')}
+                    </p>
+                  </div>
+                  <p style={{ fontSize: '14px', color: '#dc3545', fontWeight: '500' }}>
+                    Hành động này không thể hoàn tác!
+                  </p>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  className="btn-secondary" 
+                  onClick={cancelCancelBooking}
+                  style={{ marginRight: '10px' }}
+                >
+                  Không hủy
+                </button>
+                <button 
+                  className="btn-danger" 
+                  onClick={confirmCancelBooking}
+                >
+                  Xác nhận hủy
                 </button>
               </div>
             </div>
