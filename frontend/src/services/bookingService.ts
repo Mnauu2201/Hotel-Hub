@@ -131,7 +131,7 @@ const bookingService = {
     return response.data as BookingResponse;
   },
 
-  // Hủy booking
+  // Hủy booking (cho user đã đăng nhập)
   cancelBooking: async (bookingId: number | string) => {
     // Ensure token is available in the request
     const token = localStorage.getItem('accessToken');
@@ -143,6 +143,16 @@ const bookingService = {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data as { message: string };
+  },
+
+  // Hủy booking (cho guest chưa đăng nhập)
+  cancelGuestBooking: async (bookingId: number | string) => {
+    const response = await axios.put(`${API_BASE_URL}/bookings/guest/${bookingId}/cancel`, {}, {
+      headers: {
+        'Content-Type': 'application/json'
       }
     });
     return response.data as { message: string };

@@ -50,6 +50,18 @@ public class BookingService {
             throw new RuntimeException("Phòng không còn trống trong khoảng thời gian này");
         }
 
+        // Kiểm tra trùng lặp booking bổ sung
+        List<Booking> existingBookings = bookingRepository.findByRoomIdAndStatusInAndDateRange(
+            request.getRoomId(), 
+            java.util.Arrays.asList("pending", "confirmed", "paid", "completed"),
+            request.getCheckIn(), 
+            request.getCheckOut()
+        );
+        
+        if (!existingBookings.isEmpty()) {
+            throw new RuntimeException("Phòng đã được đặt trong khoảng thời gian này. Vui lòng chọn phòng khác hoặc thời gian khác.");
+        }
+
         // Lấy thông tin phòng
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new RuntimeException("Phòng không tồn tại"));
@@ -106,6 +118,18 @@ public class BookingService {
         // Kiểm tra phòng có trống không
         if (!roomRepository.isRoomAvailable(request.getRoomId(), request.getCheckIn(), request.getCheckOut())) {
             throw new RuntimeException("Phòng không còn trống trong khoảng thời gian này");
+        }
+
+        // Kiểm tra trùng lặp booking bổ sung
+        List<Booking> existingBookings = bookingRepository.findByRoomIdAndStatusInAndDateRange(
+            request.getRoomId(), 
+            java.util.Arrays.asList("pending", "confirmed", "paid", "completed"),
+            request.getCheckIn(), 
+            request.getCheckOut()
+        );
+        
+        if (!existingBookings.isEmpty()) {
+            throw new RuntimeException("Phòng đã được đặt trong khoảng thời gian này. Vui lòng chọn phòng khác hoặc thời gian khác.");
         }
 
         // Lấy thông tin phòng
@@ -203,6 +227,55 @@ public class BookingService {
             "Booking " + booking.getBookingReference() + " cancelled by user: " + userEmail);
 
         return convertToResponse(booking);
+    }
+
+    /**
+     * Hủy booking cho guest (không cần login)
+     */
+    public BookingResponse cancelGuestBooking(Long bookingId) {
+        try {
+            System.out.println("Starting guest cancel booking for ID: " + bookingId);
+            
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking không tồn tại"));
+
+            System.out.println("Found booking: " + booking.getBookingReference() + ", status: " + booking.getStatus());
+
+            // Chỉ cho phép hủy booking của guest (không có user)
+            if (booking.getUser() != null) {
+                throw new RuntimeException("Booking này thuộc về user đã đăng nhập, không thể hủy từ guest");
+            }
+
+            // Chỉ cho phép hủy booking trong trạng thái pending
+            if (!"pending".equals(booking.getStatus())) {
+                throw new RuntimeException("Chỉ có thể hủy booking đang chờ xử lý");
+            }
+
+            booking.setStatus("cancelled");
+            booking = bookingRepository.save(booking);
+            System.out.println("Booking status updated to cancelled");
+
+            // Cập nhật trạng thái phòng về AVAILABLE
+            Room room = roomRepository.findById(booking.getRoomId()).orElse(null);
+            if (room != null) {
+                room.setStatus(RoomStatus.AVAILABLE);
+                roomRepository.save(room);
+                System.out.println("Room status updated to AVAILABLE");
+            }
+
+            // Ghi log thao tác
+            activityLogService.logSystemActivity("GUEST_CANCEL_BOOKING", 
+                "Guest booking " + booking.getBookingReference() + " cancelled by guest");
+
+            System.out.println("Converting to response...");
+            BookingResponse response = convertToResponse(booking);
+            System.out.println("Guest booking cancelled successfully: " + response.getBookingReference());
+            return response;
+        } catch (Exception e) {
+            System.out.println("Error in cancelGuestBooking: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**

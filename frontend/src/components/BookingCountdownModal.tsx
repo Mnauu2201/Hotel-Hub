@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useNotification } from '../hooks/useNotification';
+import bookingService from '../services/bookingService';
+import vietqrService from '../services/vietqrService';
 
 interface BookingCountdownModalProps {
   isOpen: boolean;
@@ -21,9 +23,10 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
   checkInDate,
   checkOutDate
 }) => {
-  const { showSuccess, NotificationContainer } = useNotification();
+  const { showSuccess, showError, NotificationContainer } = useNotification();
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 phút = 900 giây
   const [isExpired, setIsExpired] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,16 +51,38 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const generatePaymentQR = () => {
-    const paymentData = {
+  const generateVietQR = () => {
+    return vietqrService.generateBookingVietQR(
       bookingId,
-      amount: totalAmount,
+      totalAmount,
       roomNumber,
       checkInDate,
-      checkOutDate,
-      timestamp: new Date().toISOString()
-    };
-    return JSON.stringify(paymentData);
+      checkOutDate
+    );
+  };
+
+  const handleCancelBooking = async () => {
+    if (isCancelling) return;
+    
+    setIsCancelling(true);
+    try {
+      // Kiểm tra xem user đã đăng nhập hay chưa
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        // User đã đăng nhập
+        await bookingService.cancelBooking(bookingId);
+      } else {
+        // Guest chưa đăng nhập
+        await bookingService.cancelGuestBooking(bookingId);
+      }
+      showSuccess('Đã hủy đặt phòng thành công!');
+      onClose();
+    } catch (error) {
+      console.error('Lỗi khi hủy booking:', error);
+      showError('Không thể hủy đặt phòng: ' + (error.response?.data?.message || 'Lỗi không xác định'));
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -95,9 +120,14 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
 
           <div className="qr-section">
             <h4>Quét mã QR để thanh toán</h4>
+            <div className="bank-info">
+              <p><strong>Ngân hàng:</strong> {vietqrService.getConfig().bankName}</p>
+              <p><strong>Số tài khoản:</strong> {vietqrService.getConfig().bankAccount}</p>
+              <p><strong>Số tiền:</strong> {totalAmount.toLocaleString('vi-VN')} VNĐ</p>
+            </div>
             <div className="qr-container">
               <QRCodeSVG 
-                value={generatePaymentQR()}
+                value={generateVietQR()}
                 size={200}
                 level="M"
                 includeMargin={true}
@@ -112,10 +142,10 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
         <div className="booking-countdown-footer">
           <button 
             className="btn-secondary" 
-            onClick={onClose}
-            disabled={isExpired}
+            onClick={isExpired ? onClose : handleCancelBooking}
+            disabled={isCancelling}
           >
-            {isExpired ? 'Đóng' : 'Hủy đặt phòng'}
+            {isCancelling ? 'Đang hủy...' : (isExpired ? 'Đóng' : 'Hủy đặt phòng')}
           </button>
           <button 
             className="btn-primary" 
