@@ -31,6 +31,8 @@ const Notifications: React.FC = () => {
       
       // Try API call first
       try {
+        console.log('🔍 Filter values:', { typeFilter, statusFilter });
+        
         const apiData = await getNotifications({
           type: typeFilter,
           status: statusFilter,
@@ -110,6 +112,7 @@ const Notifications: React.FC = () => {
     const typeMap: { [key: string]: { text: string; class: string } } = {
       'WELCOME': { text: 'Chào mừng', class: 'type-welcome' },
       'BOOKING_CONFIRMATION': { text: 'Xác nhận đặt phòng', class: 'type-booking' },
+      'BOOKING_CREATED': { text: 'Tạo đặt phòng', class: 'type-booking' },
       'PAYMENT_REMINDER': { text: 'Nhắc nhở thanh toán', class: 'type-payment' },
       'SYSTEM_MAINTENANCE': { text: 'Bảo trì hệ thống', class: 'type-maintenance' },
       'PROMOTION': { text: 'Khuyến mãi', class: 'type-promotion' }
@@ -182,13 +185,6 @@ const Notifications: React.FC = () => {
           >
             ➕ Tạo thông báo mới
           </button>
-          <button 
-            className="btn-secondary"
-            onClick={fetchNotifications}
-            style={{ marginLeft: '10px' }}
-          >
-            🔄 Refresh Data
-          </button>
         </div>
 
         {/* Filters */}
@@ -203,6 +199,7 @@ const Notifications: React.FC = () => {
               <option value="ALL">Tất cả</option>
               <option value="WELCOME">Chào mừng</option>
               <option value="BOOKING_CONFIRMATION">Xác nhận đặt phòng</option>
+              <option value="BOOKING_CREATED">Tạo đặt phòng</option>
               <option value="PAYMENT_REMINDER">Nhắc nhở thanh toán</option>
               <option value="SYSTEM_MAINTENANCE">Bảo trì hệ thống</option>
               <option value="PROMOTION">Khuyến mãi</option>
