@@ -1182,6 +1182,58 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   color: #ffffff !important; /* Ensure text is white */
 }
 
+/* Dark mode for status badges */
+.dark-mode .status-badge.status-pending {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-sent {
+  background-color: #0d4f0d !important; /* Dark green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-draft {
+  background-color: #404040 !important; /* Dark gray for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .status-badge.status-failed {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+/* Dark mode for type badges in notifications */
+.dark-mode .type-badge.type-welcome {
+  background-color: #0d4f0d !important; /* Dark green for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-booking {
+  background-color: #1a365d !important; /* Dark blue for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-payment {
+  background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-maintenance {
+  background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-promotion {
+  background-color: #6b46c1 !important; /* Dark purple for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
+.dark-mode .type-badge.type-default {
+  background-color: #404040 !important; /* Dark gray for better contrast in dark mode */
+  color: #ffffff !important; /* Ensure text is white */
+}
+
 /* Force override for notification table headers */
 .dark-mode .admin-page .admin-table thead th {
   color: #ffffff !important; /* Ensure table headers are white in dark mode */
@@ -1257,6 +1309,11 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   color: #c2185b;
 }
 
+.type-maintenance {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
 .type-promotion {
   background-color: #f3e5f5;
   color: #7b1fa2;
@@ -1280,6 +1337,59 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
 .status-failed {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+/* Fix status badges layout - ensure they stay on same line */
+.status-badge {
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Ensure status column cells don't stack badges vertically */
+.admin-table tbody tr td:has(.status-badge) {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Force status badges to be inline */
+.admin-table .status-badge {
+  display: inline-block !important;
+  margin-right: 0.25rem;
+}
+
+/* Fix table row height consistency */
+.admin-table tbody tr {
+  height: auto;
+  min-height: 50px;
+}
+
+.admin-table tbody tr td {
+  vertical-align: middle;
+  padding: 0.75rem 0.5rem;
+}
+
+/* Ensure status column has consistent height */
+.admin-table tbody tr td:nth-child(5) {
+  white-space: nowrap;
+  vertical-align: middle;
+  height: auto;
+}
+
+/* Add missing status-pending style */
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Ensure type badges have proper styling */
+.type-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 /* Action buttons for notifications - matching bookings style */

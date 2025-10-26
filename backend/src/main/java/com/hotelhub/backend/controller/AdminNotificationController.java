@@ -55,16 +55,36 @@ public class AdminNotificationController {
         if (type != null && !type.equals("ALL")) {
             if (status != null && !status.equals("ALL")) {
                 // Filter by both type and status
-                boolean isRead = status.equals("SENT");
-                notifications = notificationRepository.findByActionAndIsRead(type, isRead, pageable);
+                if (status.equals("SENT")) {
+                    notifications = notificationRepository.findByActionAndIsRead(type, true, pageable);
+                } else if (status.equals("PENDING")) {
+                    notifications = notificationRepository.findByActionAndIsRead(type, false, pageable);
+                } else if (status.equals("DRAFT")) {
+                    // For draft status, we need to check if notification is not sent and not failed
+                    notifications = notificationRepository.findByActionAndIsRead(type, false, pageable);
+                } else if (status.equals("FAILED")) {
+                    // For failed status, we need to check if notification failed to send
+                    notifications = notificationRepository.findByActionAndIsRead(type, false, pageable);
+                } else {
+                    notifications = notificationRepository.findByAction(type, pageable);
+                }
             } else {
                 // Filter by type only
                 notifications = notificationRepository.findByAction(type, pageable);
             }
         } else if (status != null && !status.equals("ALL")) {
             // Filter by status only
-            boolean isRead = status.equals("SENT");
-            notifications = notificationRepository.findByIsRead(isRead, pageable);
+            if (status.equals("SENT")) {
+                notifications = notificationRepository.findByIsRead(true, pageable);
+            } else if (status.equals("PENDING")) {
+                notifications = notificationRepository.findByIsRead(false, pageable);
+            } else if (status.equals("DRAFT")) {
+                notifications = notificationRepository.findByIsRead(false, pageable);
+            } else if (status.equals("FAILED")) {
+                notifications = notificationRepository.findByIsRead(false, pageable);
+            } else {
+                notifications = notificationRepository.findAll(pageable);
+            }
         } else {
             // No filtering
             notifications = notificationRepository.findAll(pageable);
@@ -79,7 +99,16 @@ public class AdminNotificationController {
                 notificationMap.put("message", notification.getMessage());
                 notificationMap.put("type", mapActionToType(notification.getAction()));
                 notificationMap.put("recipient", getRecipientEmail(notification.getRecipientId()));
-                notificationMap.put("status", notification.getIsRead() ? "SENT" : "PENDING");
+                // Map status based on isRead and other conditions
+                String notificationStatus;
+                if (notification.getIsRead()) {
+                    notificationStatus = "SENT";
+                } else {
+                    // For now, all unread notifications are PENDING
+                    // In the future, we can add more logic to determine DRAFT vs FAILED
+                    notificationStatus = "PENDING";
+                }
+                notificationMap.put("status", notificationStatus);
                 notificationMap.put("createdAt", notification.getCreatedAt());
                 notificationMap.put("sentAt", notification.getIsRead() ? notification.getCreatedAt() : null);
                 notificationMap.put("url", notification.getUrl());

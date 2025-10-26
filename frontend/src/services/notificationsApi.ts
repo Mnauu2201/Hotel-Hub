@@ -29,6 +29,7 @@ export const getNotifications = async (params: {
     const queryString = queryParams.toString();
     const endpoint = `/admin/notifications${queryString ? `?${queryString}` : ''}`;
     
+    console.log('🔍 Filter params:', params);
     console.log('🌐 API URL:', `${API_BASE_URL}${endpoint}`);
     console.log('🔑 Headers:', getHeaders());
     
