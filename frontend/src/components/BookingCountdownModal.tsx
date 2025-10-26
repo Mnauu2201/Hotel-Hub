@@ -31,6 +31,10 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
+    // Reset states when modal opens
+    setIsExpired(false);
+    setTimeLeft(5 * 60);
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -134,22 +138,44 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
 
             {/* QR Code Container */}
             <div className="qr-container">
-              <QRCodeSVG 
-                value={generateVietQR()}
-                size={250}
-                level="M"
-                includeMargin={true}
-              />
+              <div style={{ 
+                width: '250px', 
+                height: '250px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                background: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px'
+              }}>
+                <QRCodeSVG 
+                  value={generateVietQR()}
+                  size={200}
+                  level="M"
+                  includeMargin={true}
+                />
+              </div>
             </div>
 
             {/* Bank Transfer Details */}
             <div className="bank-transfer-details">
               <div className="transfer-info">
-                <p><strong>Nội dung CK:</strong> HotelHub{bookingId}</p>
+                <p><strong>Nội dung CK:</strong> HotelHub{roomNumber}</p>
                 <p><strong>Số tiền:</strong> {totalAmount.toLocaleString('vi-VN')} VND</p>
                 <p><strong>Tên chủ TK:</strong> HOTEL HUB COMPANY</p>
                 <p><strong>Số TK:</strong> {vietqrService.getConfig().bankAccount}</p>
                 <p><strong>Ngân hàng:</strong> {vietqrService.getConfig().bankName}</p>
+                <div style={{ 
+                  marginTop: '12px', 
+                  padding: '8px 12px', 
+                  background: '#e8f5e8', 
+                  borderRadius: '6px', 
+                  border: '1px solid #4caf50',
+                  fontSize: '12px',
+                  color: '#2e7d32'
+                }}>
+                  <strong>💡 Hướng dẫn:</strong> Quét mã QR bằng app ngân hàng để tự động điền thông tin chuyển khoản
+                </div>
               </div>
             </div>
 
