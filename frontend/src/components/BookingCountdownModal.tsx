@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useNotification } from '../hooks/useNotification';
 import bookingService from '../services/bookingService';
@@ -23,10 +24,12 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
   checkInDate,
   checkOutDate
 }) => {
+  const navigate = useNavigate();
   const { showSuccess, showError, NotificationContainer } = useNotification();
   const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 phút = 300 giây
   const [isExpired, setIsExpired] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -88,6 +91,11 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
       setIsCancelling(false);
     }
   };
+
+  const handlePaymentConfirmation = () => {
+    setShowPaymentConfirmation(true);
+  };
+
 
   if (!isOpen) return null;
 
@@ -195,17 +203,101 @@ const BookingCountdownModal: React.FC<BookingCountdownModalProps> = ({
           </button>
           <button 
             className="btn-primary" 
-            onClick={() => {
-              // Xử lý thanh toán thành công
-              showSuccess('Thanh toán thành công! Đơn đặt phòng đã được xác nhận.');
-              onClose();
-            }}
+            onClick={handlePaymentConfirmation}
             disabled={isExpired}
           >
             Đã thanh toán
           </button>
         </div>
       </div>
+      
+      {/* Modal xác nhận thanh toán */}
+      {showPaymentConfirmation && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Xác nhận thanh toán</h3>
+            </div>
+            <div className="modal-body">
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+                <p style={{ fontSize: '18px', marginBottom: '8px', fontWeight: '600', color: '#28a745' }}>
+                  Cảm ơn bạn đã thanh toán!
+                </p>
+                <p style={{ fontSize: '16px', marginBottom: '16px', color: '#6c757d' }}>
+                  Xin vui lòng chờ để bên phía admin xác nhận thanh toán của bạn.
+                </p>
+                <div style={{ 
+                  background: '#e8f5e8', 
+                  padding: '16px', 
+                  borderRadius: '8px', 
+                  margin: '16px 0',
+                  border: '1px solid #4caf50'
+                }}>
+                  <p style={{ margin: '4px 0', fontSize: '14px', color: '#2e7d32' }}>
+                    <strong>📧 Thông báo:</strong> Chúng tôi sẽ gửi email xác nhận đến bạn sau khi admin xác nhận thanh toán.
+                  </p>
+                  <p style={{ margin: '4px 0', fontSize: '14px', color: '#2e7d32' }}>
+                    <strong>⏰ Thời gian:</strong> Thường trong vòng 5-10 phút làm việc.
+                  </p>
+                </div>
+                
+                <div style={{ 
+                  background: '#f0f9ff', 
+                  padding: '16px', 
+                  borderRadius: '8px', 
+                  margin: '16px 0',
+                  border: '1px solid #0ea5e9'
+                }}>
+                  <p style={{ margin: '4px 0', fontSize: '14px', color: '#0c4a6e' }}>
+                    <strong>💡 Lưu ý:</strong> Bạn có thể xem chi tiết đặt phòng ngay bây giờ hoặc chờ admin xác nhận.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer" style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: '12px',
+              padding: '20px 24px',
+              borderTop: '1px solid #e9ecef'
+            }}>
+              <button 
+                className="btn-primary" 
+                onClick={() => {
+                  navigate(`/my-bookings/${bookingId}`);
+                  onClose();
+                }}
+                style={{ 
+                  background: '#10b981',
+                  border: '1px solid #10b981',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.background = '#059669';
+                  target.style.transform = 'translateY(-2px)';
+                  target.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  target.style.background = '#10b981';
+                  target.style.transform = 'translateY(0)';
+                  target.style.boxShadow = 'none';
+                }}
+              >
+                📋 Xem chi tiết đặt phòng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <NotificationContainer />
     </div>
