@@ -13,36 +13,37 @@ interface VietQRData {
 
 class VietQRService {
   private config: VietQRConfig = {
-    bankAccount: "0975034306", // Số tài khoản ngân hàng của khách sạn
-    bankName: "VietinBank Nam Phương",
-    bankCode: "CTG"
+    bankAccount: "8322012005", // Số tài khoản ngân hàng của khách sạn
+    bankName: "MB Bank",
+    bankCode: "MB"
   };
 
   /**
-   * Tạo VietQR string theo chuẩn
+   * Tạo VietQR string theo chuẩn VietQR thực tế
    */
   generateVietQR(data: VietQRData): string {
     const { account, amount, content, bankCode } = data;
     
-    // VietQR format: bank://transfer?account=ACCOUNT&amount=AMOUNT&content=CONTENT&bank=BANKCODE
-    const params = new URLSearchParams({
-      account: account || this.config.bankAccount,
-      amount: amount.toString(),
-      content: content
-    });
+    // Format chuẩn cho app ngân hàng Việt Nam
+    const bankCodeParam = bankCode || this.config.bankCode;
+    const accountParam = account || this.config.bankAccount;
+    const amountParam = amount.toString();
+    const contentParam = content;
     
-    if (bankCode) {
-      params.append('bank', bankCode);
-    }
+    // Tạo QR string theo format chuẩn VietQR
+    // Format: bank://transfer?account=ACCOUNT&amount=AMOUNT&content=CONTENT&bank=BANKCODE
+    const qrString = `bank://transfer?account=${accountParam}&amount=${amountParam}&content=${encodeURIComponent(contentParam)}&bank=${bankCodeParam}`;
     
-    return `bank://transfer?${params.toString()}`;
+    console.log('VietQR String generated:', qrString); // Debug log
+    
+    return qrString;
   }
 
   /**
    * Tạo VietQR cho booking
    */
-  generateBookingVietQR(bookingId: string, amount: number, roomNumber: string, checkInDate: string, checkOutDate: string): string {
-    const content = `Hotel Hub - Booking ${bookingId} - Room ${roomNumber} - ${checkInDate} to ${checkOutDate}`;
+  generateBookingVietQR(_bookingId: string, amount: number, roomNumber: string, _checkInDate: string, _checkOutDate: string): string {
+    const content = `HotelHub${roomNumber}`;
     
     return this.generateVietQR({
       account: this.config.bankAccount,
