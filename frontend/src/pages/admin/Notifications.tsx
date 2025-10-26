@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { getNotifications, sendNotification, deleteNotification } from '../../services/notificationsApi';
 import './AdminPages.css';
 
 interface Notification {
@@ -16,7 +17,6 @@ interface Notification {
 const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -27,12 +27,30 @@ const Notifications: React.FC = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
+      console.log('🔄 Fetching notifications from API...');
+      
+      // Try API call first
+      try {
+        const apiData = await getNotifications({
+          type: typeFilter,
+          status: statusFilter,
+          sortBy: 'createdAt',
+          sortDir: 'desc'
+        });
+        
+        console.log('✅ API data received:', apiData);
+        setNotifications(apiData);
+        return;
+      } catch (apiError) {
+        console.log('⚠️ API call failed, using mock data:', apiError);
+      }
+      
+      // Fallback to mock data if API fails
       const mockNotifications: Notification[] = [
         {
           id: 1,
           title: 'Chào mừng khách hàng mới',
-          message: 'Chào mừng bạn đến với HotelHub! Chúng tôi hân hạnh được phục vụ bạn.',
+          message: 'Chào mừng bạn đến với HotelHub! Chúng tôi hân hạnh được phục vụ.',
           type: 'WELCOME',
           recipient: 'user1@example.com',
           status: 'SENT',
@@ -78,88 +96,80 @@ const Notifications: React.FC = () => {
           createdAt: '2024-01-15T14:00:00Z'
         }
       ];
+      
       setNotifications(mockNotifications);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error('💥 Error fetching notifications:', error);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSendNotification = async (notificationId: number) => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(`/api/notifications/${notificationId}/send`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        setNotifications(notifications.map(notif => 
-          notif.id === notificationId 
-            ? { ...notif, status: 'SENT', sentAt: new Date().toISOString() }
-            : notif
-        ));
-      }
-    } catch (error) {
-      console.error('Error sending notification:', error);
-    }
-  };
-
-  const handleDeleteNotification = async (notificationId: number) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa thông báo này?')) {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch(`/api/notifications/${notificationId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.ok) {
-          setNotifications(notifications.filter(notif => notif.id !== notificationId));
-        }
-      } catch (error) {
-        console.error('Error deleting notification:', error);
-      }
-    }
-  };
-
   const getTypeBadge = (type: string) => {
-    const typeMap: { [key: string]: { class: string; text: string } } = {
-      'WELCOME': { class: 'type-welcome', text: 'Chào mừng' },
-      'BOOKING_CONFIRMATION': { class: 'type-booking', text: 'Xác nhận đặt phòng' },
-      'PAYMENT_REMINDER': { class: 'type-payment', text: 'Nhắc nhở thanh toán' },
-      'SYSTEM_MAINTENANCE': { class: 'type-system', text: 'Bảo trì hệ thống' },
-      'PROMOTION': { class: 'type-promotion', text: 'Khuyến mãi' }
+    const typeMap: { [key: string]: { text: string; class: string } } = {
+      'WELCOME': { text: 'Chào mừng', class: 'type-welcome' },
+      'BOOKING_CONFIRMATION': { text: 'Xác nhận đặt phòng', class: 'type-booking' },
+      'PAYMENT_REMINDER': { text: 'Nhắc nhở thanh toán', class: 'type-payment' },
+      'SYSTEM_MAINTENANCE': { text: 'Bảo trì hệ thống', class: 'type-maintenance' },
+      'PROMOTION': { text: 'Khuyến mãi', class: 'type-promotion' }
     };
-    
-    const typeInfo = typeMap[type] || { class: 'type-default', text: type };
-    return <span className={`type-badge ${typeInfo.class}`}>{typeInfo.text}</span>;
+    return typeMap[type] || { text: type, class: 'type-default' };
   };
 
   const getStatusBadge = (status: string) => {
-    const statusMap: { [key: string]: { class: string; text: string } } = {
-      'DRAFT': { class: 'status-draft', text: 'Bản nháp' },
-      'PENDING': { class: 'status-pending', text: 'Chờ gửi' },
-      'SENT': { class: 'status-sent', text: 'Đã gửi' },
-      'FAILED': { class: 'status-failed', text: 'Gửi thất bại' }
+    const statusMap: { [key: string]: { text: string; class: string } } = {
+      'SENT': { text: 'ĐÃ GỬI', class: 'status-sent' },
+      'PENDING': { text: 'CHỜ GỬI', class: 'status-pending' },
+      'DRAFT': { text: 'BẢN NHÁP', class: 'status-draft' },
+      'FAILED': { text: 'THẤT BẠI', class: 'status-failed' }
     };
-    
-    const statusInfo = statusMap[status] || { class: 'status-default', text: status };
-    return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.text}</span>;
+    return statusMap[status] || { text: status, class: 'status-default' };
   };
 
-  const filteredNotifications = notifications.filter(notif => {
-    const matchesType = typeFilter === 'ALL' || notif.type === typeFilter;
-    const matchesStatus = statusFilter === 'ALL' || notif.status === statusFilter;
-    return matchesType && matchesStatus;
-  });
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN');
+  };
+
+  const handleSendNotification = async (id: number) => {
+    try {
+      console.log('📤 Sending notification:', id);
+      await sendNotification(id);
+      console.log('✅ Notification sent successfully');
+      // Refresh the list
+      fetchNotifications();
+    } catch (error) {
+      console.error('💥 Failed to send notification:', error);
+      alert('Không thể gửi thông báo. Vui lòng thử lại.');
+    }
+  };
+
+  const handleDeleteNotification = async (id: number) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa thông báo này?')) {
+      return;
+    }
+    
+    try {
+      console.log('🗑️ Deleting notification:', id);
+      await deleteNotification(id);
+      console.log('✅ Notification deleted successfully');
+      // Refresh the list
+      fetchNotifications();
+    } catch (error) {
+      console.error('💥 Failed to delete notification:', error);
+      alert('Không thể xóa thông báo. Vui lòng thử lại.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout title="Quản lý thông báo" breadcrumb="Quản lý thông báo">
+        <div className="admin-page">
+          <div className="loading">Đang tải...</div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Quản lý thông báo" breadcrumb="Quản lý thông báo">
@@ -168,9 +178,16 @@ const Notifications: React.FC = () => {
         <div className="admin-page-actions">
           <button 
             className="btn-primary"
-            onClick={() => setShowAddModal(true)}
+            onClick={() => console.log('Create notification')}
           >
             ➕ Tạo thông báo mới
+          </button>
+          <button 
+            className="btn-secondary"
+            onClick={fetchNotifications}
+            style={{ marginLeft: '10px' }}
+          >
+            🔄 Refresh Data
           </button>
         </div>
 
@@ -191,7 +208,6 @@ const Notifications: React.FC = () => {
               <option value="PROMOTION">Khuyến mãi</option>
             </select>
           </div>
-          
           <div className="filter-group">
             <label>Trạng thái:</label>
             <select 
@@ -200,124 +216,91 @@ const Notifications: React.FC = () => {
               className="filter-select"
             >
               <option value="ALL">Tất cả</option>
-              <option value="DRAFT">Bản nháp</option>
-              <option value="PENDING">Chờ gửi</option>
               <option value="SENT">Đã gửi</option>
-              <option value="FAILED">Gửi thất bại</option>
+              <option value="PENDING">Chờ gửi</option>
+              <option value="DRAFT">Bản nháp</option>
+              <option value="FAILED">Thất bại</option>
             </select>
           </div>
         </div>
 
         {/* Notifications Table */}
         <div className="admin-table-container">
-          {loading ? (
-            <div className="loading">Đang tải...</div>
-          ) : (
-            <table className="admin-table">
-              <thead>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tiêu đề</th>
+                <th>Loại</th>
+                <th>Người nhận</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Ngày gửi</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notifications.length === 0 ? (
                 <tr>
-                  <th>ID</th>
-                  <th>Tiêu đề</th>
-                  <th>Loại</th>
-                  <th>Người nhận</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày tạo</th>
-                  <th>Ngày gửi</th>
-                  <th>Thao tác</th>
+                  <td colSpan={8} className="text-center">
+                    Không có thông báo nào
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredNotifications.map((notif) => (
-                  <tr key={notif.id}>
-                    <td>{notif.id}</td>
-                    <td>
-                      <div className="notification-title">
-                        <strong>{notif.title}</strong>
-                        <p className="notification-preview">{notif.message.substring(0, 50)}...</p>
-                      </div>
-                    </td>
-                    <td>{getTypeBadge(notif.type)}</td>
-                    <td>{notif.recipient}</td>
-                    <td>{getStatusBadge(notif.status)}</td>
-                    <td>{new Date(notif.createdAt).toLocaleDateString('vi-VN')}</td>
-                    <td>{notif.sentAt ? new Date(notif.sentAt).toLocaleDateString('vi-VN') : '-'}</td>
-                    <td>
-                      {notif.status === 'PENDING' && (
-                        <button 
-                          className="btn-action btn-send"
-                          onClick={() => handleSendNotification(notif.id)}
-                        >
-                          📤 Gửi
-                        </button>
-                      )}
-                      <button className="btn-action btn-edit">✏️ Sửa</button>
-                      <button 
-                        className="btn-action btn-delete"
-                        onClick={() => handleDeleteNotification(notif.id)}
-                      >
-                        🗑️ Xóa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+              ) : (
+                notifications.map((notification) => {
+                  const typeInfo = getTypeBadge(notification.type);
+                  const statusInfo = getStatusBadge(notification.status);
+                  
+                  return (
+                    <tr key={notification.id}>
+                      <td>{notification.id}</td>
+                      <td>
+                        <div>
+                          <strong>{notification.title}</strong>
+                          <div className="notification-message">
+                            {notification.message}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`type-badge ${typeInfo.class}`}>
+                          {typeInfo.text}
+                        </span>
+                      </td>
+                      <td>{notification.recipient}</td>
+                      <td>
+                        <span className={`status-badge ${statusInfo.class}`}>
+                          {statusInfo.text}
+                        </span>
+                      </td>
+                      <td>{formatDate(notification.createdAt)}</td>
+                      <td>{notification.sentAt ? formatDate(notification.sentAt) : '-'}</td>
+                      <td>
+                        <div className="action-buttons">
+                          {notification.status === 'PENDING' && (
+                            <button 
+                              className="btn-action btn-send"
+                              onClick={() => handleSendNotification(notification.id)}
+                            >
+                              Gửi
+                            </button>
+                          )}
+                          <button className="btn-action btn-edit">Sửa</button>
+                          <button 
+                            className="btn-action btn-delete"
+                            onClick={() => handleDeleteNotification(notification.id)}
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {/* Add/Edit Modal */}
-        {showAddModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <div className="modal-header">
-                <h2>Tạo thông báo mới</h2>
-                <button 
-                  className="modal-close"
-                  onClick={() => setShowAddModal(false)}
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="modal-content">
-                <form>
-                  <div className="form-group">
-                    <label>Tiêu đề:</label>
-                    <input type="text" className="form-input" placeholder="Nhập tiêu đề..." />
-                  </div>
-                  <div className="form-group">
-                    <label>Loại thông báo:</label>
-                    <select className="form-select">
-                      <option value="WELCOME">Chào mừng</option>
-                      <option value="BOOKING_CONFIRMATION">Xác nhận đặt phòng</option>
-                      <option value="PAYMENT_REMINDER">Nhắc nhở thanh toán</option>
-                      <option value="SYSTEM_MAINTENANCE">Bảo trì hệ thống</option>
-                      <option value="PROMOTION">Khuyến mãi</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Người nhận:</label>
-                    <input type="text" className="form-input" placeholder="Email hoặc 'all' cho tất cả" />
-                  </div>
-                  <div className="form-group">
-                    <label>Nội dung:</label>
-                    <textarea className="form-input" rows={4} placeholder="Nhập nội dung thông báo..."></textarea>
-                  </div>
-                  <div className="form-actions">
-                    <button type="button" className="btn-secondary" onClick={() => setShowAddModal(false)}>
-                      Hủy
-                    </button>
-                    <button type="button" className="btn-secondary">
-                      Lưu bản nháp
-                    </button>
-                    <button type="submit" className="btn-primary">
-                      Tạo và gửi
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </AdminLayout>
   );

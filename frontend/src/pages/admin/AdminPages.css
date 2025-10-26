@@ -1167,17 +1167,17 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
 }
 
 /* Force override for notification action buttons */
-.dark-mode .btn-edit {
+.dark-mode .btn-action.btn-edit {
   background-color: #b8860b !important; /* Dark orange for better contrast in dark mode */
   color: #ffffff !important; /* Ensure text is white */
 }
 
-.dark-mode .btn-delete {
+.dark-mode .btn-action.btn-delete {
   background-color: #8b1a1a !important; /* Dark red for better contrast in dark mode */
   color: #ffffff !important; /* Ensure text is white */
 }
 
-.dark-mode .btn-send {
+.dark-mode .btn-action.btn-send {
   background-color: #1a5f1a !important; /* Dark green for better contrast in dark mode */
   color: #ffffff !important; /* Ensure text is white */
 }
@@ -1282,8 +1282,34 @@ html body.dark-mode .admin-page .admin-table tbody tr td span[style*="color"] {
   color: #721c24;
 }
 
+/* Action buttons for notifications - matching bookings style */
+.btn-action {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-action:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
 .btn-send {
   background-color: #28a745;
+  color: white;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-delete {
+  background-color: #dc3545;
   color: white;
 }
 
